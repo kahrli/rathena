@@ -1,0 +1,338 @@
+// Needs a lot more testing, lazyyy
+
+
+prontera,159,171,0	script	#WarpEvent	45,1,1,{
+// 1: reaction; 2: roulette; 3: poring raid, 4: musical chairs
+OnTouch:
+	switch ($@Event) {
+	case 1:
+		warp "poring_w02",102,116; end;
+	case 2:
+		function CheckList;
+		function AddToList;
+		set .inAlready,CheckList;
+		if(!.inAlready)
+			AddToList;
+		warp "quiz_02",337,74; end;
+	case 3:
+		sc_start SC_STRIPWEAPON,64000,5;
+		if(BaseClass == Job_Alchemist) 
+			sc_start SC__GROOMY,64000,5;
+		warp "poring_e",0,0; end;
+	case 4:
+		mes "^DC143CNotice^000000: you will be dispelled and all items will be put into storage to prevent unfair advantages.";
+		switch(select("Yes:No")) {
+			case 1:
+				function CheckList;
+				function AddToList;
+				set .inAlready,CheckList;
+				if(!.inAlready) AddToList;
+				sc_end SC_ALL; // removes ALL buffs
+				atcommand "@storeall "+strcharinfo(0); // puts ALL players items into storage
+				close2;
+				warp "06guild_01",50,50;
+				end;
+			case 2:
+				close;
+		}
+	default:
+		end;
+	}
+    
+function CheckList {
+	if (getarraysize($@EventA)) 
+		for(set .i, 0; .i < getarraysize($@EventA); set .i, .i + 1) 
+			if(getcharid(3)==$@EventA[.i]) return(1);
+	return(0);
+}
+
+function AddToList {
+	setarray $@EventA[getarraysize($@EventA)],getcharid(3);
+	return;
+}
+
+OnTimer500:
+	if($@Hard && $@Event!=2) {
+		announce "Hard Event Mode: On!",bc_all;
+		sleep 1000;
+	}
+	switch($@Event) {
+		case 1:
+			announce "Reaction will soon start. Enter the portal in Prontera to join in.",bc_all;
+			end;
+		case 2:
+			announce "Russian Roulette will soon start. Enter the portal in Prontera to join in.",bc_all;
+			end;
+		case 3:
+			setmapflag "poring_e",mf_noskill;
+			setmapflag "poring_e",mf_nomobloot;
+			killmonsterall "poring_e";
+			announce "Poring Raid will soon start. Enter the portal in Prontera to join in.",bc_all;
+			end;
+		case 4:
+			announce "Musical Effects will soon start. Enter the portal in Prontera to join in.",bc_all;
+			end;
+		default:
+			disablenpc "#WarpEvent";
+			end;
+	}
+
+OnTimer60000:
+	switch($@Event) {
+		case 1:
+			donpcevent "Reaction#Event::OnEnable"; break;
+		case 2:
+			donpcevent "Roulette#Event::OnEnable"; break;
+		case 3:
+			donpcevent "P_Raid#Event::OnEnable"; break;
+		case 4:
+			donpcevent "MC Geezer#Event::OnEnable"; break;
+	}
+OnInit:
+    disablenpc "#WarpEvent";
+    end;
+}
+
+function	script	EventCheck	{
+	for (set .@i,getarraysize($@EventA); .@i>=0; set .@i,.@i-1) 
+		if(!isloggedin($@EventA[.@i]))
+			deletearray $@EventA[.@i],1;
+	sleep 100;
+	return;
+}
+
+-	script	EventInit	-1,{
+OnInit:
+OnClock0030:
+	set .amount,4;
+	for (set .i,0; .i<.amount; set .i, .i+1)
+		set .events[.i],rand(0,23);
+OnClock0130:
+OnClock0230:
+OnClock0330:
+OnClock0430:
+OnClock0530:
+OnClock0630:
+OnClock0730:
+OnClock0830:
+OnClock0930:
+OnClock1030: 
+OnClock1130: 
+OnClock1230: 
+OnClock1330: 
+OnClock1430: 
+OnClock1530: 
+OnClock1630:
+OnClock1730: 
+OnClock1830: 
+OnClock1930: 
+OnClock2030: 
+OnClock2130: 
+OnClock2230: 
+OnClock2330:
+	set $@Event,0;
+	deletearray $@EventA[0],127;
+	for (set .i,0; .i<.amount; set .i, .i+1)
+		if(gettime(3)==.events[.i] && !AgitCheck() && !AgitCheck2()) {
+			set $@Event,rand(1,5); 
+			set $@Hard,rand(5)?0:1;
+			enablenpc "#WarpEvent";
+			initnpctimer "#WarpEvent";
+		}
+	end;
+	
+OnWhisperGlobal:
+	dispbottom "Times for the events:";
+	for (set .i,0; .i<.amount; set .i, .i+1)
+	{
+		dispbottom .events[.i]+":30";
+	}
+	if(getgmlevel()>=40) {
+		set .@event,@whispervar0$;
+		set $@Hard,@whispervar1$;
+		if(.@event && .@event<5) {
+			deletearray $@EventA[0],127;
+			set $@Event,.@event;
+			enablenpc "#WarpEvent";
+			initnpctimer "#WarpEvent";
+		}
+	}
+	end;
+}
+
+poring_e,0,0,0	script	P_Raid#Event	-1,{
+end;
+OnEnable:
+	initnpctimer;
+	set .winner$,0;
+	set .@multiplier,(getmapusers("poring_e")+7)*60;
+	if($@Hard) set .@multiplier,.@multiplier/2;
+	set .@rand,rand(200);
+	if(.@rand<20) monster "poring_e",0,0,"Botaring",2093,1,"P_Raid#Event::OnPDead";
+	else if (.@rand<42) monster "poring_e",0,0,"Gold Poring",2248,1,"P_Raid#Event::OnPDead";
+	else if (.@rand<64) monster "poring_e",0,0,"Little Poring",2398,1,"P_Raid#Event::OnPDead";
+	else if (.@rand<65) monster "poring_e",0,0,"Magmaring",1836,1,"P_Raid#Event::OnPDead";
+	else if (.@rand<82) monster "poring_e",0,0,"Poporing",1031,1,"P_Raid#Event::OnPDead";
+	else if (.@rand<102) monster "poring_e",0,0,"Pouring",1894,1,"P_Raid#Event::OnPDead";
+	else if (.@rand<124) monster "poring_e",0,0,"Santa Poring",1062,1,"P_Raid#Event::OnPDead";
+	else if (.@rand<127) monster "poring_e",0,0,"Jejeling",2316,1,"P_Raid#Event::OnPDead";
+	else if (.@rand<134) monster "poring_e",0,0,"Metaling",1613,1,"P_Raid#Event::OnPDead";
+	else if (.@rand<138) monster "poring_e",0,0,"Stapo",1784,1,"P_Raid#Event::OnPDead";
+	else if (.@rand<162) monster "poring_e",0,0,"Drops",1572,1,"P_Raid#Event::OnPDead";
+	else if (.@rand<178) monster "poring_e",0,0,"Marin",1595,1,"P_Raid#Event::OnPDead";
+	else monster "poring_e",0,0,"Poring",1725,1,"P_Raid#Event::OnPDead";
+	monster "poring_e",0,0,"Botaring",2093,.@multiplier*97/1000;
+	monster "poring_e",0,0,"Gold Poring",2248,.@multiplier*114/1000;
+	monster "poring_e",0,0,"Little Poring",2398,.@multiplier*114/1000;
+	monster "poring_e",0,0,"Magmaring",1836,.@multiplier*5/1000;
+	monster "poring_e",0,0,"Poporing",1031,.@multiplier*85/1000;
+	monster "poring_e",0,0,"Pouring",1894,.@multiplier*97/1000;
+	monster "poring_e",0,0,"Santa Poring",1062,.@multiplier*111/1000;
+	monster "poring_e",0,0,"Jejeling",2316,.@multiplier*15/1000;
+	monster "poring_e",0,0,"Metaling",1613,.@multiplier*34/1000;
+	monster "poring_e",0,0,"Stapo",1784,.@multiplier*2/1000;
+	monster "poring_e",0,0,"Poring",1725,.@multiplier*114/1000;
+	monster "poring_e",0,0,"Drops",1572,.@multiplier*113/1000;
+	monster "poring_e",0,0,"Marin",1595,.@multiplier*78/1000;
+// heavy metaling 1977
+// deviling 1853
+// arch angeling 1388
+// angeling	1568
+// mastering 1090
+// ghostring 1576
+// bomb poring 1904
+// pori pori 1502
+// poring 1847
+	if($@Hard) {
+		mapannounce "poring_e","Don't attack any fake porings or you risk losing!",bc_map;
+		monster "poring_e",0,0,"Porlng",1725,.@multiplier*333/1000,"P_Raid#Event::OnLose";
+		monster "poring_e",0,0,"poring",1725,.@multiplier*333/1000,"P_Raid#Event::OnLose";
+		monster "poring_e",0,0,"PorinG",1725,.@multiplier*333/1000,"P_Raid#Event::OnLose";
+	}
+	end;
+OnLose:
+	switch(rand(1,3)){case 1:warp "Save",0,0; break; case 2: percentheal -80,0; break; case 3: sc_start SC_FREEZE,60000,0; break;}
+	end;
+OnPoDead:
+	getitem 12281,1;
+	end;
+OnPDead:
+	set .winner$,strcharinfo(0);
+	getitem 12281,1;
+	announce .winner$+" has won the Poring Raid.",bc_all;
+	if(true) {
+		mapannounce "poring_e","Prepare for the worst...",bc_map;
+		sleep 5000;
+		monster "poring_e",0,0,"Bomb Poring",1904,20;
+		end;
+	}
+	sleep 5000;
+	mapwarp "poring_e","prontera",155,182;
+	end;
+	
+OnTimer2000:
+	addrid(1);
+	sc_start SC_STRIPWEAPON,4000,5;
+	initnpctimer;
+	end;
+}
+
+-	script	Roulette#Event	-1,{
+end;
+OnEnable:
+	setmapflag "quiz_02",mf_nopenalty;
+	mapannounce "quiz_02","Russian Roulette is about to begin.",bc_map;
+	initnpctimer;
+	end;
+	
+OnTimer500:
+	callfunc "EventCheck";
+	set .@victim,rand((getarraysize($@EventA)));
+	if(getarraysize($@EventA)>1) {
+		if(rand(10)<6) { //60%
+			attachrid($@EventA[.@victim]);
+			specialeffect2 183;
+			percentheal -100,0;
+			mapannounce "quiz_02",strcharinfo(0)+" has taken a bullet.",bc_map;
+			deletearray $@EventA[.@victim],1;
+			detachrid;
+		} else {
+			attachrid($@EventA[.@victim]);
+			mapannounce "quiz_02",strcharinfo(0)+" has dodged a bullet.",bc_map;
+			detachrid;
+		}
+		initnpctimer;
+		end;
+	} else {
+		attachrid($@EventA[0]);
+		announce strcharinfo(0)+" has won Russian Roulette.",bc_all;
+		getitem 12281,1;
+		detachrid;
+		sleep 5000;
+		areawarp "quiz_02",300,50,370,90,"prontera",155,182;
+		stopnpctimer;
+		end;
+	}
+}
+
+poring_w02,98,129,4	script	Reaction#Event	428,{
+	switch (.reaction) {
+	case 1:
+		set .reaction,2;
+		announce strcharinfo(0)+" has won the Reaction Event.",bc_all;
+		mes "[Reaction]";
+		mes "Congratulations on winning!";
+		getitem 12281,1;
+		close2;
+		sleep 5000;
+		set .reaction,0;
+		mapwarp "poring_w02","prontera",155,182;
+		end;
+	case 2:
+		mes "[Reaction]";
+		mes "I'm sorry but you were just a little to late.";
+		close;	
+	default:
+		mes "[Reaction]";
+		mes "I'm sorry you've clicked too early. You are therefore OUT.";
+		mes "Next time wait until I talk!";
+		close2;
+		warp "Save",0,0;
+		end;
+	}
+OnEnable:
+	if(!$@Hard) set .tick,rand(40,160);
+	else set .tick,rand(20,120);
+	set .check,0;
+	set .reaction,0;
+	mapannounce "poring_w02","The one rule is: Do not talk to Reaction until he says his name!",bc_map;
+	sleep 3000;
+	initnpctimer;
+	end;
+	
+OnTimer500:
+	if (.tick == .check) {
+		npctalk "Reaction !!";
+		set .reaction,1;
+		stopnpctimer;
+		end;
+	}
+	if(!$@Hard) {
+		switch(rand(80)) {
+			case 1: npctalk "Not now!"; break;
+			case 2: npctalk "Hi guys!"; break;
+			case 3: npctalk "Just kidding~"; break;
+			case 4: npctalk "Who wants chicken?"; break;
+			case 5: npctalk "Filler text here."; break;
+			case 6: npctalk "I need some frost joker lessons, huh?"; break;
+		}
+	}
+	set .check,.check+1;
+	initnpctimer;
+	end;
+
+OnInit:
+	set .reaction,0;
+	setmapflag "poring_w02",mf_nopenalty;
+	end;
+}

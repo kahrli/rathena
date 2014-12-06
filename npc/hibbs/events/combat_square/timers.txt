@@ -1,0 +1,150 @@
+pvp_2vs2,39,10,0	script	T_Total	-1,{
+end;
+OnTimer3600000:
+	mapannounce "pvp_2vs2","The duel has taken too long! You are disqualified!",1;
+	mapannounce "quiz_00","The duel has taken too long! They are disqualified!",1;
+
+
+	for (set .@i,0; .@i<getarraysize($cDuel$); set .@i,.@i+1) {
+		if(isloggedin(getcharid(3,$cDuel$[.@i]))) { 
+			attachrid(getcharid(3,$cDuel$[.@i]));
+			if(.@i%2==0) warp "quiz_00",75,28;
+			else warp "quiz_00",56,28;
+			attachrid 0;
+		}
+	}
+	deletearray $pDuel$,128;
+	deletearray $cDuel$,128;
+	stopnpctimer;
+	stopnpctimer "T_ArenaCheck";
+	sleep 100;
+	callfunc "L_MakeDuel";
+	end;
+}
+
+pvp_2vs2,38,10,0	script	T_ArenaCheck	-1,{
+end;
+
+OnTimer5000:
+	for (set .@i,getarraysize($cDuel$); .@i>-1; set .@i,.@i-1) {
+		if(isloggedin(getcharid(3,$cDuel$[.@i]))) {
+			attachrid(getcharid(3,$cDuel$[.@i]));
+			if (HP==0) {
+				warp "quiz_00",56,29;
+				deletearray $cDuel$[.@i],1;
+			}
+			attachrid 0;
+		}
+	}
+	switch (getareausers("pvp_2vs2",14,14,65,65)-getareausers("pvp_2vs2",37,37,42,42)) {
+	case 1:
+		for (set .@i,0; .@i<getarraysize($cDuel$); set .@i,.@i+1) {
+			getmapxy(.@map$,.@mapX,.@mapY,0,$cDuel$[.@i]);
+			if (.@map$=="pvp_2vs2" && (.@mapX>13 && .@mapX<66) && (.@mapY>13 && .@mapY<66) )
+			{ 	
+				set .@place,getarraysize($pTier$);
+				setarray $pTier$[.@place],$cDuel$[.@i];
+				if(getarraysize($cTier$)+getarraysize($pTier$)!=1) {
+					mapannounce "pvp_2vs2","We have a winner! "+$cDuel$[.@i]+" will be moving on!",1;
+					mapannounce "quiz_00","We have a winner! "+$cDuel$[.@i]+" will be moving on!",1;
+				}
+				deletearray $cDuel$,128;
+				deletearray $pDuel$,128;
+				sleep 1000;
+				if(isloggedin(getcharid(3,$pTier$[.@place]))) {
+					attachrid(getcharid(3,$pTier$[.@place]));
+					getitem 617,1;
+					warp "quiz_00",75,28;
+					attachrid 0;
+				}
+				sleep 1000;
+				//stopnpctimer "T_Total";
+				stopnpctimer;
+				callfunc "S_CheckTiers";
+			}
+		}
+		attachrid 0;
+		sleep 1000;
+		callfunc "L_MakeDuel";
+		break;
+	case 2:
+		initnpctimer;
+		break;
+	case 0:
+		sleep 10;
+		callfunc "L_MakeDuel";
+		break;
+	default:
+		mapannounce "pvp_2vs2","The amount of duelists in the duel arena is wrong.",1;
+		mapannounce "pvp_2vs2","All duelists will now be warped out.",1;
+		mapannounce "quiz_00","Due to some error, the duelists have been disqualified.",1;
+		areawarp "pvp_2vs2",37,37,42,42,"pvp_2vs2",40,10;
+		areawarp "pvp_2vs2",14,14,65,65,"quiz_00",70,35;
+		deletearray $pDuel$,128;
+		deletearray $cDuel$,128;
+		//stopnpctimer "T_Total";
+		stopnpctimer;
+		sleep 2000;
+		callfunc "L_MakeDuel";
+	}
+	end;
+}
+
+pvp_2vs2,36,10,0	script	T_DuelCheck	-1,{
+end;
+OnTimer2000:
+	callfunc "S_CheckTiers";
+	if((getareausers("pvp_2vs2",14,14,65,65)-getareausers("pvp_2vs2",37,37,42,42))>0) {
+		areawarp "pvp_2vs2",37,37,42,42,"pvp_2vs2",40,10;
+		areawarp "pvp_2vs2",14,14,65,65,"quiz_00",70,35;
+	}
+	for (set .@i,0; .@i<getarraysize($pDuel$); set .@i,.@i+1) {
+		if(!isloggedin(getcharid(3,$pDuel$[.@i]))) {
+			callfunc "S_EnterDuelist",.@i;
+			mapannounce "pvp_2vs2","Previous entrant has been disqualified. "+$pDuel$[.@i]+", you are our new choice.",1;
+			mapannounce "quiz_00","Previous entrant has been disqualified. "+$pDuel$[.@i]+", you are our new choice.",1;
+			set .@redo,1;
+		}
+	}
+	if (.@redo) { set .@redo,0; initnpctimer; end; }
+	mapannounce "pvp_2vs2","The battle between "+$pDuel$[0]+" and "+$pDuel$[1]+" will now begin!",1;
+	mapannounce "quiz_00","The battle between "+$pDuel$[0]+" and "+$pDuel$[1]+" will now begin!",1;
+	sleep 10000;
+	for (set .@i,1; .@i>=0; set .@i,.@i-1) {
+		if(isloggedin(getcharid(3,$pDuel$[.@i]))) {
+			attachrid(getcharid(3,$pDuel$[.@i]));
+//			atcommand strcharinfo(0)+":@alive";
+			if(.@i==1) warp "pvp_2vs2",40,20; 
+			else warp "pvp_2vs2",40,60;
+			sc_end SC_ALL;
+			percentheal 100,100;
+			setarray $cDuel$[getarraysize($cDuel$)],$pDuel$[.@i];
+			deletearray $pDuel$[.@i],1;
+			attachrid 0;
+		}
+	}
+	sleep 5000;
+	initnpctimer "T_Total";
+	sleep 5000;
+	initnpctimer "T_ArenaCheck";
+	stopnpctimer;
+	end;
+}
+
+-	script	PVPT_Starter	-1,{
+OnClock0600:
+OnClock1800:
+	disablenpc "PVPSpecWarp";
+	disablenpc "Combat Square Staff#5";
+	enablenpc "CSWarp";
+	enablenpc "Combat Square Staff#CS";
+	Announce "The Tournament will begin in 5 minutes. Competitors please report to Combat Square.",bc_all;
+	sleep 1000;
+	Announce "You can get there in the Warper, via Other > Combat Square.",bc_all;
+	end;
+
+OnClock0606:
+OnClock1806:
+	callfunc "L_MakeDuel";
+	end;
+}

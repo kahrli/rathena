@@ -1,0 +1,272 @@
+// Need to make new headgear ids and need to check with old claus npcs
+
+prontera,142,173,4	script	Frosty#scarf	710,{
+	if(scarf == 5) {
+		mes "[Frosty]";
+		mes "If you haven't noticed, child, I do not have any arms.  I fear you need to go find someone with arms.";
+		next;
+		mes "[Frosty]";
+		mes "But if the Clauses are busy, you could always go try one of their Elves!";
+		close;
+	}
+	if(scarf == 4 && countitem(6020)>=5 && countitem(949)>=20
+	 && countitem(916)>=20 && countitem(7115)>=5
+	 && countitem(7063)>=5 && countitem(7101)
+	 && countitem(2528)>=2) {
+		mes "["+strcharinfo(0)+"]";
+		mes "Frosty, I had to journey all the way back to you just to get this scarf.  Please tell me you can make it!";
+		next;
+		mes "[Frosty]";
+		mes "I would love to!";
+		next;
+		mes "^666666(Yesssss!)^000000";
+		next;
+		mes "[Frosty]";
+		mes "But I can't.";
+		next;
+		mes "^666666(Noooooooo!)^000000";
+		next;
+		mes "[Frosty]";
+		mes "If you haven't noticed, child, I do not have any arms.  I fear you need to go find someone with arms.";
+		next;
+		mes "[Frosty]";
+		mes "But if the Clauses are busy, you could always go try one of their Elves!";
+		set scarf,5;
+		close;
+	}
+	if(scarf && scarf < 4) {
+		mes "[Frosty]";
+		mes "You find ol' Mister Claus yet?";
+		close;
+	}
+	if(!scarf) {
+		mes "[Frosty]";
+		mes "Hey, hey, hey!  Er, wrong movie...";
+		next;
+		mes "[Frosty]";
+		mes "Okay, child, you look a bit chilly.  How 'bout you get me some stuff and ol' mistah Frosty here will help you get all snug and warm, eh?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "What do you need, Mr. Snowman?! An old silk hat? A corn cob pipe? A button nose?";
+		next;
+		mes "[Frosty]";
+		mes "No child!  That's so stupid! To tell you the truth I have fully forgotten everything I need!";
+		next;
+		mes "[Frosty]";
+		mes "Go find ol' Mister Claus and he should be able to help you get all started! He is the one who gave me my scarf! Now go! Go go go!";
+		set scarf,1;
+		close;
+	}
+	mes "[Frosty]";
+	mes "Hey, kiddo!";
+	close;
+}
+
+xmas,148,95,4	script	Mr. Claus#scarf	718,{
+	if(scarf > 2 && scarf < 5) {
+		mes "[Mr. Claus]";
+		mes "Hee hee...";
+		emotion e_heh;
+		next;
+		mes "[Mr. Claus]";
+		mes "Found the elephantine Mrs. Claus?";
+		close;
+	}
+	if(scarf == 2 && countitem(572) && countitem(538)>=6) {
+		mes "[Mr. Claus]";
+		mes "To tell you the truth I have totally forgotten everything I need to make you a scarf! Why not go ask Mrs. Claus?";
+		next;
+		mes "[Mr. Claus]";
+		emotion e_gg;
+		mes "She has the memory of an elephant and the stomach of one too! Ho ho ho!";
+		set scarf,3;
+		delitem 572,1;
+		delitem 538,6;
+		close;
+	}
+	if(scarf == 2) {
+		mes "[Mr. Claus]";
+		mes "I need ^3355FF6 Well-baked Cookies^000000 and ^3355FF1 Lucky Cookie^000000! Get to work!";
+		close;
+	}
+	if(scarf == 1) {
+		mes "["+strcharinfo(0)+"]";
+		mes "Are you Mister Claus?";
+		next;
+		emotion e_gg;
+		mes "[Mr. Claus]";
+		mes "Hee hee hee...";
+		next;
+		emotion e_dot;
+		mes "[Mr. Claus]";
+		mes "...";
+		next;
+		mes "[Mr. Claus]";
+		emotion e_heh;
+		mes "Ho ho ho! I sure am!";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Frosty the Snowman told me that you can tell me what I need to make a scarf!";
+		next;
+		mes "[Mr. Claus]";
+		mes "In order for me to tell you the secrets you are going to need to bring me one simple thing!";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "What?! Anything, Mr. Claus, anything!";
+		next;
+		mes "[Mr. Claus]";
+		mes "I need ^3355FF6 Well-baked Cookies^000000 and ^3355FF1 Lucky Cookie^000000! Get to work!";
+		set scarf,2;
+		close;
+	}
+	mes "[Mr. Claus]";
+	mes "Hee hee hee!";
+	close;
+}
+
+xmas,121,156,4	script	Mrs. Claus	714,{
+	if(scarf > 2 && scarf < 5 && countitem(6020)>=5 && countitem(949)>=20
+	 && countitem(916)>=20 && countitem(7115)>=5
+	 && countitem(7063)>=5 && countitem(7101)
+	 && countitem(2528)>=2) {
+		mes "["+strcharinfo(0)+"]";
+		mes "Here you go, ma'am! Can you make me a warm scarf now?";
+		next;
+		mes "[Mrs. Claus]";
+		mes "I'm so sorry, child! Something has come up! Bring it all to Frosty and I am sure he can make it for you!";
+		close;
+	}
+	if(scarf > 2 && scarf < 5) {
+		mes "[Mrs. Claus]";
+		mes "Oh hello child! Mr. Claus says you are in need of my help to make a scarf! My specialty!";
+		next;
+		mes "[Mrs. Claus]";
+		mes "Go on out and get me ^3355FF2 Wool Scarf";
+		mes "5 Fur";
+		mes "20 Feather";
+		mes "20 Feather of Bird";
+		mes "5 Harpy Feather";
+		mes "5 Soft Feather";
+		mes "^000000and ^3355FF1 Peco Peco Feather^000000.";
+		next;
+		mes "[Mrs. Claus]";
+		mes "Hurry child! I will go get my sewing needles!";
+		set scarf,4;
+		close;
+	}
+	mes "[Mrs. Claus]";
+	mes "Hello child!";
+	close;
+}
+
+xmas,69,247,4	script	Hermey#scarf	717,{
+	if(scarf_color && countitem(1001) && countitem(6020)>=5 
+	&& countitem(949)>=20
+	&& countitem(916)>=20 && countitem(7115)>=5
+	&& countitem(7063)>=5 && countitem(7101)
+	&& countitem(2528)>=2) {
+		mes "[Hermey]";
+		mes "Okay, before I make it, make sure you're okay with me using the ^3355FF2 Wool Scarves^000000 in your inventory! Otherwise ^FF0000the cards will be gone forever^000000!!";
+		next;
+		if(select("I checked.:It's not okay!")==2) {
+			mes "[Hermey]";
+			mes "Good call!!  Come back when they are!";
+			close;
+		}
+		mes "[Hermey]";
+		mes "Just one more second!! Now to whisper the magic words...";
+		next;
+		mes "[Hermey]";
+		mes "^3355FFOogy snoogy rainbow gabloogy change the scarf into the color of my...choosingy...!!!!^000000";
+		next;
+		mes "[Hermey]";
+		mes "Here is your scarf! Enjoy!";
+		delitem 1001,1;
+		delitem 6020,5;
+		delitem 949,20;
+		delitem 916,20;
+		delitem 7115,5;
+		delitem 7063,5;
+		delitem 7101,1;
+		delitem 2528,2;
+		switch(scarf_color) {
+			case 1: getitem 5822,1; break;
+			case 2: getitem 5397,1; break;
+			case 3: getitem 5506,1; break;
+			case 4: getitem 5507,1; break;
+			case 5: getitem 5818,1; break;
+			case 6: getitem 5819,1; break;
+			case 7: getitem 5510,1; break;
+			case 8: getitem 5513,1; break;
+			case 9: getitem 17009,1; break;
+			case 10: getitem 5519,1; break;
+		}
+		set scarf,0;
+		set scarf_color,0;
+		close;
+	}
+	if(scarf_color && countitem(1001) && !(countitem(6020)>=5 && countitem(949)>=20
+	&& countitem(916)>=20 && countitem(7115)>=5
+	&& countitem(7063)>=5 && countitem(7101)
+	&& countitem(2528)>=2)) {
+		mes "[Hermey]";
+		mes "I still need ^3355FF2 Wool Scarf";
+		mes "5 Fur";
+		mes "20 Feather";
+		mes "20 Feather of Bird";
+		mes "5 Harpy Feather";
+		mes "5 Soft Feather";
+		mes "^000000and ^3355FF1 Peco Peco Feather^000000...";
+		close;
+	}
+	if(scarf_color && !countitem(1001)) {
+		mes "[Hermey]";
+		mes "Quickly, I need star dust!";
+		close;
+	}
+	if(scarf == 5 && countitem(6020)>=5 && countitem(949)>=20
+	&& countitem(916)>=20 && countitem(7115)>=5
+	&& countitem(7063)>=5 && countitem(7101)
+	&& countitem(2528)>=2) {
+		mes "["+strcharinfo(0)+"]";
+		mes "Are you one of Mr. Claus's elves?";
+		next;
+		mes "[Hermey]";
+		mes "I sure am! But I wanted to be a dentist...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Can you just please make this scarf for me?";
+		next;
+		mes "[Hermey]";
+		mes "I sure, sure can! Now just tell me what color you want!";
+		next;
+		switch(select("Black:Blue:Cyan:Gold:Green:Halloween:Pink:Purple:Red:Santa")) {
+			case 1:
+				set scarf_color,1; break;
+			case 2:
+				set scarf_color,2; break;
+			case 3:
+				set scarf_color,3; break;
+			case 4:
+				set scarf_color,4; break;
+			case 5:
+				set scarf_color,5; break;
+			case 6:
+				set scarf_color,6; break;
+			case 7:
+				set scarf_color,7; break;
+			case 8:
+				set scarf_color,8; break;
+			case 9:
+				set scarf_color,9; break;
+			case 10:
+				set scarf_color,10; break;
+		}
+		mes "[Hermey]";
+		mes "Okay I just need ^3355FF1 Star Dust^000000 and I can use the magic of the stars to change it to any color I want! Now go get me it!";
+		close;
+	}
+	mes "[Hermey]";
+	mes "Welcome to Lutie!";
+	close;
+}

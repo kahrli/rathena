@@ -26,12 +26,12 @@ umbala,126,129,4	script	Bearded Man#bandit	120,{
 	mes "Beards! Get your wonderful beards!";
 	mes "Would you like a beard?";
 	next;
-	menu "Yes, I'd like some facial hair!",-,"No thanks, thats gross!",M_NO;
+	menu "Yes, I'd like some facial hair!",-,"No thanks, that's gross!",M_NO;
 
 	mes "[Bearded Man]";
 	mes "HoHo~ So you want some whiskers.";
 	emotion e_heh;
-	mes "Well I would give you my beards but there not cheap.";
+	mes "Well I would give you my beards but they're not cheap.";
 	mes "Matter of fact I have only one left...";
 	mes "but I'm not selling it.";
 	mes "But don't get mad! I can make you one.";
@@ -140,10 +140,10 @@ L_DELIVERY:
 	mes "[Karfa Clerk]";
 	mes "Sorry but we have not received any ^8080FFThread^000000.";
 	mes "Our shipments have been put off until its safe.";
-	mes "You see we get our ^8080FFThread^000000 from Alberta and a monsters keeps attacking our merchants.";
+	mes "You see we get our ^8080FFThread^000000 from Alberta and a monster keeps attacking our merchants.";
 	next;
 	mes "[Karfa Clerk]";
-	mes "Now this monsters has not been doing this before.";
+	mes "Now this monster was not doing this before.";
 	mes "It may have to do with the warmer months.";
 	mes "Please help us out!";
 	set BEARD_QUEST,3;

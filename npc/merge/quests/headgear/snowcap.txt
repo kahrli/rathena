@@ -1,0 +1,208 @@
+// adjust hat IDs etc
+
+
+prontera,145,165,6	script	Winter#snow	892,{
+	set @you$,"["+strcharinfo(0)+"]";
+	switch(snowcap) {
+	case 0: 
+		mes "[Winter]";
+		mes "Excuse me! Excuse me!";
+		next;
+		mes @you$;
+		mes "Yes?";
+		next;
+		mes "[Winter]";
+		mes "I am so sorry to bother you but it seems I have lost my hat! Could you please help me look for it?";
+		set snowcap,1;
+		next;
+	case 1:
+		mes @you$;
+		mes "Well where was the last place you had it?";
+		next;
+		mes "[Winter]";
+		mes "I was over in Amatsu with Spring... Maybe I left it over at her tree?";
+		next;
+		mes @you$;
+		if(sex)
+			mes "I will go check for you! Anything for such a pretty woman as yourself~";
+		else
+			mes "I will go check for you! Anything for such a nice girl as yourself~";
+		close;
+	case 5:
+		mes "[Winter]";
+		mes "Oh thank you thank you thank you!";
+		next;
+		mes @you$;
+		if(sex)
+			mes "It took a bit of work, but it was worth it for a pretty woman like you~";
+		else
+			mes "It took a bit of work, but it was worth it for a nice girl like you~";
+		next;
+		mes "[Winter]";
+		mes "As a token of my appreciation, I will give you my hat! To remember me by forever!";
+		next;
+		mes @you$;
+		mes "Oh, thank you!";
+		next;
+		mes "[Winter]";
+		mes "(What a creep... I don't want that hat after this creep has touched it.)";
+		next;
+		mes @you$;
+		mes "What was that?";
+		next;
+		mes "[Winter]";
+		mes "Nothing!";
+		mes "(Just smile and wave...)";
+		emotion e_ok;
+		close;
+	default:
+		mes "[Winter]";
+		mes "Where's my hat...";
+		emotion e_sob;
+		close;
+	}
+}
+
+amatsu,237,107,4	script	Spring#snow	941,{
+	set @you$,"["+strcharinfo(0)+"]";
+	switch(snowcap) {
+	case 1:
+		mes @you$;
+		mes "Excuse me, Miss Spring!";
+		next;
+		mes "[Spring]";
+		mes "Eek! Oh, it's just a person. How can I help you?";
+		next;
+		mes "[Spring]";
+		mes "(I hope this stranger doesn't hurt me!)";
+		emotion e_swt;
+		next;
+		mes @you$;
+		mes "I'm helping Winter look for a hat. Do you happen to have it?";
+		next;
+		mes "[Spring]";
+		mes "Oh... well... uh... I... I gave it to Summer so she could give it to Winter but I don't think she has yet.";
+		set snowcap,2;
+		next;
+	case 2:
+		mes @you$;
+		mes "Could you tell me where you last saw Summer?";
+		next;
+		mes "[Spring]";
+		mes "TAKE MY WALLET! Oh, er... Summer was last at Comodo... She was playing near the top of the volcano.";
+		next;
+		mes @you$;
+		mes "Okay, thank you! I will be on my way now!";
+		next;
+		mes "[Spring]";
+		mes "(Finally that creepy person is gone!)";
+		next;
+		mes @you$;
+		mes "I'm right here...";
+		next;
+	default:
+		mes "[Spring]";
+		mes "OH GOD!!";
+		emotion e_wah;
+		close;
+	}
+}
+
+comodo,178,227,7	script	Summer#snow	911,{
+	set @you$,"["+strcharinfo(0)+"]";
+	switch(snowcap) {
+	case 2:
+		mes @you$;
+		mes "Excuse me, Summer?";
+		next;
+		mes "[Summer]";
+		mes "YUP THAT'S ME, YOU GOT ME, I'M SUMMER, YUP!";
+		next;
+		mes @you$;
+		mes "Oooo-kay.";
+		next;
+		mes "[Summer]";
+		mes "SO WHAT DO YOU NEED?? I AM VERY BUSYYYYY!";
+		set snowcap,3;
+		next;
+	case 3:
+		mes @you$;
+		mes "I was just wondering if you had Winter's hat...";
+		next;
+		mes "[Summer]";
+		mes "NOPE, GAVE IT TO FALL IN JUNO!";
+		next;
+		mes @you$;
+		mes "Okay, thank you very much!";
+		next;
+	default:
+		mes "[Summer]";
+		mes "GOSH YOU DON'T HAVE TO LEAVE SO SOON! I AM REALLY HAPPY TO HAVE A FRIEND HERE!";
+		emotion e_fsh;
+		next;
+		mes "^3355FFYou run.^000000";
+		close;
+	}
+}
+
+yuno,210,310,4	script	Fall#snow	894,{
+	set @you$,"["+strcharinfo(0)+"]";
+	switch(snowcap) {
+	default:
+	case 3:
+		mes "[Fall]";
+		mes "Ahhh, this town. So unique... I wonder how it floats...";
+		if(snowcap != 3) close;
+		next;
+		mes "^3355FFShe seems focused.  Now's your chance to attack!";
+		mes "You sneak up behind Fall.^000000";
+		next;
+		mes @you$;
+		mes "FALL.";
+		next;
+		mes "^3355FFShe slowly turns around... and tugs on your ear like you're a grade-schooler.^000000";
+		next;
+		mes "[Fall]";
+		mes "DON'T YOU TRY TO SCARE THE ALL-KNOWING FALL.";
+		next;
+		mes @you$;
+		mes "Okayyyyyyyyyy! Let go of my ear please!!!";
+		next;
+		mes "[Fall]";
+		mes "Fine. You are here for the hat, correct?!";
+		next;
+		mes @you$;
+		mes "Yes.";
+		next;
+		mes "[Fall]";
+		mes "Well, I guess you can have it... if you reach for it...";
+		next;
+		mes "^3355FFShe holds it up real high.^000000";
+		next;
+		mes "^3355FFYou jump and jump and jump but can't reach it.^000000";
+		next;
+		mes @you$;
+		mes "Wahhh! Gimme it!!";
+		next;
+		mes "[Fall]";
+		mes "HAHAHA. You puny child!! First you must pass the test!!!";
+		close2;
+		monster "yuno",210,310,"3 More Weeks",1247,2,"Fall#snow::OnMyMobDead";
+		end;
+	case 4:
+		mes "[Fall]";
+		mes "Fine, fine, take the hat. You're no fun.";
+		getitem 17011,1;
+		set snowcap,5;
+		close;
+	}
+	OnMyMobDead:
+		if(snowcap == 3) {
+			if(@antonio < 2) set @antonio,@antonio+1;
+			if(@antonio >= 2) set snowcap,4;
+		}
+		end;
+OnInit:
+	setmapflag "yuno",mf_monster_noteleport;
+	end;
+}

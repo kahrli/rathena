@@ -1,0 +1,405 @@
+//===== eAthena Script ======================================= 
+//= Gangster Scarf Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+in_rogue,374,112,7	script	Assassin#zgang	884,{
+	if(zgang) {
+		mes "[Double Agent]";
+		mes "Remember, the password is ^0000FFMy father never hoarded upgrade items.^000000";
+		close;
+	}
+	if(rumour_nd==22 && !zgang) {
+		completequest 16002;
+		mes "[Assassin]";
+		mes "Hey! You're the one who found the Z-gang hide-out, aren't you?  I heard you're quite the master at infiltration.";
+		next;
+		mes "[Double Agent]";
+		mes "I can't tell you my name, for obvious reasons.  I'm a double agent. I've been here invistigating these guys for some time now.";
+		next;
+		mes "[Double Agent]";
+		mes "Actually, we could use some help.  We can't manage to capture the Gangster's Boss.  You interested in some quick work?";
+		next;
+		if(select("I'm in.:No thanks, I don't need any trouble.")==2) {
+			mes "[Double Agent]";
+			mes "Pity.";
+			close;
+		}
+		mes "[Double Agent]";
+		mes "Excellent!  I'm sure you'll be a helpful addition.";
+		next;
+		mes "[Double Agent]";
+		mes "First thing, I'll send you to investigate a great thief, Gangster Master.  Just head east a bit.  It looks like he's hiding in the house of Hollgrehenn's son.";
+		next;
+		mes "[Double Agent]";
+		mes "Win his trust.  It might cost a little, if you know what I mean.";
+		next;
+		mes "[Double Agent]";
+		mes "The password is ^0000FFMy father never hoarded upgrade items.^000000";
+		set zgang,1;
+		close;
+	}
+	mes "[Assassin]";
+	mes "Shhh!!  Silence.  What do you want?";
+	next;
+	select("Nothing, just walking around.:Who are you?");
+	mes "[Assassin]";
+	mes "I'm not here.";
+	close;
+}
+
+in_rogue,149,48,5	script	Gangster Master#z	803,{
+	if(zgang==3) {
+		mes "^0000FFThe card says he lives in a cabin in Lutie. I don't want to make her mad by asking again.^000000";
+		next;
+	}
+	if(zgang==2) {
+		mes "[Gangster Master]";
+		mes "Let's see just how great you are with a job.  We're talking about a Grand Theft!  Here's what I'll need.";
+		next;
+		mes "[Gangster Master]";
+		mes "Lots of money,";
+		mes "some Gold,";
+		mes "Treasure,";
+		mes "Diamonds,";
+		mes "and lots of pretty gems!";
+		if(Zeny>=1000000 && countitem(969)>=2 &&
+			countitem(7444)) {
+			next;
+			set .@diamond,countitem(730)+countitem(731)+countitem(732)+countitem(733)+countitem(2613);
+			set .@gem,countitem(718)+countitem(719)+countitem(720)+countitem(721)+countitem(722)+countitem(723)+countitem(724)+countitem(725)+countitem(726)+countitem(727)+countitem(728)+countitem(729);
+			if(.@diamond>12 && .@gem>25) {
+				mes "[Gangster Master]";
+				mes "Good job!  I'm sure the organization will be really happy with this.  Here, take this card.  It has the location of our oldest member.  He'll know the lair of the Boss.";
+				next;
+				mes "^666666(It says he lives in a cabin in Lutie.)^000000";
+				next;
+				mes "["+strcharinfo(0)+"]";
+				mes "In Lutie?  Really?";
+				next;
+				mes "[Gangster Master]";
+				mes "Yeah baby, in Lutie!  It's the perfect hide-out for a ganster!  Nobody's searched for him there.";
+				set Zeny,Zeny-1000000;
+				delitem 969,countitem(969);
+				delitem 7444,countitem(7444);
+				delitem 718,countitem(718);
+				delitem 719,countitem(719);
+				delitem 720,countitem(720);
+				delitem 721,countitem(721);
+				delitem 722,countitem(722);
+				delitem 723,countitem(723);
+				delitem 724,countitem(724);
+				delitem 725,countitem(725);
+				delitem 726,countitem(726);
+				delitem 727,countitem(727);
+				delitem 728,countitem(728);
+				delitem 729,countitem(729);
+				delitem 730,countitem(730);
+				delitem 731,countitem(731);
+				delitem 732,countitem (732);
+				delitem 2613,countitem(2613);
+				set zgang,3;
+				close;
+			}
+			mes "[Gangster Master]";
+			if(.@diamond > 6)
+				mes "So just a few more diamonds....";
+			if(.@gem > 13 )
+				mes "And just a few more gems...";
+		}
+		close;
+	}
+	if(zgang==1) {
+		mes "[Gangster Master]";
+		mes "Finally!  The Renoe told me about you.";
+		next;
+		if(select("Huh?:At your service!  You're a woman?")==1) {
+			mes "[Gangster Master]";
+			mes "Guess not...";
+			close;
+		}
+		mes "[Gangster Master]";
+		mes "Yep!  I'm a ^FF0000material girl^000000, hehehe.  Are you ready?";
+		next;
+		mes "[Gangster Master]";
+		mes "Let's see just how great you are with a job.  We're talking about a Grand Theft!  Here's what I'll need.";
+		next;
+		mes "[Gangster Master]";
+		mes "Lots of money,";
+		mes "some Gold,";
+		mes "Treasure,";
+		mes "Diamonds,";
+		mes "and lots of pretty gems!";
+		set zgang,2;
+		close;
+	}
+	mes "[Gangster Master]";
+	mes "How did you enter here??";
+	close;
+}
+
+xmas_fild01,189,136,3	script	Old Collector#zgang	713,{
+	if(zgang == 5) {
+		mes "[Old Collector]";
+		mes "To find the boss, you need to go where our best hitman is.";
+		next;
+		mes "[Old Collector]";
+		mes "He's hiding on a far, far away island.  People say ^3355FFthis island is cursed^000000, so be careful.";
+		next;
+		mes "[Old Collector]";
+		mes "And remember the password: ^3355FFHabla con la mano.^000000";
+		close;
+	}
+	if(zgang == 4) {
+		set .@doll,0;
+		if(countitem(740)) 
+			set .@doll,.@doll+1;
+		if(countitem(741)) 
+			set .@doll,.@doll+1;
+		if(countitem(742)) 
+			set .@doll,.@doll+1;
+		if(countitem(743)) 
+			set .@doll,.@doll+1;
+		if(countitem(750)) 
+			set .@doll,.@doll+1;
+		if(countitem(751)) 
+			set .@doll,.@doll+1;
+		if(countitem(752)) 
+			set .@doll,.@doll+1;
+		if(countitem(753)) 
+			set .@doll,.@doll+1;
+		if(countitem(754)) 
+			set .@doll,.@doll+1;
+		if(countitem(7206)) 
+			set .@doll,.@doll+1;
+		if(countitem(7212)) 
+			set .@doll,.@doll+1;
+		if(countitem(7268)) 
+			set .@doll,.@doll+1;
+		if(countitem(7277)) 
+			set .@doll,.@doll+1;
+		if(countitem(7272)) 
+			set .@doll,.@doll+1;
+		if(.@doll>7) {
+			mes "[Old Collector]";
+			mes "Best Christmas present ever!  Ready for your reward?";
+			next;
+			if(select("Yes!:Let me think about it.")==2) {
+				mes "[Old Collector]";
+				mes "Alright then.";
+				close;
+			}
+			mes "[Old Collector]";
+			mes "To find the boss, you need to go where our best hitman is.";
+			next;
+			mes "[Old Collector]";
+			mes "He's hiding on a far, far away island.  People say ^3355FFthis island is cursed^000000, so be careful.";
+			next;
+			mes "[Old Collector]";
+			mes "And remember the password: ^3355FFHabla con la mano.^000000";
+			if(countitem(740)) 
+				delitem 740,1;
+			if(countitem(741)) 
+				delitem 741,1;
+			if(countitem(742)) 
+				delitem 742,1;
+			if(countitem(743)) 
+				delitem 743,1;
+			if(countitem(750)) 
+				delitem 750,1;
+			if(countitem(751)) 
+				delitem 751,1;
+			if(countitem(752)) 
+				delitem 752,1;
+			if(countitem(753)) 
+				delitem 753,1;
+			if(countitem(754)) 
+				delitem 754,1;
+			if(countitem(7206)) 
+				delitem 7206,1;
+			if(countitem(7212)) 
+				delitem 7212,1;
+			if(countitem(7268)) 
+				delitem 7268,1;
+			if(countitem(7277)) 
+				delitem 7277,1;
+			if(countitem(7272)) 
+				delitem 7272,1;
+			set zgang,5;
+			close;
+		}
+		mes "[Old Collector]";
+		mes "Alright, look, I'll give you some inside information about the Boss if you can help me get the most wonderful doll collection in the world.";
+		close;
+	}
+	if(zgang == 3) {
+		mes "[Old Collector]";
+		mes "Merry Christmas!  What brings you here?";
+		next;
+		if(select("I'm looking for the Big Boss.:Merry Christmas to you too!")==2) {
+			mes "[Old Collector]";
+			mes "Ho ho ho!";
+			close;
+		}
+		mes "[Old Collector]";
+		mes "Yes, mmm... This card is from the organization.  I don't want any more business with the organization.";
+		next;
+		mes "[Old Collector]";
+		mes "See, I have a new passion now.  I love to collect ^3355FFunvaluable artifacts^000000!";
+		next;
+		mes "[Old Collector]";
+		mes "Alright, look, I'll give you some inside information about the Boss if you can help me get the most wonderful doll collection in the world.";
+		set zgang,4;
+		close;
+	}
+	mes "[Old Collector]";
+	mes "Merry Christmas!  What brings you here?";
+	close;
+}
+
+nameless_n,86,114,5	script	Shady Character#zgang	731,{
+	if(zgang>5) {
+		mes "[Hitman]";
+		mes "The casino, hombre, the casino!";
+		close;
+	}
+	if(zgang == 5) {
+		if(countitem(1215) || countitem(1213) || countitem(1214)) {
+			mes "[Hitman]";
+			mes "That ^3355FFDagger^000000... May I have it?";
+			next;
+			if(select("Sure.:No!")==2) {
+				mes "[Hitman]";
+				mes "Scram, get out of here.";
+				specialeffect2 2;
+				percentheal -50,0;
+				close;
+			}
+			mes "[Hitman]";
+			mes "Amigo, you make me very happy!";
+			next;
+			mes "[Hitman]";
+			if(countitem(1215)) delitem 1215,1;
+			else if(countitem(1213)) delitem 1213,1;
+			else if(countitem(1214)) delitem 1214,1;
+			mes "A deal is a deal.  The Boss hangs out in the casino; he's a bit addicted to gambling.  It's also where he washes his dirty money, you know what I'm saying...";
+			set zgang,6;
+			close;
+		}
+		mes "[Hitman]";
+		mes "Tell me, who sent you?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "^3355FFHabla con la mano.^000000";
+		next;
+		mes "[Hitman]";
+		mes "Hehehe, that old collector, huh?  Tell me, what do you want?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "I need to talk to your Boss.";
+		next;
+		mes "[Hitman]";
+		mes "Look, look, I don't have much time, I'm fleeing from justice.  When I was swimming to come here I lost my dagger.";
+		next;
+		mes "[Hitman]";
+		mes "My baby... She was wonderful for stabbing guards and opening beers... Bring me one just as good and I'll tell you where the Boss is right now.";
+		close;
+	}
+	mes "[Shady Character]";
+	mes "Who sent you?";
+	close;
+}
+
+cmd_in02,104,59,4	script	Big Boss#zgang	814,{
+	if(zgang == 7) {
+		mes "[Big Boss]";
+		mes "You bastard...";
+		close;
+	}
+	if(zgang == 6) {
+		mes "[Big Boss]";
+		mes "Well well well, excellent work, my new apprentice.  Or should I say, gangster?";
+		next;
+		mes "[Big Boss]";
+		mes "How I wish that all the members were like you.  This organization could use some cold blood!  Not like those Z-gang fools.  They never brang me that book we asked for...";
+		next;
+		mes "[Big Boss]";
+		mes "Whatever, congratulations... You are now an official member.  Charley, give him your weapon.";
+		next;
+		mes "[Bodyguard]";
+		mes "Huh?  But sir?";
+		next;
+		mes "[Big Boss]";
+		mes "Are you deaf?  I have a new bodyguard, get outta here!  Move it!";
+		next;
+		mes "[Big Boss]";
+		mes "Now let me explain our plans...";
+		next;
+		mes "^666666(30 minutes later...)^000000";
+		next;
+		mes "[Big Boss]";
+		mes "...And this conversation never happened, capisce?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "What conversation?";
+		next;
+		mes "[Big Boss]";
+		mes "That's my boy!";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "One more thing Boss... You're under arrest!";
+		next;
+		enablenpc "Double Agent#zgang";
+		enablenpc "Police#zgang";
+		enablenpc "Police#zgang2";
+		enablenpc "Police#zgang3";
+		mes "[Big Boss]";
+		mes "What??  This can't be happening!  I will have my revenge for this!!";
+		next;
+		mes "[Double Agent]";
+		mes "Thanks a lot for your cooperation.  Now that we have the Deer, it will be easy to catch the rest of the gang.";
+		next;
+		mes "[Double Agent]";
+		mes "Well, take this mask as a memento, partner.  It's useless for me now.";
+		set zgang,7;
+		getitem 5361,1;
+		close2;
+		disablenpc "Double Agent#zgang";
+		disablenpc "Police#zgang";
+		disablenpc "Police#zgang2";
+		disablenpc "Police#zgang3";
+		end;
+	}
+	mes "[Big Boss]";
+	mes "Can't you see I'm a little pre-occupied?";
+	close;
+}
+
+cmd_in02,105,57,3	script	Bodyguard#zgang	808,{
+	mes "[Bodyguard]";
+	mes "You best keep your distance.";
+	close;
+}
+
+cmd_in02,102,61,5	script	Bodyguard#zgang2	808,{
+	mes "[Bodyguard]";
+	mes "The Boss don't like people staring.";
+	close;
+}
+
+cmd_in02,99,59,7	script	Double Agent#zgang	884,{
+	OnInit:
+		disablenpc "Police#zgang";
+		disablenpc "Police#zgang2";
+		disablenpc "Police#zgang3";
+		disablenpc "Double Agent#zgang";
+}
+
+cmd_in02,97,56,7	script	Police#zgang	99,{}
+cmd_in02,106,53,1	script	Police#zgang2	98,{}
+cmd_in02,103,51,1	script	Police#zgang3	97,{}

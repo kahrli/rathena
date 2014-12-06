@@ -1,1 +1,1 @@
-ALTER TABLE `picklog` ADD `bound` TINYINT( 1 ) UNSIGNED NOT NULL DEFAULT '0';
+insert into item_cash_db2 values (1,4128,2);

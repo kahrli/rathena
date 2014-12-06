@@ -1,0 +1,76 @@
+// Map doesn't exist
+
+poring_c02,115,38,4	script	Event	999,{
+
+	mes "[Event Manager]";
+	
+	/*if(!getgmlevel()) {
+		mes "How the hell...?";
+		close2;
+		warp "SavePoint",0,0;
+	}*/
+	
+	if(agitCheck() || agitCheck2()) {
+		mes "It's War of Emperium, stupid.";
+		close;
+	}
+	for(set .@i,0; .@i<getvariableofnpc(.amount,"EventInit"); set .@i,.@i+1) {
+		if (gettime(3) == getvariableofnpc(.events[.@i],"EventInit")) {
+			mes "There's an auto-event soon, idiot.";
+			close;
+		}
+	}
+
+	setarray .@start[0],11,1,2,20,12,8;
+	setarray .@day[0],2,4,6,6,4,0;
+
+	for(set .@i,0; .@i<getarraysize(.@start); set .@i,.@i+1) {
+		if(gettime(4)==.@day[.@i]) {
+			if( gettime(3)==.@start[.@i] ||
+				(gettime(3)==(.@start[.@i]-1) && gettime(2)>=30) ||
+				(gettime(3)==(.@start[.@i]+1) && gettime(2)<=30) ) {
+					mes "There's War of Emperium soon.  Chill out.";
+					close;
+			}
+		}
+	}
+	
+	if( (gettime(3)==5 && gettime(2)>=30) || (gettime(3)==17 && gettime(2)>=30) ||
+		gettime(3)==6 || gettime(3)==18) {
+			mes "Hello, tourney soon, remember?";
+			close;
+	}
+	
+	if(lastevent >= gettimetick(0) && lastevent!=0) {
+		mes "You can't hold another event right now.";
+		close;
+	}
+	
+	mes "What event did you want held?";
+	next;
+	input event$;
+	dispbottom strcharinfo(0)+" is trying to hold "+event$+" at "+gettime(3)+":00"; //logmes
+	mes "[Event Manager]";
+	mes "PM me to broadcast.";
+	mes "Name is NPC:Event";
+	next;
+	mes "[Event Manager]";
+	mes "You can have 2 rounds.";
+	getitem 7777,3;
+	dispbottom "2 event boxes to "+strcharinfo(0)+" at "+gettime(3)+":00";
+	set lastevent,gettimetick(0)+7200000;
+	close;
+OnWhisperGlobal:
+	if(getgmlevel() && lastevent >= (gettimetick(0)-3600000)) {
+		mes "[Event Manager]";
+		mes "Broadcast what?";
+		next;
+		input @input$;
+		mes "[Event Manager]";
+		mes "Broadcast ^3355FF"+@input$+"^000000?";
+		next;
+		if(select("Yes:No")==2) close;
+		close2;
+		atcommand "@broadcast "+@input$;
+	}
+}

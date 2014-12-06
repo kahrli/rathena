@@ -1,0 +1,128 @@
+// Bad idea, badly glitched, needs a looot of work
+
+
+prontera,146,104,6	script	Trivia		407,{
+
+//NPC Name
+set @npc$,"^008000[RO-Trivia Test2]^000000";
+//Get Char Name
+set @char_name$,strcharinfo(0);
+
+L_TrivMain:
+mes @npc$;
+mes "Hello "+ @char_name$ +". Im going to give you a chance to win some zeny by knowing your RO monsters, items and skills. Sounds like fun right? Well, do you want to play?";
+menu "Yes",L_TrivOption,"No",L_TrivQuit;
+
+L_TrivOption:
+mes "Would you like to hear the rules or go straight to your selection of trivia?";
+menu "Rules",L_TrivRules,"Selection",L_TrivSelection;
+
+L_TrivRules:
+mes "Ok, here are the rules. First off, you will have 2 options of trivia. 1st being Monsters and 2nd being Items. Each play costs ^00FA9A100K^000000 zeny. You will be given a trivia question relating to RO and then you must answer in the box.^DC143CSpelling must be 100% ACCURATE^000000.";
+next;
+mes "You will have 3 chances to guess. If you answer incorrectly, you will be given a maximum of 2 hints per trivia question. If you don't guess correctly by the 3rd attempt, you lose ^00FA9A100K^000000 zeny.";
+mes "Here is the list of payouts.";
+mes "1st attempt --- ^00FA9A200K^000000";
+mes "2nd attempt --- ^00FA9A150K^000000";
+mes "3rd attempt --- ^00FA9A100K^000000";
+mes " ";
+next;
+mes "The beginning of the riddle will tell you if it is [Item] or [Monster].";
+mes "Here is an example of how the riddles will work...";
+mes "[Monster] I am the song played at your funeral. Who am I?";
+mes "then you input your guess in the box and find out if your right or wrong. If you are wrong...a hint will be displayed to help you out. A pause to let you think about your answer and then youll click next to continue guessing.";
+next;
+mes "Are you ready to make your selection or quit playing?";
+menu "Start playing",L_TrivSelection,"Quit",L_TrivQuit;
+
+
+L_TrivSelection:
+mes "Your selection of riddles?";
+menu "Monsters",L_TrivMonster,"Items",L_TrivItem,"I think I'll pass this time",L_TrivQuit;
+
+//keeps giving 200k even if i put in wrong answer, need to switch $ with something better
+// @var$ gives C_EQ errors
+// .var$ gives C_EQ errors
+// $@var gives 200k regardless if its correct
+
+
+L_TrivMonster:
+switch( rand(2) ) {
+case 0:
+mes "[MONSTER] And I stretched my hands to the sky and there was darkness in the land. Who am I?";
+next;
+input .var$;
+if(.var$==eclipse) goto L_TrivWinMonster1;
+else mes "[MONSTER] And I stretched my hands to the sky and there was darkness in the land. Who am I?";
+mes "Hint 1: This creature is small.";
+next;
+input .var$;
+if(.var$==eclipse) goto L_TrivWinMonster2;
+else mes "[MONSTER] And I stretched my hands to the sky and there was darkness in the land. Who am I?";
+mes "Hint 2: This creature is ^1E90FFblue^000000.";
+next;
+input .var$;
+if(.var$==eclipse) goto L_TrivWinMonster3;
+else goto L_TrivLoseMonster;
+case 1:
+mes "[Monster] I am blessed with speed, flight and penetrating vision but dont disreguard my strength nor fierceness. Who am I?";
+next;
+input .var$;
+if(.var$==gryphon) goto L_TrivWinMonster1;
+else mes "[MONSTER] I am blessed with speed, flight and penetrating vision but dont disreguard my strength nor fierceness. Who am I?";
+mes "Hint 1: I am a large creature.";
+next;
+input .var$;
+if(.var$==gryphon) goto L_TrivWinMonster2;
+else mes "[MONSTER] I am blessed with speed, flight and penetrating vision but dont disreguard my strength nor fierceness. Who am I?";
+mes "Hint 2: There are very few of us in RO.";
+next;
+input .var$;
+if(.var$==gryphon) goto L_TrivWinMonster3;
+else goto L_TrivLoseMonster;
+}
+
+//Monster section win 1st attempt
+L_TrivWinMonster1:
+mes "Congratulations, you won on the 1st try. You win ^00FA9A200K^000000 zeny.";
+set Zeny, Zeny+200000;
+mes "What would you like to do?";
+menu "Keep playing",L_TrivMonster,"Let me try [Items]",L_TrivItem,"I'm done playing",L_TrivQuit;
+
+//Monster section win 2st attempt
+L_TrivWinMonster2:
+mes "Nice try, but you won on the 2nd guess. You win ^00FA9A150K^000000 zeny.";
+set Zeny, Zeny+150000;
+mes "What would you like to do?";
+menu "Keep playing",L_TrivMonster,"Let me try [Items]",L_TrivItem,"I'm done playing",L_TrivQuit;
+
+//Monster section win final attempt
+L_TrivWinMonster3:
+mes "Phew, that was close "+ @char_name$ +" you almost lost. You win ^00FA9A100K^000000 zeny.";
+set Zeny, Zeny+100000;
+mes "What would you like to do?";
+menu "Keep playing",L_TrivMonster,"Let me try [Items]",L_TrivItem,"I'm done playing",L_TrivQuit;
+
+
+//losing monster riddle
+L_TrivLoseMonster:
+set Zeny, Zeny-100000;
+mes "Im sorry but your answers were incorrect. Do you wish to test your luck in the [Monster] section again?";
+menu "Yes",L_TrivMonster,"No, let me try [Items]",L_TrivItem,"I'm done playing",L_TrivQuit;
+
+
+
+L_TrivItem:
+mes "under development";
+close;
+
+
+
+L_TrivQuit:
+mes "Thanks for playing, Goodbye...";
+close;
+
+L_TrivNoZeny:
+mes "I'm sorry but you don't have at least 100k zeny to play. Come back soon...";
+close;
+}

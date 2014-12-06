@@ -1,0 +1,326 @@
+// Needs fixed up a touch to clarify about the snake scales
+
+louyang.gat,36,257,2,	script	Xu Xian#fifths	822,{
+	if (fifths2==3) goto L_choice;
+	if (fifths2==5) goto S_faint;
+	if (fifths2==4) goto F_fifths4;
+	if (fifths2==6) goto L_faint; 
+	if (fifths2==9)
+		if(!countitem(926)&&!countitem(1020)&&!countitem(7165)&&!countitem(7166))
+			goto L_bad;
+		else
+			goto F_faint;
+
+	if (fifths2) {
+		mes "[Xu Xian]";
+		mes "^666666*sigh*^000000";
+		mes "Oh, Bai...";
+		close; }
+		
+	mes "[Xu Xian]";
+	mes "^666666*sigh*^000000";
+	mes "Oh, Bai...";
+	next;
+	if(select("What is it?:End conversation")==2) goto L_close;
+	mes "[Xu Xian]";
+	mes "Oh, it's my love! Bai Su Zhen!";
+	mes "She's been banished to the dungeons of Suei Long!";
+	mes "Whatever shall I do?";
+	next;
+	if(select("Punished? For what?:Good luck with that.")==2) goto L_close;
+	mes "[Xu Xian]";
+	mes "Fa Hai has suspected her of...";
+	mes "Being a demon!";
+	mes "And I am unsure myself!";
+	next;
+	mes "[Xu Xian]";
+	mes "Oh, if only...If only I could know of her safety!";
+	mes "And...if I can trust her.";
+	next;
+	mes "[Xu Xian]";
+	mes "Does that make me a bad husband,";
+	mes "To question the trustworthiness of my wife?";
+	next;
+	mes "[Xu Xian]";
+	mes "Oh! I wish I had some help...";
+	next;
+	if(select("I could help you.:End conversation")==2) goto L_close;
+	mes "[Xu Xian]";
+	mes "Really?!";
+	mes "You would help me?";
+	next;
+	mes "[Xu Xian]";
+	mes "Oh, thank you, traveler!";
+	mes "My wife, Bai Su Zhen, is deep in the dungeons here.";
+	mes "She is also very beautiful, so it should be hard to miss her.";
+	next;
+	mes "[Xu Xian]";
+	mes "Here, take this letter. She will notice my seal.";
+	set fifths2,1;
+	getitem 7278,1;
+	next;
+	mes "[Xu Xian]";
+	mes "Thank you, traveler!";
+	mes "I pray you come back safely and with news of my wife.";
+	mes "Remember, anything at all that she gives you --";
+	mes "All of it is highly valued.";
+	close;
+
+L_close:
+	mes "[Xu Xian]";
+	mes "^666666*sigh*...^000000";
+	close;
+	
+L_choice:
+	mes "[Xu Xian]";
+	mes "Oh, traveler! You have returned!";
+	mes "Well? What news do you have of my wife?";
+	next;
+	if(!countitem(926)&&!countitem(1020)&&!countitem(7165)&&!countitem(7166)) {
+		if(select("Tell him about the demon.:Don't tell him.")==1) {
+			if(!countitem(926)&&!countitem(1020)&&!countitem(7165)&&!countitem(7166)) {
+				mes "["+strcharinfo(0)+"]";
+				mes "(I should probably get some evidence...)";
+				set fifths2,9;
+				close;
+			}
+		}
+	}
+	else if(select("Show the snake scale.:Don't show the snake scale.")==1) 
+		goto F_faint;
+	mes "[Xu Xian]";
+	mes "Yes... These are some of the things she owns.";
+	mes "Is this all?";
+	next;
+	mes "[Xu Xian]";
+	mes "...It is? You mean... She's not a snake demon?!";
+	next;
+	mes "[Xu Xian]";
+	mes "Oh, happy day! My love has been true!";
+	mes "I cannot fully express my gratitude for what you have done for me.";
+	next;
+	mes "[Xu Xian]";
+	mes "Please accept this meager token of my thanks.";
+	set fifths2,4;
+	getitem 12281,1;
+	next;
+	mes "[Xu Xian]";
+	mes "Next time you see my love...";
+	next;
+	getitem 7593,1;
+	mes "[Xu Xian]";
+	mes "Give her this.";
+	mes "Tell her I am preparing to free her!";
+	close;
+
+F_faint:
+	mes "[Xu Xian]";
+	mes "Yes... These are some of the things she owns.";
+	mes "Is this all?";
+	next;
+	mes "[Xu Xian]";
+	mes "Ah! Is that...Is that a...";
+	mes "snake scale?!";
+	next;
+	mes "[Xu Xian]";
+	mes "You mean to say that my love, my Bai is...";
+	mes "She truly is a snake demon?!";
+	next;
+	mes "[Xu Xian]";
+	mes "Oh, woe is me! Woe is me...!";
+	mes "Whatever shall I do?";
+	mes "I...oh! ^666666*faints*^000000";
+	next;
+	mes "(Perhaps you should go back to Bai for some help.)";
+	next;
+	mes "(Wait! You should take something of Xu's so she will recognize you.)";
+	getitem 7592,1;
+	set fifths2,5;
+	close;
+	
+F_fifths4:
+	mes "[Xu Xian]";
+	mes "Next time you see my love...";
+	next;
+	mes "[Xu Xian]";
+	mes "Tell her I am preparing to free her!";
+	close;
+	
+S_faint:
+	mes "[Xu Xian]";
+	mes "^666666*fainted*^000000";
+	close;
+	
+L_faint:
+	mes "[Xu Xian]";
+	mes "^666666*fainted*^000000";
+	next;
+	if(select("Use herb:Don't use herb")==2) close;
+	if(countitem(7252)) delitem 7252,1;
+	mes "[Xu Xian]";
+	mes ".....";
+	next;
+	mes "[Xu Xian]";
+	mes "^666666*smells herb*^000000";
+	next;
+	mes "[Xu Xian]";
+	mes "Ah...Wha? Where am I?";
+	mes "Oh, traveler, it's you. Forgive me for fainting.";
+	mes "It's just... I cannot truly believe it!";
+	next;
+	mes "[Xu Xian]";
+	mes "Fa Hai was right...";
+	mes "But I...";
+	next;
+	mes "[Xu Xian]";
+	mes "What's this? You have a letter?";
+	next;
+	if(countitem(7801)) delitem 7801,1;
+	mes "[Xu Xian]";
+	mes "^666666*reads letter*^000000";
+	next;
+	mes "[Xu Xian]";
+	mes "Hmm... She... has sincerely apologized.";
+	mes "She... fears for my well-being?";
+	next;
+	mes "[Xu Xian]";
+	mes "That's it. I love my Bai and I will never leave her side!";
+	mes "I regret that I had not known earlier, so that I might have helped in some way.";
+	next;
+	mes "[Xu Xian]";
+	mes "Thank you, traveler. Please, take this.";
+	getitem 12281,1;
+	set fifths2,8;
+	next;
+	mes "[Xu Xian]";
+	mes "I know now how to deal with this.";
+	mes "Bai, I am coming!";
+	close;
+
+	
+}
+
+
+lou_dun03.gat,247,50,4	script	Bai Su Zhen#fifths	1689,{
+	if ((countitem(7278)>0 && fifths2==1) || fifths2==2) goto L_quest; // letter
+
+	if (countitem(7592)>0 && fifths2==5) goto W_quest; // shown
+	if (countitem(7593)>0 && fifths2==4) goto F_quest; // not shown
+	if (fifths2==9 && !countitem(926)) goto F_mad;
+
+	mes "[Bai Su Zhen]";
+	mes "What do you want here?";
+	mes "Be gone!";
+	close;
+
+L_quest:
+	mes "[Bai Su Zhen]";
+	mes "Who are you?";
+	mes "What are you doing here?";
+	next;
+	if(select("Just wanderin'.:Xu Xian sent me.")==1) {
+		mes "[Bai Su Zhen]";
+		mes "Hmph.";
+		close;
+	}
+	mes "[Bai Su Zhen]";
+	mes "Oh! Did he?! I'm glad he still wanted to know...";
+	next;
+	mes "[Bai Su Zhen]";
+	mes "What does he want?";
+	next;
+	set fifths2,2;
+	if(countitem(7278)) delitem 7278,1; // letter
+	mes "[Bai Su Zhen]";
+	mes "^666666*reads letter*^000000";
+	mes "......";
+	next;
+	mes "[Bai Su Zhen]";
+	mes "So... Fa Hai must have told him.";
+	mes "He's afraid that I'm a demon --";
+	mes "And I'm afraid he's right!";
+	next;
+	mes "[Bai Su Zhen]";
+	mes "Oh, please, just tell him I'm fine.";
+	mes "Tell him... It may be some time until we can meet again.";
+	mes "Tell him I love him! And please, do not tell him my true identity!";
+	next;
+	mes "[Bai Su Zhen]";
+	mes "Please, hurry! On this day...";
+	mes "All demons must revert to their true forms!";
+	next;
+F_spawn:
+	mes "[Bai Su Zhen]";
+	mes "Ack! Urgh.. I... Run!";
+	close2;
+	if(fifths2==2)set fifths2,3;
+	monster "lou_dun03",248,53,"Bai Su Zhen",1421,1,"Bai Su Zhen#fifths::OnMyMobDeath";
+	hideonnpc "Bai Su Zhen#fifths";
+	end;
+
+OnMyMobDeath:
+	hideoffnpc "Bai Su Zhen#fifths";
+	end;
+	
+F_mad:
+	mes "["+strcharinfo(0)+"]";
+	mes "Come out, demon!!";
+	next;
+	goto F_spawn;
+
+W_quest:
+	mes "[Bai Su Zhen]";
+	mes "So? Why have you returned?";
+	mes "Did you tell him?!";
+	next;
+	mes "[Bai Su Zhen]";
+	mes ".....";
+	mes "You did?";
+	next;
+	mes "[Bai Su Zhen]";
+	mes "Oh, why! Why would you do that to me?";
+	mes "Oh, he's... he's probably fainted!";
+	mes "He has, hasn't he?";
+	next;
+	mes "[Bai Su Zhen]";
+	mes "Goodness! Here, take this herb.";
+	mes "Hold it by his nose; he should wake up.";
+	next;
+	getitem 7252,1;
+	mes "[Bai Su Zhen]";
+	mes "Wait! Before you go...";
+	mes "^666666*scribbles on paper*^000000";
+	next;
+	mes "[Bai Su Zhen]";
+	mes "Take this! Make him read it as soon as he wakes up!";
+	getitem 7801,1;
+	delitem 7592,1;
+	set fifths2,6;
+	close;
+
+F_quest:
+	mes "[Bai Su Zhen]";
+	mes "So? Why have you returned?";
+	next;
+	mes "[Bai Su Zhen]";
+	mes "What's that you've got there?";
+	set fifths2,7;
+	delitem 7593,1;
+	next;
+	mes "[Bai Su Zhen]";
+	mes "A moon snack...?";
+	mes "Ah! It says 'Together' on it...";
+	mes "So you didn't tell him?";
+	next;
+	mes "[Bai Su Zhen]";
+	mes "Oh! I'm so happy!";
+	mes "Thank you, traveler!";
+	next;
+	mes "[Bai Su Zhen]";
+	mes "Please, take this.";
+	mes "It's the least I can do for what you've done for me.";
+	set fifths2,8;
+	getitem 12134,1; // red envelop
+	close;
+
+}

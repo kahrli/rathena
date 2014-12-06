@@ -1,0 +1,483 @@
+// Still need music files
+
+
+//----------------------------------------------------------------------------------------------------//
+//                   Created by Squishtastic / (MSN + Email) squishtastic@gmail.com
+//										  Puffnstuff (eAthena)
+//----------------------------------------------------------------------------------------------------//
+// This event is like musical chairs, the only difference is that with this version it uses special
+// effects instead of chairs. The player must be inside that special effect otherwise they get warped
+// out of the event map. If after 10 minutes there is no clear 1 winner, the event ends and declares
+// everyone left a winner and awards them a prize. If a player or GM enters the map without getting 
+// access from the Angry Music Box, that player will not be stored in the array and unable to play,
+// nor win the event. Players are dispelled and items are put into players storage to prevent unfair
+// advantages.
+//-------------------------------------------How to install:------------------------------------------//
+// Install the script as you normally would. Patch the wav files to the data/wav folder. Do NOT run 
+// this event for players until you have had a few days after releasing the patch containing the wav 
+// file because if the sound effect is asked to run and you do not have it, you WILL crash your 
+// client(s). The patch size for this event will end up being roughly 8 megs. If players use 3D sound,
+// they will notice the sound almost seeming to go in and out, as if it were broken but that is the
+// nature of 3D sound if using non 3D sound setup or headphones.
+//--------------------------------------------Things to do:-------------------------------------------//
+// 3) finally test event on a populated server
+//----------------------------------------------------------------------------------------------------//
+
+//    1		  2		  3
+//	40,59	49,61	59,59
+
+//    4				  5
+//	38,50	 NPC   	61,50
+
+//    6		  7		  8
+//	40,40	49,38	59,40
+
+//1x) 38, 39, 40, 41, 42
+//1y) 57, 58, 59, 60, 61
+//2x) 47. 48, 49, 50, 51
+//2y) 59, 60, 61, 62, 63
+//3x) 57, 58, 59, 60, 61
+//3y) 57, 58, 59, 60, 61
+//4x) 36, 37, 38, 39, 40
+//4y) 48, 49, 50, 51, 52
+//5x) 59, 60, 61, 62, 63
+//5y) 48, 49, 50, 51, 52
+//6x) 38, 39, 40, 41, 42
+//6y) 38, 39, 40, 41, 42
+//7x) 47. 48, 49, 50, 51
+//7y) 36, 37, 38, 39, 40
+//8x) 57, 58, 59, 60, 61
+//8y) 38, 39, 40, 41, 42
+
+-	script	MusicCP	-1,{ // in case event errors, a quick way to allow players back in to re-test or play again
+OnWhisperGlobal:
+if(getgmlevel() < 80)	end;
+	mes "Reset Musical Effects entry variable?";
+	switch(select("Yes:No")){
+		case 1:	set $MC_Entry,0;	mes "Done";	close;
+		case 2:	close;
+	}
+}
+
+06guild_01,50,49,3	script	MC Geezer#Event	933,{
+end;
+OnEnable:
+	set .rule,0;
+	callfunc "EventCheck";
+	mapannounce "06guild_01", "Welcome to another exciting edition of Musical Effects!",bc_yellow;
+	sleep 2000;
+	mapannounce "06guild_01","If you need to know the rules, say \"rules\" within the next 10 seconds...",bc_yellow;
+	defpattern 1, "([^:]+):.*\\srules.*", "OnRules";
+	activatepset 1;
+	sleep 10000;
+	deletepset 1;
+	if(!.rule)
+		goto OnPlay;
+	end;
+
+OnRules:
+	deletepset 1;
+	set .rule,1;
+	sleep 2000;
+	mapannounce "06guild_01","To play Musical Effects, all you gotta do is keep moving and when the music stops, find the CORRECT effect and stand in it.",bc_yellow;
+	sleep 3000;
+	mapannounce "06guild_01","Now would be a good time to make sure your effects are ON (/effect).",bc_yellow;
+	sleep 5000;
+	mapannounce "06guild_01","This is Heavens Drive and it is the effect to look for!",bc_yellow;
+	npcskilleffect 91,1,38,50;
+	npcskilleffect 91,1,40,59;
+	npcskilleffect 91,1,40,40;
+	npcskilleffect 91,1,49,61;
+	npcskilleffect 91,1,49,38;
+	npcskilleffect 91,1,59,59;
+	npcskilleffect 91,1,59,40;
+	npcskilleffect 91,1,61,50;
+	sleep 5000;
+	mapannounce "06guild_01","If you are NOT within the CORRECT effect within 2 seconds after the music ends, you are declared out and warped out of the map.",bc_yellow;
+	sleep 5000;
+	mapannounce "06guild_01","Remember, you must keep moving while the music is playing or you will be disqualified and warped out.",bc_yellow;
+	sleep 5000;
+	mapannounce "06guild_01","Here is a sample of the music you will be hearing.",bc_blue;
+	sleep 2000;
+	soundeffectall "six.wav",0;
+	sleep 7000;
+	mapannounce "06guild_01","It would be beneficial for you to adjust your ingame sound settings by pressing ESC and going to sound, then lowering the BGM setting to hear better.",bc_yellow;
+	sleep 7000;
+	mapannounce "06guild_01","I shall give you all an extra 10 seconds to double check your sound settings.",bc_yellow;
+	sleep 10000;
+	mapannounce "06guild_01","Be the last one in a seat to win!",bc_yellow;
+	sleep 2000;
+
+OnPlay:
+	mapannounce "06guild_01","Ok, you all know the rules, get ready!",bc_yellow;
+	sleep 3000;
+	mapannounce "06guild_01","5",bc_yellow;
+	sleep 1000;
+	mapannounce "06guild_01","4",bc_yellow;
+	sleep 1000;
+	mapannounce "06guild_01","3",bc_yellow;
+	sleep 1000;
+	mapannounce "06guild_01","2",bc_yellow;
+	sleep 1000;
+	mapannounce "06guild_01","1",bc_yellow;
+	sleep 1000;
+	mapannounce "06guild_01","GO!",bc_yellow;
+
+	set .round, 0;
+	set .finish, 0;
+
+	initnpctimer;
+
+
+MC_OnStart:
+	if(.finish == 1) {
+		announce "No players survived: there are no winners.",0;
+		end;
+	}
+	if(getmapusers("06guild_01")==1) { 
+		attachrid $@EventA[0];
+		announce strcharinfo(0)+" has won Musical Effects.",bc_all;
+		getitem 12281,1;
+		detachrid;
+		sleep 5000;
+		mapwarp "06guild_01","prontera",155,182;
+		stopnpctimer;
+		end;
+	}
+	
+	set .round, .round + 1;
+	npctalk "This is Round #"+.round+". Players remaining: "+getmapusers("06guild_01")+".";
+
+switch(rand(1,5)){
+	case 1:
+		soundeffectall "six.wav",0; // music file
+		callsub WalkCheck; // while() forcing ppl to stay moving if music is playing or warp out on a 2 second sleep between getmapxy movement check
+		sleep 2000;
+		callsub WalkCheck;
+		set $@MC_Pattern,rand(1,16); // 16 different patterns for where you need to be when music stops
+		callsub MC_Effects; // used for displaying the effects that players need to stand on when music runs out
+		sleep 3000; // 3 seconds once the effect is used to get inside of 1 of them
+		callfunc "MC_Out"; // used to find if a player is out or not
+		break;
+	case 2:
+		soundeffectall "twelve.wav",0;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 2000;
+		set $@MC_Pattern,rand(1,16);
+		callsub MC_Effects;
+		sleep 3000;
+		callfunc "MC_Out";
+		break;
+	case 3:
+		soundeffectall "fifteen.wav",0;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 1000;
+		set $@MC_Pattern,rand(1,16);
+		callsub MC_Effects;
+		sleep 3000;
+		callfunc "MC_Out";
+		break;
+	case 4:
+		soundeffectall "twentytwo.wav",0;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		set $@MC_Pattern,rand(1,16);
+		callsub MC_Effects;
+		sleep 3000;
+		callfunc "MC_Out";
+		break;
+	case 5:
+		soundeffectall "twentyseven.wav",0;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 2000;
+		callsub WalkCheck;
+		sleep 1000;
+		set $@MC_Pattern,rand(1,16);
+		callsub MC_Effects;
+		sleep 3000;
+		callfunc "MC_Out";
+		break;
+	}
+sleep 1;
+goto MC_OnStart;
+
+	
+MC_Effects:
+	if($@MC_Pattern==1){
+		npcskilleffect 91,1,40,59;
+		npcskilleffect 91,1,61,50;
+		return;
+	}
+	if($@MC_Pattern==2){
+		npcskilleffect 91,1,40,59;
+		npcskilleffect 91,1,49,38;
+		return;
+	}
+	if($@MC_Pattern==3){
+		npcskilleffect 91,1,40,59;
+		npcskilleffect 91,1,59,40;
+		return;
+	}
+	if($@MC_Pattern==4){
+		npcskilleffect 91,1,40,59;
+		npcskilleffect 91,1,49,38;
+		npcskilleffect 91,1,59,59;
+		return;
+	}
+	if($@MC_Pattern==5){
+		npcskilleffect 91,1,40,40;
+		npcskilleffect 91,1,40,59;
+		npcskilleffect 91,1,59,40;
+		npcskilleffect 91,1,59,59;
+		return;
+	}
+	if($@MC_Pattern==6){
+		npcskilleffect 91,1,40,40;
+		npcskilleffect 91,1,49,61;
+		return;
+	}
+	if($@MC_Pattern==7){
+		npcskilleffect 91,1,49,61;
+		npcskilleffect 91,1,59,40;
+		return;
+	}
+	if($@MC_Pattern==8){
+		npcskilleffect 91,1,38,50;
+		npcskilleffect 91,1,49,61;
+		npcskilleffect 91,1,61,50;
+		return;
+	}
+	if($@MC_Pattern==9){
+		npcskilleffect 91,1,40,40;
+		npcskilleffect 91,1,49,61;
+		npcskilleffect 91,1,59,40;
+		return;
+	}
+	if($@MC_Pattern==10){
+		npcskilleffect 91,1,38,50;
+		npcskilleffect 91,1,49,38;
+		npcskilleffect 91,1,49,61;
+		npcskilleffect 91,1,61,50;
+		return;
+	}
+	if($@MC_Pattern==11){
+		npcskilleffect 91,1,38,50;
+		npcskilleffect 91,1,59,59;
+		return;
+	}
+	if($@MC_Pattern==12){
+		npcskilleffect 91,1,40,40;
+		npcskilleffect 91,1,59,59;
+		return;
+	}
+	if($@MC_Pattern==13){
+		npcskilleffect 91,1,49,38;
+		npcskilleffect 91,1,59,59;
+		return;
+	}
+	if($@MC_Pattern==14){
+		npcskilleffect 91,1,38,50;
+		npcskilleffect 91,1,59,40;
+		return;
+	}
+	if($@MC_Pattern==15){
+		npcskilleffect 91,1,38,50;
+		npcskilleffect 91,1,49,38;
+		npcskilleffect 91,1,61,50;
+		return;
+	}
+	if($@MC_Pattern==16){
+		npcskilleffect 91,1,40,40;
+		npcskilleffect 91,1,61,50;
+		return;
+	}
+	if($@MC_Pattern==0 || $@MC_Pattern > 16){
+	dispbottom ""+$@MC_Pattern+" $@MC_Pattern is broken";
+	}
+	return;
+
+
+OnTimer600000:
+	set .MC_Play,0;
+	if(.finish==1) end;
+	if( !getmapusers("06guild_01")) {
+		announce "***No players survived - No winners***",0;
+		end;
+	}
+
+	for( set .@h, 0; .@h < GetArraySize($@EventA); set .@h, .@h + 1) {
+
+		if(isloggedin($@EventA[.@h])) {
+			attachrid $@EventA[.@h];
+			getitem 12281,1;
+			announce "Congratulations to "+strcharinfo(0)+" for winning Musical Effects!",0;
+			detachrid;
+			sleep 1000;
+		}
+
+		sleep 1;
+	}
+
+	deletearray $@EventA[0], GetArraySize($@EventA);
+	sleep 2000;
+	mapwarp "06guild_01","prontera",155,186;
+	end;
+
+
+WalkCheck:
+	attachrid $@EventA[.@j];
+	getmapxy @map$,@x1,@y1,0;
+	sleep2 2000;
+	getmapxy @map$,@x2,@y2,0;
+	if(@x1!=@x2 || @y1!=@y2){
+		return;
+	}
+	else{
+		dispbottom "I'm sorry "+strcharinfo(0)+", but you have failed to continuously move while the music is playing.";
+		dispbottom "You have been warped to your save point.";
+		warp "SavePoint", 0, 0;
+		deletearray $@EventA[.@j], 1;
+		set .@j, .@j - 1;
+		detachrid;
+		end;
+	}
+}
+
+function	script	MC_Out	{
+	deletearray .@x[0], getarraysize(.@x);
+	deletearray .@y[0], getarraysize(.@y);
+	switch($@MC_Pattern){
+	case 1:
+		setarray .@x[0],	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63;
+		setarray .@y[0],	57,	57,	57,	57,	57,	58,	58,	58,	58,	58,	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61,	48,	48,	48,	48,	48,	49,	49,	49,	49,	49,	50,	50,	50,	50,	50,	51,	51,	51,	51,	52,	52,	52,	52,	52,	52;
+		break;
+	case 2:
+		setarray .@x[0],	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51;
+		setarray .@y[0],	57,	57,	57,	57,	57,	58,	58,	58,	58,	58,	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61,	36,	36,	36,	36,	36,	37,	37,	37,	37,	37,	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40;
+		break;
+	case 3:
+		setarray .@x[0],	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61;
+		setarray .@y[0],	57,	57,	57,	57,	57,	58,	58,	58,	58,	58,	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61,	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40,	41,	41,	41,	41,	41,	42,	42,	42,	42,	42;
+		break;
+	case 4:
+		setarray .@x[0],	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61;
+		setarray .@y[0],	57,	57,	57,	57,	57,	58,	58,	58,	58,	58,	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61,	36,	36,	36,	36,	36,	37,	37,	37,	37,	37,	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40,	57,	57,	57,	57,	57,	58,	58,	58,	58,	58,	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61;
+		break;
+	case 5:
+		setarray .@x[0],	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61;
+		setarray .@y[0],	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40,	41,	41,	41,	41,	41,	42,	42,	42,	42,	42,	57,	57,	57,	57,	57,	58,	58,	58,	58,	58,	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61,	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40,	41,	41,	41,	41,	41,	42,	42,	42,	42,	42,	57,	57,	57,	57,	57,	58,	58,	58,	58,	58,	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61;
+		break;
+	case 6:
+		setarray .@x[0],	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51;
+		setarray .@y[0],	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40,	41,	41,	41,	41,	41,	42,	42,	42,	42,	42,	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61,	62,	62,	62,	62,	62,	63,	63,	63,	63,	63;
+		break;
+	case 7:
+		setarray .@x[0],	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61;
+		setarray .@y[0],	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61,	62,	62,	62,	62,	62,	63,	63,	63,	63,	63,	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40,	41,	41,	41,	41,	41,	42,	42,	42,	42,	42;
+		break;
+	case 8:
+		setarray .@x[0],	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63;
+		setarray .@y[0],	48,	48,	48,	48,	48,	49,	49,	49,	49,	49,	50,	50,	50,	50,	50,	51,	51,	51,	51,	51,	52,	52,	52,	52,	52,	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61,	62,	62,	62,	62,	62,	63,	63,	63,	63,	63,	48,	48,	48,	48,	48,	49,	49,	49,	49,	49,	50,	50,	50,	50,	50,	51,	51,	51,	51,	51,	52,	52,	52,	52,	52;
+		break;
+	case 9:
+		setarray .@x[0],	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61;
+		setarray .@y[0],	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40,	41,	41,	41,	41,	41,	42,	42,	42,	42,	42,	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61,	62,	62,	62,	62,	62,	63,	63,	63,	63,	63,	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40,	41,	41,	41,	41,	41,	42,	42,	42,	42,	42;
+		break;
+	case 10:
+		setarray .@x[0],	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63;
+		setarray .@y[0],	48,	48,	48,	48,	48,	49,	49,	49,	49,	49,	50,	50,	50,	50,	50,	51,	51,	51,	51,	51,	52,	52,	52,	52,	52,	36,	36,	36,	36,	36,	37,	37,	37,	37,	37,	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40,	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61,	62,	62,	62,	62,	62,	63,	63,	63,	63,	63,	48,	48,	48,	48,	48,	49,	49,	49,	49,	49,	50,	50,	50,	50,	50,	51,	51,	51,	51,	51,	52,	52,	52,	52,	52;
+		break;
+	case 11:
+		setarray .@x[0],	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61;
+		setarray .@y[0],	48,	48,	48,	48,	48,	49,	49,	49,	49,	49,	50,	50,	50,	50,	50,	51,	51,	51,	51,	51,	52,	52,	52,	52,	52,	57,	57,	57,	57,	57,	58,	58,	58,	58,	58,	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61;
+		break;
+	case 12:
+		setarray .@x[0],	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	38,	39,	40,	41,	42,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61;
+		setarray .@y[0],	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40,	41,	41,	41,	41,	41,	42,	42,	42,	42,	42,	57,	57,	57,	57,	57,	58,	58,	58,	58,	58,	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61;
+		break;
+	case 13:
+		setarray .@x[0],	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61;
+		setarray .@y[0],	36,	36,	36,	36,	36,	37,	37,	37,	37,	37,	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40,	57,	57,	57,	57,	57,	58,	58,	58,	58,	58,	59,	59,	59,	59,	59,	60,	60,	60,	60,	60,	61,	61,	61,	61,	61;
+		break;
+	case 14:
+		setarray .@x[0],	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61,	57,	58,	59,	60,	61;
+		setarray .@y[0],	48,	49,	50,	51,	52,	48,	49,	50,	51,	52,	48,	49,	50,	51,	52,	48,	49,	50,	51,	52,	48,	49,	50,	51,	52,	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40,	41,	41,	41,	41,	41,	42,	42,	42,	42,	42;
+		break;
+	case 15:
+		setarray .@x[0],	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	47,	48,	49,	50,	51,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63;
+		setarray .@y[0],	48,	48,	48,	48,	48,	49,	49,	49,	49,	49,	50,	50,	50,	50,	50,	51,	51,	51,	51,	51,	52,	52,	52,	52,	52,	36,	36,	36,	36,	36,	37,	37,	37,	37,	37,	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40,	48,	48,	48,	48,	48,	49,	49,	49,	49,	49,	50,	50,	50,	50,	50,	51,	51,	51,	51,	51,	52,	52,	52,	52,	52;
+		break;
+	case 16:
+		setarray .@x[0],	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	36,	37,	38,	39,	40,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63,	59,	60,	61,	62,	63;
+		setarray .@y[0],	38,	38,	38,	38,	38,	39,	39,	39,	39,	39,	40,	40,	40,	40,	40,	41,	41,	41,	41,	41,	42,	42,	42,	42,	42,	48,	48,	48,	48,	48,	49,	49,	49,	49,	49,	50,	50,	50,	50,	50,	51,	51,	51,	51,	51,	52,	52,	52,	52,	52;
+		break;
+	}
+
+	callfunc "EventCheck";
+
+	for( set .@j, 0; .@j < GetArraySize($@EventA); set .@j, .@j + 1) {
+
+		attachrid $@EventA[.@j];
+		getmapxy @map$, @mapx, @mapy, 0;
+
+		for( set @i, 0; @i < GetArraySize(.@x); set @i, @i + 1 ) {
+			if( @mapx == .@x[@i] && @mapy == .@y[@i])
+				set @ok, 1;
+		}
+		if( !@ok || @map$!="06guild_01" ) {
+			warp "SavePoint", 0, 0;
+			deletearray $@EventA[.@j], 1;
+			set .@j, .@j - 1;
+		}
+		set @ok, 0;
+		detachrid;
+
+		sleep 1;
+	}
+	if(!getmapusers("06guild_01")) {
+		set .finish,1;
+		announce "No players survived: there are no winners.***",0;
+		end;
+	}
+	mapannounce "06guild_01","Next round incoming...",bc_blue;
+	sleep 3000;
+	return;
+}
+
+06guild_01	mapflag	nocommand	80
+06guild_01	mapflag	nosave
+06guild_01	mapflag	noskill
+06guild_01	mapflag	nobranch
+06guild_01	mapflag	nowarpto
+06guild_01	mapflag	nowarp
+06guild_01	mapflag	noteleport
+06guild_01	mapflag	nomemo

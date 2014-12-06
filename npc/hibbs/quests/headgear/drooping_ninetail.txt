@@ -1,0 +1,108 @@
+//===== eAthena Script ======================================= 
+//= Drooping Ninetail Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+payon,198,111,3	script	Lulu	80,{
+
+if(que_droop_nine==0) {
+	completequest 16003;
+  mes "[Lulu]";
+  mes "Heehee~ Hello there!";
+  mes "You're a";
+  mes "new face.";
+  mes "Ever been to Juno?";
+  mes "My family lives there.";
+  next;
+  if(select("Where?","Yes I have.")==1)
+   { mes "[Lulu]"; mes "Oh, nevermind. Drink?"; close; }
+  mes "[Lulu]";
+  mes "I used to make dolls there.";
+  mes "But this lady I met here";
+  mes "requested a ^FF0000hat that looks like a fox^000000...";
+  mes "And then all the old guys";
+  mes "here wanted one too...";
+  next;
+  mes "[Lulu]";
+  mes "Oh! Maybe you'd";
+  mes "want one?";
+  mes "I wouldn't mind";
+  mes "making you one";
+  mes "since you've been so polite";
+  mes "to listen to my story~";
+  next;
+  mes "[Lulu]";
+  mes "Okay, write this down.";
+  mes " ";
+  mes "^0000FF1 Black Cat Ears";
+  mes "80 Feathers";
+  mes "10 Nine Tails^000000";
+  next;
+  mes "[Lulu]";
+  mes "Come back soon so I can";
+  mes "make you that hat, okay?";
+  set que_droop_nine,1;
+  close;
+}
+
+else {
+     mes "[Lulu]";
+     mes "You ready for that hat?";
+     mes "Okay, you need";
+     mes "^0000FF1 Black Cat Ears";
+     mes "80 Feathers";
+     mes "10 Nine Tails^000000";
+     mes "Got all that?";
+     next;
+     if(select("Yes I do.","No, sorry.")==1)
+     {
+       if(countitem(5057)>=1&&countitem(949)>=80&&countitem(1022)>=10)
+       {
+          mes "[Lulu]";
+          mes "Great!";
+          mes "Just hang tight for one second!";
+          next;
+          mes "[Lulu]";
+          mes "...";
+          next;
+          mes "[Lulu]";
+          mes "...";
+          mes ".....";
+          next;
+          mes "[Lulu]";
+          mes "...";
+          mes ".....";
+          mes ".......";
+          next;
+          mes "[Lulu]";
+          mes "All done! Here you go!";
+          mes "I hope you enjoy my";
+          mes "hard work as much as";
+          mes "everyone else here!";
+          delitem 5057,1;
+          delitem 949,80;
+          delitem 1022,10;
+          getitem 5252,1;
+       }
+       else {
+            mes "[Lulu]";
+            mes "Oh gee.";
+            mes "I don't know if I'm miscounting";
+            mes "or if you are but";
+            mes "I really can't make a hat";
+            mes "with only this...";
+       }
+       next;
+     }
+       mes "[Lulu]";
+       mes "Come back soon, okay?";
+       emotion e_ho;
+     close;
+}
+
+}

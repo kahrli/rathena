@@ -1,0 +1,218 @@
+//===== eAthena Script ======================================= 
+//= Valkyrie Feather Band Quest
+//===== By: ================================================== 
+//= Arios/Exaz
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+//    ===== For: ===============================================
+//    = ShmaRO
+//    ==========================================================
+
+odin_tem01,135,142,2	script	Leon	407,{
+    if (#valk_band >=3) goto M_OneMore;
+    if (#valk_band >=2) goto M_Items;
+    if (#valk_band >=1) goto M_Check;
+    completequest 16012;
+    mes "[Leon]";
+    mes "Hello there, stranger.";
+    next;
+    mes "[Leon]";
+    mes "What's your name?";
+    next;
+    menu "^5566FF"+strcharinfo(0)+"^000000.",-;
+    mes "[Leon]";
+    mes "^5566FF"+strcharinfo(0)+"^000000..."; 
+    mes "That's an interesting name.";
+    next;
+    mes "[Leon]";
+    mes "Oh, excuse my rudeness,";
+    mes "I haven't even introduced myself.";
+    next;
+    mes "[Leon]";
+    mes "I'm Leon, a researcher.";
+    mes "I've been studying a flower here,";
+    mes "called the ^5566FFValhalla Flower^000000.";
+    next;
+    mes "[Leon]";
+    mes "I've discovered that it holds";
+    mes "some sort of healing effect that";
+    mes "could cure any possible disease!";
+    next;
+    mes "[Leon]";
+    mes "So, ^5566FF"+strcharinfo(0)+"^000000...";
+    mes "Will you help me find this flower?";
+    next;
+    mes "[Leon]";
+    mes "Of course, you will be rewarded";
+    mes "with this ^5566FFValkyrie Feather Band^000000";
+    mes "that I found deep inside the temple."; 
+    next;
+    menu "Sure, leave it to me!",M_Yes,"Sorry, but I am busy..",M_Leave;
+    
+M_Yes:
+    mes "[Leon]";
+    mes "Thank you!";
+    mes "I will need 2 samples of the flower.";
+    set #valk_band,1;
+    next;
+    mes "[Leon]";
+    mes "I shall wait here";
+    mes "for your return!";
+    close;
+    
+//    = Part 2    =====================================================
+    
+M_Check:
+    mes "[Leon]";
+    mes "Did you find the";
+    mes "^5566FFValhalla Flowers^000000?";
+    next;
+    menu "Yeah, here they are!",M_Flower,"Not yet...",M_Brb;
+    close;
+    
+M_Flower:    
+    if(countitem(7510) < 2)goto M_NoFlower;
+    delitem 7510,2;
+    set #valk_band,2;
+    mes "[Leon]";
+    mes "Wonderful!";
+    emotion 2;
+    next;
+    mes "[Leon]";
+    mes "...";
+    next;
+    mes "[Leon]";
+    mes "But it looks like they're about to wither!";
+    emotion 23;
+    next;
+    mes "[Leon]";
+    mes "Quickly! we must act before";
+    mes "it's too late!";
+    next;
+    menu "Alright! What do I need to do?",-;
+    mes "[Leon]";
+    mes "I will need the following ingredients";
+    mes "to keep them alive!";
+    next;
+    mes "[Leon]";
+    mes "^3355FF50 Holy Water";
+    mes "50 Powder of Butterfly";
+    mes "20 Great Nature";
+    mes "30 Light Granule^000000";
+    next;
+    mes "[Leon]";
+    mes "Please, hurry before it's too late!";
+    close;
+    
+//    = Part 3    =========================================================
+
+M_Items:
+    mes "[Leon]";
+    mes "Do you have the";
+    mes "^3355FF50 Holy Water^000000,";
+    mes "^3355FF50 Powder of Butterfly^000000,";
+    mes "^3355FF20 Great Nature^000000";
+    mes "and ^3355FF30 Light Granule^000000?";
+    emotion 23;
+    next;
+    menu "Yes, I do!",-,"Not yet!",M_Brb;
+    if(countitem(523) < 50 || countitem(924) < 50 || countitem(997) < 20 || countitem(7938) < 30) goto M_NoItems;
+    mes "[Leon]";
+    mes "Good work,  ^5566FF"+strcharinfo(0)+"^000000!";
+    next;
+    mes "[Leon]";
+    mes "...";
+    next;
+    mes "[Leon]";
+    mes "There!";
+    mes "That should keep it alive!";
+    next;
+    mes "[Leon]";
+    mes "^5566FF"+strcharinfo(0)+"^000000, thank you!";
+    mes "Here's your reward for helping me out!";
+    delitem 523,50;
+    delitem 924,50;
+    delitem 997,20;
+    getitem 5256,1;
+    delitem 7938,30;
+    set #valk_band,3;
+    close;
+    
+//    =    Part 4: Redoing Quest    =========================================================    
+
+M_OneMore:
+    mes "[Leon]";
+    mes "Hey there ^5566FF"+strcharinfo(0)+"^000000!";
+    mes "Did you come for another";
+    mes "^5566FFValkyrie Feather Band^000000?";
+    next;
+    menu "Yeah!",-,"No thanks, just passing by~",M_No;
+    mes "[Leon]";
+    mes "Alright! I need new";
+    mes "^5566FFValhalla Flowers^000000 anyway.";
+    mes "So I'll need the following:";
+    next;
+    mes "[Leon]";
+    mes "^3355FF2 Valhalla Flower";
+    mes "50 Holy Water";
+    mes "50 Powder of Butterfly";
+    mes "20 Great Nature";
+    mes "30 Light Granule^000000";  
+    next;
+    mes "[Leon]";
+    mes "Do you have everything?";
+    next;
+    menu "You bet!",-,"Not yet...",M_Brb;
+    if(countitem(7510) < 2 || countitem(523) < 50 || countitem(924) < 50 || countitem(997) < 20 || countitem(7938) < 30) goto M_NoItems;
+    delitem 7510,2;
+    delitem 523,50;
+    delitem 924,50;
+    delitem 997,20;
+    delitem 7938,30;
+    getitem 5256,1;
+    mes "[Leon]";
+    mes "Awesome work!";
+    mes "Here's your  ^5566FFValkyrie Feather Band^000000!";
+    close;    
+    
+//    =    Other    =================================================================
+
+    
+M_No:
+    mes "[Leon]";
+    mes "Alright, see you later!";
+    emotion 2;
+    close;
+    
+M_Brb:
+    mes "[Leon]";
+    mes "Ok, I'll be waiting here!";
+    close;
+    
+M_NoItems:
+    mes "[Leon]";
+    mes "You're missing a few items..";
+    mes "Come back when you got everything!";
+    close;
+    
+M_NoFlower:
+    mes "[Leon]";
+    emotion 6;
+    mes "Don't lie to me!";
+    mes "You obviously don't!";
+    next;
+    mes "[Leon]";
+    mes "Come back when you have them.";
+    emotion 32;
+    close;
+    
+M_Leave:
+    mes "[Leon]";
+    mes "Oh, ok... That's a shame.";
+    emotion 33;
+    close;
+
+}

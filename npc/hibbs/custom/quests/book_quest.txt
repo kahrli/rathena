@@ -1,0 +1,95 @@
+geffen,128,48,6	script	Karomaru#book_quest	805,{	
+	mes "[Karomaru]";
+	mes "Ah! Hello there!";
+	next;
+	mes "[Karomaru]";
+	mes "We're having really nice weather today, huh?";
+	next;
+	if(select("Yep, sure are.:What's that book you're holding?")==1) {
+		emotion e_ok;
+		mes "[Karomaru]";
+		mes "Yeah, Alberta's the best place for relaxing in front of the sea...";
+		close;
+	}
+	mes "[Karomaru]";
+	mes "Ooh, you've set your eyes on my precious treasure, haven't you?";
+	mes "^666666*chuckle*^000000";
+	next;
+	mes "[Karomaru]";
+	mes "You see, this is a very rare item called ^FF0000Field Manual^000000. With it, I can discern very effective ways and strategies for battle in the wild!";
+	mes "Isn't it great?";
+	if(book_quest) close;
+	next;
+	if(select("Wow, can I have it?!:Meh, bookwarm.")==2) {
+		mes "[Karomaru]";
+		mes "Wh-what?! Hmph! I'll have you know I'm stronger than I look! Why, my teacher makes me carry all his heavy books.";
+		next;
+		emotion e_sigh;
+		mes "[Karomaru]";
+		mes "Ouch, my arms actually are sore after all that work...";
+		close;
+	}
+	if(BaseLevel<65) {
+		mes "[Karomaru]";
+		mes "Hah! You wish. You don't even look like you'd understand what it means to battle.";
+		close;
+	}
+	if(Upper==1) {
+		mes "[Karomaru]";
+		mes "Uh, this wouldn't help you. You look like you've much more experience than this book!";
+		close;
+	}
+	mes "[Karomaru]";
+	mes "Oh? Hmm, well, you sure look like you could use it, but I don't think I want to part with it so easily... I know!";
+	next;
+	mes "[Karomaru]";
+	mes "Let us endorse in the art of trading, why don't we?";
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "Uh... Sure, what would you like for it?";
+	next;
+	mes "[Karomaru]";
+	mes "Let's see, I'm a fan of a good read, and my teacher told me to write an essay about dragons, so I think I know what I'll ask for!";
+	emotion e_gg;
+	next;
+	mes "[Karomaru]";
+	mes "Bring me the following...";
+	next;
+	mes "[Karomaru]";
+	mes "^3355FF1 Legacy of Dragon";
+	mes "20 Dragon Skin";
+	mes "20 Dragon Canine";
+	mes "20 Dragon Scale";
+	mes "1 Dragon Tail^000000";
+	next;
+	mes "[Karomaru]";
+	mes "I need to perform an experiment later too, so I'd like the other items as well...";
+	next;
+	if(select("Got it all right here!:You're nuts! No deal.")==2) {
+		mes "[Karomaru]";
+		mes "That's fine, a weakling will be a weakling I guess.";
+		emotion e_meh;
+		close;
+	}
+	if(!countitem(1559) || countitem(7123)<20 || countitem(1035)<20 ||
+		countitem(1036)<20 || !countitem(1037)) {
+		mes "[Karomaru]";
+		mes "Huh? You traying to scam me or something? Nevermind then.";
+		emotion e_wah;
+		close;
+	}
+	mes "[Karomaru]";
+	mes "Wow, you really got me the book I wanted! And all the materials I need for my project too!";
+	next;
+	mes "[Karomaru]";
+	mes "Argh, I don't want to give off this handy manual, but okay... A deal is a deal, I guess.  Thanks again!";
+	emotion e_no1;
+	delitem 1559,1;
+	delitem 7123,20;
+	delitem 1035,20;
+	delitem 1036,20;
+	delitem 1037,1;
+	getitem 12312,1;
+	set book_quest,1;
+	close;
+}

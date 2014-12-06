@@ -205,6 +205,31 @@ IG_Taming,10020,1	// Grave Keeper's Sword
 IG_Taming,12373,1	// Boy's Pure Heart
 IG_Taming,12374,1	// Ice Fireworks
 IG_Taming,12395,1	// Tantan Noodle
+// ShmaRO [Pyeus]
+IG_Taming,14569,1	//Goblin_1 ring
+IG_Taming,14570,1	//Goblin_2 ring
+IG_Taming,14571,1	//Goblin_4 ring
+IG_Taming,14572,1	//Deleter tame
+IG_Taming,14573,1	//Diabolic tame
+IG_Taming,12373,1	//Succubus tame
+IG_Taming,12374,1	//Imp tame
+IG_Taming,12358,1	//Civil Servant tame
+IG_Taming,12359,1	//Leaf cat tame
+IG_Taming,12360,1	//Loli ruri tame
+IG_Taming,12361,1	//Marionette tame
+IG_Taming,12362,1	//Shinobi tame
+IG_Taming,12363,1	//Whisper tame
+IG_Taming,12365,1	//Nymph tame
+IG_Taming,12366,1	//Miyabi doll tame
+IG_Taming,12367,1	//Dullahan tame
+IG_Taming,12368,1	//Medusa tame
+IG_Taming,12369,1	//Stone shooter tame
+IG_Taming,12370,1	//Incubus tame
+IG_Taming,12371,1	//golem tame
+IG_Taming,12372,1	//nightmare terror tame
+IG_Taming,12364,1	//goblin leader tame
+IG_Taming,10027,1	//whisper accessory
+IG_Taming,12225,1	//xmas gob tame
 // Bundle Of Magic Scroll
 IG_Scroll,686,1	// Level 3 Earth Spike
 IG_Scroll,687,1	// Level 5 Earth Spike

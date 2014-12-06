@@ -1,0 +1,136 @@
+// ends at meyes 5
+
+
+
+
+gef_tower,110,29,3	script	Bamphory#meyes	742,{
+	if(meyes > 4) {
+		mes "[Bamphory]";
+		mes "Anthropologist.  Prontera.  ^3355FF200 Fabric, 1 Holy Water, 1 Magician Hat, and 1 Eye of Dullahan^000000.  Move out, soldier!";
+		close;
+	}
+	if(meyes == 4) {
+		mes "[Bamphory]";
+		mes "Kick awesome.  You got me my list.  Total win.";
+		next;
+		mes "[Bamphory]";
+		mes "Alright so as promised...";
+		next;
+		select("Hat time?");
+		mes "[Bamphory]";
+		mes "Nope.  I lied.  I actually have no idea how to make it.";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "......";
+		next;
+		mes "[Bamphory]";
+		mes "^FF0000However!!^000000  You know that silly little town you got that book in?";
+		next;
+		select("You knew it was in Prontera?");
+		mes "[Bamphory]";
+		mes "Heavens no.  Stop interrupting.  There's an anthropologist in the town.  He knows something about it.  About the people who make it anyway.  Something similar to it, anyway.";
+		next;
+		mes "[Bamphory]";
+		mes "Actually... It's not even the same hat you're going to him for.  It's all the same to you though, isn't it, Adventurer?  Crazy scavenger hunt for some crazy hat?  Exciting exciting.";
+		next;
+		mes "[Bamphory]";
+		mes "Bring the anthropologist ^3355FF200 Fabric, 1 Holy Water, 1 Magician Hat, and 1 Eye of Dullahan^000000.  If that doesn't jog his memory, sock it to him.";
+		set meyes,5;
+		close;
+	}
+	if(meyes == 2) {
+		mes "[Bamphory]";
+		mes "What??  Why didn't you look!  Geez, help these days...";
+		next;
+		select("Why can't you open it?");
+		mes "[Bamphory]";
+		mes "That is ^FF0000t-o-p s-e-c-r-e-t^000000.";
+		mes "Now get out of here if you can't handle it before I turn you into a tree.";
+		getexp 5000,5000;
+		set meyes,3;
+		close;
+	}
+	if(meyes) {
+		mes "[Bamphory]";
+		mes "Alright.  So I need some majorly top secret information in this super cool book so I can make this super cool hat.";
+		next;
+		mes "[Bamphory]";
+		mes "You: find book, get recipe.  Me: make hat.";
+		next;
+		mes "[Bamphory]";
+		mes "The book should be located in one of the ^3355FFtwo great libraries^000000.  One of them has it.";
+		next;
+		mes "[Bamphory]";
+		mes "Remember, every minute you spend dawdling is another minute I ask myself if I should hire your replacement.";
+		close;
+	}
+	if(!meyes) {
+		mes "[Bamphory]";
+		mes "Hello.  Would you be so kind as to help me out?  I'm in a bit of a bind, you see.";
+		next;
+		if(select("Sure thing!:You talk funny.")==2) {
+			mes "[Bamphory]";
+			mes "Cowabunga, dude.  You itching to earn some cheddar?";
+			next;
+			select("Whatever.  Maybe.");
+		}
+		mes "[Bamphory]";
+		mes "Alright.  So I need some majorly top secret information in this super cool book so I can make this super cool hat.";
+		next;
+		mes "[Bamphory]";
+		mes "The book's sealed off from my hot little magical hands, though.  That's where you come in.";
+		next;
+		mes "[Bamphory]";
+		mes "Trouble for you is, the instructions are written in Runic and maybe -- I'm just guessing here -- you can't read Runic writing.  That's where I come in.";
+		next;
+		mes "[Bamphory]";
+		mes "So you write down the perfectly English ingrediants and I'll use my noodle to fix you up one of the niftiest hats you've ever seen.  Deal?";
+		next;
+		if(select("Deal-io.:Um, what?")==2) {
+			mes "[Bamphory]";
+			mes "You: find book, get recipe.  Me: make hat.  Got it?";
+			next;
+			if(select("Sort of.:No, not really.")==2) {
+				mes "[Bamphory]";
+				mes "Ugh, I can't work like this!";
+				close;
+			}
+		}
+		mes "[Bamphory]";
+		mes "Yes, now then.  The book should be located in one of the ^3355FFtwo great libraries^000000.  One of them has it; I never bothered to commit which to my memory.";
+		next;
+		mes "[Bamphory]";
+		mes "No matter.  Scurry along, find what I need, and return here for your treat.";
+		set meyes,1;
+		close;
+	}
+}
+
+prt_in,174,109,0	script	A File#meyes	111,{
+	if(meyes && meyes<4) {
+		mes "^3355FFThis looks like the file you're looking for, though you wouldn't exactly call Prontera's library a *great* library.  Now if only Jekan would go away.^000000";
+		next;
+		if(!rand(5)) {
+			mes "^3355FFQuick!  He's distracted by that tourist!^000000";
+			next;
+			if(select("Continue reading.:Leave before you get in trouble.")==2) {
+				mes "^3355FFOh, screw it.  That wizard's probably a serial killer anyway.^000000";
+				set meyes,2;
+				close;
+			}
+			mes "^3355FFIgnoring your conscience, you dig in.  You manage to find the extremely short list.^000000";
+			next;
+			mes "^FF000010 Fine Sand,";
+			mes "20 Squid Ink,";
+			mes "20 Worn Out Scroll,";
+			mes "1 Pencil Case.";
+			set meyes,4;
+			close;
+		}
+	}
+	mes "[Librarian Jekan]";
+	mes "W-wait...!";
+	mes "That section";
+	mes "is off limits!";
+	close;
+}

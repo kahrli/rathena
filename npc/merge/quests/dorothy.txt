@@ -1,0 +1,88 @@
+// ends before Toto, dorothy 1
+
+
+
+prontera,145,175,6	script	Auntie Em#dorothy	846,{
+	set @you$,"["+strcharinfo(0)+"]";
+	switch(dorothy) {
+	default:
+	case 0:
+		mes "[Auntie Em]";
+		mes "Oh my darling Dorothy... Where could she have gone?";
+		if(dorothy) close;
+		next;
+		mes @you$;
+		mes "Excuse me. Do you need help finding someone?";
+		next;
+		mes "[Auntie Em]";
+		mes "Yes, yes... My Dorothy... She was whisked away this morning by a horribe tornado...";
+		next;
+		mes @you$;
+		mes "Oh no!";
+		set dorothy,1;
+		next;
+	case 1:
+		mes "[Auntie Em]";
+		mes "Yes... I have traveled all the way from Kansas to find her...";
+		next;
+		mes @you$;
+		mes "Kansas? I hear ^3355FFGM Cha^000000 is from there... Maybe he will know something! I'll be right back!";
+		next;
+		mes "^666666(If I were GM Cha where would I be...? I know he likes playing with his powers... Maybe he is in his City of Kunlun! I will go there first!)^000000";
+		close;
+	}
+}
+
+gon_fild01,299,120,8	script	Cha#dorothy	871,{
+	set @you$,"["+strcharinfo(0)+"]";
+	switch(dorothy) {
+	case 1:
+		mes @you$;
+		mes "Cha! Hey Cha!";
+	next;
+	mes "[Cha]";
+	mes "Yes?";
+	atcommand "@disguise 2300";
+	next;
+	mes @you$;
+	mes "Er... You are from Kansas, right?";
+	next;
+	mes "[Cha]";
+	mes "Yes I am!";
+	atcommand "@disguise 2475";
+	next;
+	mes @you$;
+	mes "Well have you heard anything about Dorothy?";
+	next;
+	mes "[Cha]";
+	mes "Dorothy? Miss Em's niece? I know her! She lives down the street from me!";
+	atcommand "@disguise 1002";
+	next;
+	mes @you$;
+	mes "Do you know where Dorothy went?!";
+	next;
+	mes "[Cha]";
+	mes "Yeah! We were playing down in the chicken coop and I made a tornado and she flew away!";
+	atcommand "@disguise 1400";
+	next;
+	mes @you$;
+	mes "That doesn't answer where she is...";
+	next;
+	mes "[Cha]";
+	mes "Oh! I don't know where she is then. Try asking ^3355FFToto^000000! He might know where she is! I taught him how to talk earlier today!";
+	next;
+	mes @you$;
+	mes "Where is Toto?";
+	next;
+	mes "[Cha]";
+	mes "Um... He likes quaint villages... And he said something about going to get a drink out of an ocean? Or a lake? Something like that...maybe a river...";
+	next;
+	mes @you$;
+	mes "Okay! Thank you Cha!";
+	next;
+	mes "[Cha]";
+	mes "No problem! I will give you a hand to find him!";
+	atcommand "@undisguise";
+	close;
+	}
+}

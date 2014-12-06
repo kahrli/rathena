@@ -1,0 +1,744 @@
+// Soccer game, need to test with teams
+
+//===== eAthena Script =======================================
+//= Poring Ball Script
+//===== By: ==================================================
+//= Saruka.usagi@gmail.com
+//= For ArcadyaOnline with Agora-online
+//= Translated to English by diedlikeahero & GM Team
+//===== Current Version: =====================================
+//= 1.3
+//===== Compatible With: =====================================
+//= Any eAthena Version
+//===== Description: =========================================
+//= Football game made for Ragnarok Online, with a poring
+//= as a ball.
+//= The red team is on the east of the field
+//= The blue team is on the west of the field
+//===== Variables ============================================
+//=
+//= Variables temporary servers (?) :
+//= $@state_match = 0 -> is free, writting possible
+//= $@state_match = 1 -> confirmation of writtings
+//= $@state_match = 2 -> a match is currently launching
+//= $@state_match = 3 -> a match is in play
+//= $@state_match = 4 -> delay after match
+//=
+//= $@score_blue_match
+//= $@score_red_match
+//=
+//= $@isballonfield = 0 -> yes, 1 -> no
+//= $@Activeplayers$ = name of the last player who hit the ball
+//= $@ActiveteamID = id of the last team that hit the ball
+//=
+//= $@teampossessingballID = id of the red team or the blue team
+//=
+//= $@blueteamID = id of blue team
+//= $@redteamID = id of red team
+//=
+//=$@redconfirmation -> 0 : not confirmed, 1 : confirmed, 2 : request to cancel
+//=$@blueconfirmation
+//=
+//===== Prerequisite ==========================================
+//= A football field : ball2
+//= 2 palettes (one for the red team and one for the blue team) here the palettes 78 and 79.
+//= (see OnInit method of the organizer)
+//= red palette : $paletteRed
+//= blue palette : $paletteBlue
+//=============================================================
+
+quiz_02,45,389,4	script	Organizer#orga_ball	911,{
+	function S_Register;
+	//cutin "lhz_diguts02",2;
+	if ($@state_match >= 2) goto OnMatchinplay;
+
+Showgamerules:
+	mes "[Organizer]";
+	mes "Soccer is a pretty simple game.";
+	mes "You just have to send the ball in the adversary's goal.";
+	mes "The team that makes the most goals wins the match.";
+	next;
+	mes "[Organizer]";
+	mes "But before going on the field, we need two teams.";
+	mes "All the members of a team have to be in the same party.";
+	mes "Then the leader of the team needs to sign up with an assistant.";
+	mes "When 2 teams are signed up,";
+	mes "you'll be warped onto the field!";
+	if(getcharid(0)==getpartyleader(getcharid(1),2)) {
+		next;
+		mes "[Organizer]";
+		mes "Would you like to play a game?";
+		next;
+		switch(select("Red Team:Blue Team")) {
+			case 1:	S_Register(0);
+			case 2:	S_Register(1);
+		}
+	}
+	goto OnClose;
+
+	function S_Register {
+
+		if ($@state_match>=2) {
+			mes "[Organizer]";
+			mes "You can't sign up because a match is in progress.  Don't hesitate to check back in a few minutes.";
+			close; 
+		}
+
+		if (getcharid(1)==0) {
+			mes "[Organizer]";
+			mes "This game is a team game, and you're not in a party. Come back with your friends!";
+			close;
+		}
+		
+		if (getcharid(0)!=getpartyleader(getcharid(1),2)) {
+			mes "[Organizer]";
+			mes "You need to be the party leader to sign up!";
+			close;
+		}
+		
+		if(getcharid(1)==$@redteamID || getcharid(1)==$@blueteamID) {
+			mes "[Organizer]";
+			mes "You're already registered.  Just wait a few minutes for the opposing team.";
+			close;
+		}
+
+		if (!getarg(0) && $@redteamID!=0 && getpartyname($@redteamID)!="null") {
+			mes "[Organizer]";
+			mes "A red team is already signed up!";
+			close;
+		}
+		
+		if (getarg(0) && $@blueteamID!=0 && getpartyname($@blueteamID)!="null") {
+			mes "[Organizer]";
+			mes "A blue team is already signed up!";
+			close;
+		}
+	
+		mes "[Organizer]";
+		mes "Would you like to register your team?";
+		next;
+		switch(select("Yes:PvP on:No")) 
+			{
+				case 2:	
+					if(getarg(0))
+						set $@bluex,1;
+					else
+						set $@redx,1;
+					break;
+				case 3: close;
+			}
+		if (getarg(0)) {
+			if($@blueteamID && getpartyname($@blueteamID)!="null") {
+				mes "[Organizer]";
+				mes "I'm sorry! Another team beat you to registration!";
+				close;
+			}
+			set $@blueteamID, getcharid(1);
+			announce "Organizer : "+getpartyname($@blueteamID)+" Team has subscribed as the Blue Team!",bc_yellow|bc_map;
+		}
+		else {
+			if($@redteamID && getpartyname($@redteamID)!="null") {
+				mes "[Organizer]";
+				mes "I'm sorry! Another team beat you to registration!";
+				close;
+			}
+			set $@redteamID, getcharid(1);
+			announce "Organizer : "+getpartyname($@redteamID)+" Team has subscribed as the Red Team!",bc_yellow|bc_map;
+		}
+		mes "[Organizer]";
+		mes "Your team is now registered, good luck!";
+		close2;
+		doevent "Organizer#orga_ball::OnSubscriptionteam";
+		end;
+
+	}
+
+// OnSubscriptionteam called by the assistants during the subscription of each team
+OnSubscriptionteam:
+	// if the 2 teams are subscribed
+	initnpctimer;
+	if (($@redteamID!=0) && ($@blueteamID!=0) && (getpartyname($@redteamID)!="null") && (getpartyname($@blueteamID)!="null")) {
+		announce "Organizer : The 2 teams are ready : "+getpartyname($@blueteamID)+" vs "+getpartyname($@redteamID)+"!",bc_yellow|bc_map;
+		set $@state_match, 2;
+		stopnpctimer;
+		donpcevent "TimerInitMatch::OnStart";
+	}
+	end;
+
+OnTimer60000:
+	announce "Organizer : The teams have taken too long, the match is cancelled...",bc_npc|bc_map;
+	callsub OnMatchcancellation;
+	end;
+
+OnMatchcancellation:
+	set $@state_match, 0;
+	set $@blueteamID, 0;
+	set $@redteamID, 0;
+	set $@isballonfield, 0;
+	set $@teampossessingballID, 0;
+	set $@bluex,0;
+	set $@redx,0;
+	mapwarp "ball2","quiz_02",45,374;
+	return;
+
+S_Leave:
+	if(@palette)
+		setlook 7, @palette;
+	warp prontera,155,182;
+	goto OnClose;
+	
+OnMatchinplay:
+	if (getcharid(1)==$@redteamID) { // if the player is from the red team
+		mes "[Organizer]";
+		mes "Ready to play?";
+		select("I want to go on the field.");
+		setlook 7, $paletteRed;
+		savepoint "quiz_02",39,382;
+		percentheal 100,100;
+		set @poringBallAura, 0;
+		warp "ball2",66,56;
+		goto OnClose;
+	}
+	else if (getcharid(1)==$@blueteamID) { // if the player is from the blue team
+		mes "[Organizer]";
+		mes "Ready to play?";
+		select("I want to go on the field.");
+		setlook 7, $paletteBlue;
+		savepoint "quiz_02",52,382;
+		set @poringBallAura, 0;
+		percentheal 100,100;
+		warp "ball2",54,56;
+		goto OnClose;
+	} else
+		// if the player isn't in one of the teams send him back to the game rules.
+		goto Showgamerules;
+	goto OnClose;
+
+// At the start of map server :
+OnInit:
+	set $paletteRed, 349;
+	set $paletteBlue, 316;
+	// Warp all the players from map ball2 near the Organizer.
+	callsub OnMatchcancellation;
+	end;
+
+OnClose:
+	close2;
+	cutin "",255;
+	end;
+}
+
+ball2,0,0,0	script	TimerInitMatch	-1,{
+
+OnStart:
+	// countdown before the match begins
+	set $@teampossessingballID, 0;
+	set $@score_blue_match, 0;
+	set $@score_red_match, 0;
+	set $paletteRed, 349;
+	set $paletteBlue, 316;
+
+	deletearray $@partymembername$,128;
+	getpartymember $@redteamID;
+	for (set .@k, 0; .@k<$@partymembercount; set .@k,.@k+1) {
+		if (isloggedin(getcharid(3,$@partymembername$[.@k]))) {
+			attachrid(getcharid(3,$@partymembername$[.@k]));
+			set @palette,getlook(7);
+			setlook 7, $paletteRed;
+			set @poringBallAura, 0;
+			savepoint "quiz_02",52,382;
+			percentheal 100,100;
+		}
+	}
+	deletearray $@partymembername$,128;
+	getpartymember $@blueteamID;
+	for (set .@k, 0; .@k<$@partymembercount; set .@k,.@k+1) {
+		if (isloggedin(getcharid(3,$@partymembername$[.@k]))) {
+			attachrid(getcharid(3,$@partymembername$[.@k]));
+			set @palette,getlook(7);
+			setlook 7, $paletteBlue;
+			set @poringBallAura, 0;
+			savepoint "quiz_02",52,382;
+			percentheal 100,100;
+		}
+	}
+	warpparty "ball2",66,56,$@redteamID;
+	warpparty "ball2",54,56,$@blueteamID;
+	initnpctimer;
+OnTimer10000:
+	announce "Match will begin in 30 seconds.",bc_npc|bc_map;
+	doevent "Ball::OnReturntomiddle";
+	end;
+OnTimer20000:
+	announce "Match will begin in 20 seconds.",bc_npc|bc_map;
+	end;
+OnTimer30000:
+	announce "Match will begin in 10 seconds.",bc_npc|bc_map;
+	end;
+OnTimer40000:
+	announce "The match has begun!",bc_npc|bc_map;
+	stopnpctimer;
+	donpcevent "TimerMatch::OnStartMatch";
+	if($@redx && $@bluex) pvpon "ball2";
+	end;
+}
+
+
+ball2,0,0,0	script	TimerMatch	-1,{
+
+OnStartMatch:
+	stopnpctimer; // normally pointless, but seeing the consequences of a npc timer, we won't take a chance.
+	initnpctimer;
+	set $@state_match,3;
+	end;
+OnTimer180000:
+	mapannounce "ball2", "Halftime! Score is currently "+$@score_blue_match+" (Blue) / "+$@score_red_match+" (Red)",bc_map;
+	end;
+OnTimer360000:
+	mapannounce "ball2", "The match is over! Scores end with "+$@score_blue_match+" (Blue) / "+$@score_red_match+" (Red)",bc_map;
+	set $@state_match,4;
+	pvpoff "ball2";
+	end;
+
+OnTimer362000:
+	if ($@score_blue_match<$@score_red_match)
+		mapannounce "ball2", "Congratulations to the Red Team!!",bc_map;
+	else if ($@score_blue_match>$@score_red_match)
+		mapannounce "ball2", "Congratulations to the Blue Team!!",bc_map;
+	else mapannounce "ball2", "It's a tie!!",bc_map;
+	donpcevent "Ball::OnReturntomiddle";
+	end;
+
+OnTimer380000:
+	deletearray $@partymembername$,128;
+	getpartymember $@redteamID;
+	for (set .@k, 0; .@k<$@partymembercount; set .@k,.@k+1) {
+		if (isloggedin(getcharid(3,$@partymembername$[.@k]))) {
+			attachrid(getcharid(3,$@partymembername$[.@k]));
+			setlook 7, @palette;
+			set @poringBallAura, 0;
+		}
+	}
+	deletearray $@partymembername$,128;
+	getpartymember $@blueteamID;
+	for (set .@k, 0; .@k<$@partymembercount; set .@k,.@k+1) {
+		if (isloggedin(getcharid(3,$@partymembername$[.@k]))) {
+			attachrid(getcharid(3,$@partymembername$[.@k]));
+			setlook 7, @palette;
+			set @poringBallAura, 0;
+		}
+	}
+
+	mapwarp "ball2","quiz_02",46,375;
+	set $@state_match,0;
+	set $@blueteamID, 0;
+	set $@redteamID, 0;
+	set $@redconfirmation, 0;
+	set $@blueconfirmation, 0;
+	set $@teampossessingballID, 0;
+	set $@bluex,0;
+	set $@redx,0;
+	end;
+}
+
+ball2,60,56,4	script	Ball#pori_ball	1792,{
+
+// Kicking the ball allows it to move from many squares,
+// however its location is determined square by square.
+// The ball draws its course by moving forward from a square every 150 ms.
+// Every time it lands on a square it makes some tests to determine if a goal has been made,
+// if it came out of the field, etc.
+// If that is the case it returns to its place on its own (middle of the field, corners, etc.)
+
+	if ($@state_match!=3) {
+		// If there are no matches in progress ( hasn't started yet, just finished, etc.)
+		npctalk "No match! Don't touch!";
+		end;
+	} 
+
+	if ($@destinationType>0) {
+		end;
+	}
+
+	// If the player isn't in one of the 2 subscribed teams :
+	if ((getcharid(1) == 0) || ((getcharid(1) != $@redteamID)  && (getcharid(1) != $@blueteamID))) {
+		npctalk "A trespasser!! Get out "+strcharinfo(0)+" !";
+		warp "SavePoint",0,0;
+		end;
+	}
+
+	set $@Activeplayers$, strcharinfo(0);
+	set $@ActiveteamID, getcharid(1);
+
+	// Player and ball coordinates at the time of the shot
+	getmapxy $@mapname$,$@mapxNPC,$@mapyNPC,1;
+	getmapxy $@mapname$,$@mapxPC,$@mapyPC,0;
+
+	// verification of the player's distance / ball : the player must be 1 square from the ball.
+	if (distance($@mapxNPC,$@mapyNPC,$@mapxPC,$@mapyPC)>2) {
+		dispbottom "You cannot shoot the Ball at distance.";
+		end;
+	}
+
+	// Watch out for the position of the stopnpctimer, some tests must be made beforehand (has the player really hit the ball?)
+	stopnpctimer;
+
+	specialeffect 26;
+	specialeffect 44;
+	npcspeed 98;
+
+	// Research of the distance the ball will travel
+	// (still for now)
+	set $@distance,4;
+
+	// Research of the position of the ball X
+	if ($@mapxPC<$@mapxNPC) set $@movementX, 1;
+	else if ($@mapxPC>$@mapxNPC) set $@movementX, -1;
+	else set $@movementX, 0;
+
+	// Research of the position of the ball Y
+	if ($@mapyPC<$@mapyNPC) set $@movementY, 1;
+	else if ($@mapyPC>$@mapyNPC) set $@movementY, -1;
+	else set $@movementY, 0;
+
+	// If the ball is already out of the field, it cannot be moved further away from the field
+	if ($@isballonfield==1) {
+		if ((23>=$@mapyNPC+$@movementY)||($@mapyNPC+$@movementY>=89)||(12>=$@mapxNPC+$@movementX)||($@mapxNPC+$@movementX>=108)) end;
+	}
+
+	// Check if the ball is in a team's possession (for example after the ball's been kicked out of the field by a team,
+	// only the other team has the right to give the first hit to the ball)
+	if ($@teampossessingballID != 0) && ($@ActiveteamID != $@teampossessingballID) {
+		dispbottom "The other team gets the Ball.";
+		end;
+	}
+	else set $@teampossessingballID, 0;
+
+	// start of the ball's movement
+
+	set $@mapxNPC, $@mapxNPC+$@movementX;
+	set $@mapyNPC, $@mapyNPC+$@movementY;
+
+	npcwalkto $@mapxNPC,$@mapyNPC;
+	//npctalk "npcwalkto A "+$@mapxNPC+" "+$@mapyNPC;
+	goto Whereistheball;
+	end;
+
+OnTimer150:
+	stopnpctimer;
+	getmapxy $@mapname$,$@mapxNPC,$@mapyNPC,1;
+	//npctalk "getmapxy "+$@mapxNPC+" "+$@mapyNPC;
+
+	// Research of the direction if the ball already has one
+	if ($@destinationType>0) {
+		switch($@destinationType) {
+			case 0: break;
+			case 1: // Go to the middle of the field
+				set $@destinationX, 60;
+				set $@destinationY, 56;
+				break;
+			case 2: // Go to the North West corner
+				set $@destinationX, 15;
+				set $@destinationY, 86;
+				break;
+			case 3: // Go to the North East corner
+				set $@destinationX, 105;
+				set $@destinationY, 86;
+				break;
+			case 4: // Go to the South West corner
+				set $@destinationX, 15;
+				set $@destinationY, 26;
+				break;
+			case 5: // Go to the South East corner
+				set $@destinationX, 105;
+				set $@destinationY, 26;
+				break;
+			case 6: // Go to the West Goal
+				set $@destinationX, 19;
+				set $@destinationY, 56;
+				break;
+			case 7: // Go to the East Goal
+				set $@destinationX, 101;
+				set $@destinationY, 56;
+				break;
+		}
+
+		// Research of the movement X of the ball to get closer to destination
+		if ($@destinationX<$@mapxNPC) set $@movementX, -1;
+		else if ($@destinationX>$@mapxNPC) set $@movementX, 1;
+		else set $@movementX, 0;
+
+		// Research of the movement Y of the ball to get closer to destination
+		if ($@destinationY<$@mapyNPC) set $@movementY, -1;
+		else if ($@destinationY>$@mapyNPC) set $@movementY, 1;
+		else set $@movementY, 0;
+
+		// Movement of the ball
+		npcwalkto $@mapxNPC+$@movementX,$@mapyNPC+$@movementY;
+		getmapxy $@mapname$,$@mapxNPC,$@mapyNPC,1;
+
+		// if the ball still hasn't reached its destination, restart the timer
+		if (($@mapxNPC==$@destinationX) && ($@mapyNPC==$@destinationY)) set $@destinationType,0;
+		else {
+			stopnpctimer;
+			initnpctimer;
+		}
+		end;
+	}	
+
+	// save the coordinates " before movement " (to delete the players from the minimaps)
+	//set $@mapxNPCold, $@mapxNPC;
+	//set $@mapyNPCold, $@mapyNPC;
+
+	// If the ball doesn't have a precise destination, it continues its previous movement
+	set $@mapxNPC, $@mapxNPC+$@movementX;
+	set $@mapyNPC, $@mapyNPC+$@movementY;
+
+	npcwalkto $@mapxNPC,$@mapyNPC;
+	//npctalk "npcwalkto B "+$@mapxNPC+" "+$@mapyNPC;
+
+	// Update the movement of the Poring on the minimap
+
+	// for every player on the map
+		// affects rid with a thing like : getcharid(3)
+		//attachrid($@thingmabob_rid);
+		// delete old save point
+		// draw new save point
+
+	goto Whereistheball;
+	end;
+
+OnReturntomiddle:
+	set $@destinationType, 1;
+	stopnpctimer;
+	initnpctimer;
+	end;
+
+Whereistheball:
+	// Note :
+	// the command "getmapxy $@mapname$,$@mapxNPC,$@mapyNPC,1;" previously used here
+	// wasn't allowing enough time for the ball to move, and often gave its coordinated to the movement
+	// so instead I update the coordinates of the ball manually when it is being moved. This means that we work with
+	// the " supposed " coordinates of the ball.
+	// If the supposed coordinates ever didn't fit with the real coordinates, there would be a need to think
+	// a way to give the ball the time to move, before doing the getmapxy.
+
+	//If the ball was out, test if it came back on the field
+	if ($@isballonfield==1) {
+		if (((23<$@mapyNPC)&&($@mapyNPC<89))&&((12<$@mapxNPC)&&($@mapxNPC<108))) {
+			mapannounce "ball2", "The ball is back on the field.",bc_blue;
+			set $@isballonfield,0;
+		}
+
+	} else {
+
+		if ($@mapxNPC>=108) {
+		// T h e    b a l l    i s    o n    t h e    e a s t    s i d e
+
+			// Check if we are in the right-side goal
+			if ((53<=$@mapyNPC)&&($@mapyNPC<=59)) {
+
+				mapannounce "ball2", " "+$@Activeplayers$+" has scored a goal for the Blue Team!",bc_blue;
+				npctalk "Goal! I'll return to the middle of the field.";
+				set $@score_blue_match, $@score_blue_match+1;
+				set $@destinationType, 1;
+				set $@teampossessingballID, $@redteamID;
+				stopnpctimer;
+				initnpctimer;
+				end;
+			}
+			// if we are not in the goal,
+			mapannounce "ball2",  " "+$@Activeplayers$+" has sent the Ball out of the field!",0xFF0000;
+			//set isballonfield,1;
+
+			if ($@ActiveteamID==$@redteamID) {
+				// If the ball gets kicked by a player from the defending team, send the ball in the right corner :
+				if ($@mapyNPC<=56) {
+					npctalk "Out of the field! I am going to the corner.";
+					set $@destinationType, 5; // Destination South East
+				} else {
+					npctalk "Out of the field! I am going to the corner.";
+					set $@destinationType, 3; // Destination North West
+				}
+				// It's the blue team (attackers) that now possess the ball:
+				set $@teampossessingballID, $@blueteamID;
+
+			} else if ($@ActiveteamID==$@blueteamID) {
+				// If the ball gets kicked by a player from the attacking team, send the ball in front of the goal
+				npctalk "Out of the field! I am going in front of the Red Team's goal.";
+				set $@destinationType, 7; // Destination East Goal
+
+				// It's the red team (defenders) that now possess the ball:
+				set $@teampossessingballID, $@redteamID;
+			} else end;
+			stopnpctimer;
+			initnpctimer;
+			end;
+		} else if ($@mapxNPC<=12) {
+			// T h e    b a l l    i s    o n    t h e    w e s t    s i d e
+
+			// Check if we are in the left-side goal
+			if ((53<=$@mapyNPC)&&($@mapyNPC<=59)) {
+
+				mapannounce "ball2", " "+$@Activeplayers$+" has scored a goal for the Red Team!",bc_blue;
+				npctalk "Goal! I'll return in the middle of the field.";
+				set $@score_red_match, $@score_red_match+1;
+				set $@destinationType, 1; // Destination middle of the field
+				set $@teampossessingballID, $@blueteamID;
+				stopnpctimer;
+				initnpctimer;
+				end;
+			}
+
+			mapannounce "ball2", " "+$@Activeplayers$+" has sent the Ball out of the field!",0xFF0000;
+			//set isballonfield,1;
+			if ($@ActiveteamID==$@blueteamID) {
+				// If the ball gets kicked by a player from the defending team, send the ball in the right corner:
+				if ($@mapyNPC<=56) {
+					npctalk "Out of the field! I am going to the corner.";
+					set $@destinationType, 4; // Destination South East
+				} else {
+					npctalk "Out of the field! I am going to the corner.";
+					set $@destinationType, 2; // Destination North West
+				}
+				// It's the red team (attackers) that now possess the ball:
+				set $@teampossessingballID, $@redteamID;
+
+			} else if ($@ActiveteamID==$@redteamID) {
+				// If the ball gets kicked by a player from the attacking team, send the ball in front of the goal
+				npctalk "Out of the field! I am going in front of the Blue Team's goal.";
+				set $@destinationType, 6; // Destination West Goal
+				// It's the blue team (defenders) that now possess the ball:
+				set $@teampossessingballID, $@blueteamID;
+			} else end;
+			stopnpctimer;
+			initnpctimer;
+			end;
+		} else if (($@mapyNPC>=89)||($@mapyNPC<=23)) {
+			// T h e    b a l l    i s    o n    ( e i t h e r    N o r t h    o r    S o u t h    s i d e )
+
+			mapannounce "ball2", " "+$@Activeplayers$+" has sent the Ball out of the field!",0xFF0000;
+
+			set $@isballonfield,1;
+			if ($@ActiveteamID==$@redteamID) {
+				set $@teampossessingballID, $@blueteamID;
+				npctalk "Ball for the Blue Team.";
+			} else if ($@ActiveteamID==$@blueteamID) {
+				set $@teampossessingballID, $@redteamID;
+				npctalk "Ball for the Red team.";
+			}
+			end;
+		}
+	}
+
+	// Preparation for the next movement
+	set $@distance,$@distance-1;
+	if ($@distance>0) {
+		stopnpctimer;
+		initnpctimer;
+	}
+	end;
+}
+
+
+// *******************************************************************
+//                         Others                 NPCs
+// *******************************************************************
+
+ball2,108,52,2	script	Red Flag#fred1	722,{
+	end;
+}
+
+ball2,108,60,2	script	Red Flag#fred2	722,{
+	end;
+}
+
+ball2,12,52,6	script	Blue Flag#fblue1	722,{
+	end;
+}
+
+ball2,12,60,6	script	Blue Flag#fblue2	722,{
+	end;
+}
+
+
+ball2,60,17,8	script	Field Assistant	913,{
+
+	mes "[Field Assistant]";
+	mes "Hi, what do you want?";
+	next;
+	if (getgmlevel()>79) {
+		switch(select("Leave","Cancel","Cancel the match","Give a point to the Red Team","Give a point to the Blue Team","Put the ball back in the middle")) {
+			case 1:
+				goto OnLeave;
+				break;
+			case 2:	
+				break;
+			case 3:
+				if ($@state_match == 3) {
+					set $@blueteamID, 0;
+					set $@redteamID, 0;
+					set $@redconfirmation, 0;
+					set $@blueconfirmation, 0;
+					set $@state_match, 0;
+					set $@isballonfield, 0;
+					set $@teampossessingballID, 0;
+					set $@bluex,0;
+					set $@redx,0;
+					donpcevent "TimerMatchcancellation::OnMatchcancellation";
+				} else mes "No match is in progress.";
+				break;
+			case 4:
+				if ($@state_match == 3) {
+					mapannounce "ball2", " "+strcharinfo(0)+ " has added a point for the Red Team!",bc_blue;
+					set $@score_match_rouge, $@score_match_rouge+1;
+				} else mes "No match is in progress.";
+				break;	
+			case 5:
+				if ($@state_match == 3) {
+					mapannounce "ball2", " "+strcharinfo(0)+ " has added a point for the Blue Team!",bc_blue;
+					set $@score_blue_match, $@score_blue_match+1;
+				} else mes "No match is in progress.";
+				break;
+			case 6:
+				mes "To be continued.";				
+				break;					
+		}
+
+	} else {
+
+		switch(select("Leave","Cancel")) {
+			case 1:
+				goto OnLeave;
+				break;
+			case 2:	
+				break;
+		}
+	}
+	close;
+
+OnLeave:
+	warp "quiz_02",46,375;
+	close;
+
+}
+
+
+// map football field
+ball2	mapflag	noicewall
+//ball2	mapflag	pvp
+ball2	mapflag	pvp_noguild
+ball2	mapflag	nomemo
+ball2	mapflag	noteleport
+ball2	mapflag	nowarp
+ball2	mapflag	nosave	SavePoint
+ball2	mapflag	nopenalty
+ball2	mapflag	nobranch
+ball2	mapflag	noexp
+
+// map for team constitution
+quiz_02	mapflag	noskill
+quiz_02	mapflag	nomemo
+quiz_02	mapflag	nobranch
+quiz_02	mapflag	nopenalty
+quiz_02	mapflag	noexp

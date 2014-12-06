@@ -1019,7 +1019,13 @@ paramk
 //======================================================================================
 //Place your custom maps with a starting ID here.
 //======================================================================================
-//Example:
-//
-//mymap	1250
-//mymap-2
+chess01 1250
+maze_room
+payo1
+payo1_in01
+payo1_in02
+space
+ball2
+heaven_m
+poring_e
+que_baby

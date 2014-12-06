@@ -1,0 +1,330 @@
+//===== eAthena Script ======================================= 
+//= Tiraya Bonnet
+//===== By: ================================================== 
+//= Arios/Exaz
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+//    Start of Quest
+geffen,140,73,5	script	Tira Bonne	803,{
+completequest 16013;
+
+if (#tiraya==6){
+mes "[Tira]";
+mes "You found him?";
+next;
+menu "Not exactly Henzel...",-;
+mes "[Tira]";
+mes "Oh? what do you mean?";
+next;
+mes "^5566FF(You tell her the story.)^000000";
+next;
+mes "[Tira]";
+mes "Oh, I see..";
+mes "But I am glad Takeru is following";
+mes "his father's footsteps.";
+next;
+menu "Here's your Peach Cake!",-;
+mes "[Tira]";
+mes "Why, thank you!";
+mes "As promised, here's your Tiraya Bonnet!";
+mes "And have some Peach Cake as well!";
+getitem 5395,1;
+getitem 12091,3;
+delitem 1081,1;
+set #tiraya,0;
+close;
+}
+if (#tiraya>=1){
+mes "[Tira]";
+mes "Did you find him yet?";
+mes "His house is across the north bridge of Hugel!";
+close;
+}
+mes "[Tira]";
+cutin "hu_alex02",2;
+mes "^5566FF*Sigh*^000000";
+next;
+menu "What's wrong?",-;
+mes "[Tira]";
+mes "I wish my mom was still around..";
+mes "She used to make delicious ^5566FFPeach Cakes^000000.";
+next;
+mes "[Tira]";
+mes "I've tried making them myself,";
+mes "but there was a secret ingredient";
+mes "that she put in to make it taste delicious!";
+next;
+mes "[Tira]";
+mes "I've tried to search for the recipe in a lot of ^5566FFCookbooks^000000,";
+mes "but I always wind up";
+mes "with the same, dull ^5566FFPeach Cake^000000.";
+next;
+mes "[Tira]";
+mes "Maybe I should just give up.";
+next;
+menu "Isn't there another way to get it?",-;
+mes "[Tira]";
+mes "Well I'm not sure.";
+mes "I know that there was";
+mes "a ^3355FFBaker^000000 that taught";
+mes "my mom how to make a lot of cakes.";
+next;
+cutin "hu_alex01",2;
+mes "[Tira]";
+mes "That's it!";
+mes "Maybe he knows how to do it!";
+mes "Can you do me a favor?";
+mes "I want you to go and look for him!";
+next;
+menu "Alright...",-;
+mes "[Tira]";
+mes "Thank you!";
+mes "I will reward you with a hat";
+mes "that I found in my attic!";
+mes "It's been passed down by my family";
+mes "for generations!";
+next;
+menu "Sounds good, got any leads on this 'Baker'?",-;
+mes "[Tira]";
+mes "Hmmm...";
+mes "Right! Well,";
+mes "when I was still a kid,";
+mes "he had a house in Hugel.";
+mes "I always used to play with his son";
+mes "by the river!";
+next;
+mes "[Tira]";
+mes "Ask for ^5566FFHenzel the Baker^000000!";
+mes "You can find his house by going";
+mes "across the ^5566FFnorth bridge and";
+mes "up the hill^000000.";
+next;
+menu "Ok, got it!",-;
+set #tiraya,1;
+close2;
+cutin "",255;
+end;
+}
+
+hu_in01,326,374,3	script	Assassin	884,{
+if (#tiraya==5){
+if (countitem(7164) < 20 || countitem(539) < 10 || countitem(548) < 10 || countitem(519) < 10 || countitem(620) < 5 || countitem(7453) < 1 || countitem(574) < 1) goto No_Item3;
+mes "[Takeru]";
+mes "Ok good job!";
+mes "Time to wear my outfit,";
+mes "And make the Peach Cake!";
+next;
+cutin "ep13_shy",2;
+menu "...HAHAHAHA",-;
+mes "[Takeru]";
+mes "Yeah, laugh all you want.";
+mes "But this is a must-have";
+mes "when baking a cake!";
+mes "Ok, let's get to work!";
+next;
+mes "[Takeru]";
+mes ". . .";
+next;
+mes "[Takeru]";
+mes ". . .";
+mes ". . . . . .";
+next;
+delitem 7164,20;
+delitem 539,10;
+delitem 548,10;
+delitem 519,10;
+delitem 620,5;
+delitem 7453,1;
+delitem 574,1;
+mes "[Takeru]";
+mes "Ok, all done!";
+mes "Here, deliver this to Tira.";
+mes "And give her my best regards";
+mes "Goodbye!";
+set #tiraya,6;
+close2;
+cutin "",255;
+getitem 1081,1;
+end;
+}
+
+if (#tiraya==4){
+if (countitem(7477) < 1) goto No_Item2;
+cutin "moc2_kid05",2;
+mes "[Takeru]";
+mes "Alright! Let's see...";
+mes "Ah, I will need the following";
+mes "items for the Peach Cake:";
+next;
+mes "[Takeru]";
+mes "^3355FF20 Solid Peach";
+mes "10 Piece of Cake";
+mes "10 Cheese";
+mes "10 Milk";
+mes "5 Orange Juice";
+mes "1 Sweet Sauce^000000";
+next;
+mes "[Takeru]";
+mes "And of course,";
+mes "my father's secret ingredient...";
+mes "^3355FF1 Egg^000000.";
+menu "I'm on it... *Sigh*",-;
+delitem 7477,1;
+cutin "",255;
+close2;
+set #tiraya,5;
+end;
+}
+
+if (#tiraya==3){
+cutin "moc2_kid05",2;
+mes "[Takeru]";
+mes "Alright! All done!";
+next;
+mes "[Takeru]";
+mes "Ok, let's see where the Cookbook is..";
+next;
+mes "[Takeru]";
+mes ". . .";
+next;
+mes "[Takeru]";
+mes "Strange.. I can't seem to find it.";
+mes "Then I will need to ask you for";
+mes "another favor.";
+next;
+menu "How could I see that coming...",-;
+mes "[Takeru]";
+mes "Sorry to ask you of this,";
+mes "but could you get me";
+mes "^3355FF1 Cookbook Volume 6^000000?";
+next;
+menu "Alright!",-;
+set #tiraya,4;
+close2;
+cutin "",255;
+end;
+}
+
+if (#tiraya==2){
+if(countitem(7038) < 30 || countitem(7217) < 20 || countitem(1057) < 10 || countitem(722) < 5 || countitem(982) < 1) goto No_Item;
+mes "[Takeru]";
+mes "Good job!";
+mes "Now I need a few minutes to fix it.";
+delitem 7038,30;
+delitem 7217,20;
+delitem 1057,10;
+delitem 722,5;
+delitem 982,1;
+set #tiraya,3;
+close;
+}
+
+if (#tiraya==1){
+cutin "moc2_kid03",2;
+mes "[Assassin]";
+mes "What do you want?";
+next;
+menu "I am looking for Henzel the Baker..",-;
+cutin "moc2_kid02",2;
+mes "[Assassin]";
+mes "Henzel?";
+next;
+cutin "moc2_kid03",2;
+mes "[Assassin]";
+mes "I am sorry, ";
+mes "but he is no longer with us.";
+mes "He passed away 5 months ago.";
+next;
+menu "Sorry to hear...",-;
+mes "[Assassin]";
+mes "Mhm... Why have you come here?";
+next;
+mes "^5566FF(You tell him about Tira's situation.)^000000";
+next;
+mes "[Assassin]";
+mes "I see.";
+mes "Well, you're in luck.";
+mes "Because I am the son of Henzel.";
+mes "Call me Takeru.";
+next;
+cutin "moc2_kid05",2;
+mes "[Takeru]";
+mes "My father handed down all his";
+mes "Cookbooks to me. And the";
+mes "^5566FFPeach Cake^000000 is in one of them.";
+next;
+mes "[Takeru]";
+mes "But first thing's first.";
+mes "I will need you to get me materials";
+mes "to repair my father's chef hat.";
+next;
+menu "You gotta be kidding me!",-;
+mes "[Takeru]";
+mes "Rules are rules!";
+mes "My dad never baked anything";
+mes "without wearing his Chef hat!";
+next;
+menu "Fine, what do I need to get?",-;
+mes "[Takeru]";
+mes "I need";
+mes "^3355FF30 Yarn^000000,";
+mes "^3355FF20 Spool^000000,";
+mes "^3355FF10 Moth Dust^000000,";
+mes "^3355FF5 Pearl^000000,";
+mes "and ^3355FF1 White Dyestuff^000000.";
+next;
+mes "[Takeru]";
+mes "Good luck!";
+set #tiraya,2;
+close2;
+cutin "",255;
+end;
+}
+mes "[Assassin]";
+mes "...";
+cutin "",255;
+close;
+
+No_Item:
+mes "[Takeru]";
+mes "Hurry, I don't have all";
+mes "day on me!";
+next;
+mes "[Takeru]";
+mes "Get me";
+mes "^3355FF30 Yarn^000000,";
+mes "^3355FF20 Spool^000000,";
+mes "^3355FF10 Moth Dust^000000,";
+mes "^3355FF5 Pearl^000000,";
+mes "and ^3355FF1 White Dyestuff^000000.";
+close;
+
+No_Item2:
+mes "[Takeru]";
+mes "Hurry, I don't have all";
+mes "day on me!";
+next;
+mes "[Takeru]";
+mes "Get me";
+mes "^3355FF1 Cookbook Volume 6^000000!";
+close;
+
+No_Item3:
+mes "[Takeru]";
+mes "Hurry, I don't have all";
+mes "day on me!";
+next;
+mes "[Takeru]";
+mes "^3355FF20 Solid Peach";
+mes "10 Piece of Cake";
+mes "10 Cheese";
+mes "10 Milk";
+mes "5 Orange Juice";
+mes "1 Sweet Sauce^000000";
+mes "^3355FF1 Egg^000000";
+close;
+}

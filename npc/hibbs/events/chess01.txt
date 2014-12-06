@@ -1,0 +1,2183 @@
+// Needs chess map
+
+
+//===== eAthena Script ======================================
+//= Chess Script
+//===== By: ===============================================
+//= by Keyworld (ea.ws) // Key (roea.fr)
+//===== Current Version: ======================================
+//= 6.2
+//===== Compatible With: ===================================== 
+//= Don't test before ~9000
+//===== Description: ========================================= 
+//= A "simple" Chess Script
+//===== Topic =================================================
+//= http://www.roeathena.fr/index.php?showtopic=3163
+//= http://www.eathena.ws/board/index.php?showtopic=201982
+//===== Crédits =================================================
+//= KeyWorld / Key (script)
+//= Myllena (translate)
+//= Luna (Mapping / spriting)
+//===== Additional Comments: ================================== 
+//= 1.0 
+//= ---- Added all moves.
+//= ---- Destroy the enemis pawns
+//= ---- "Check Mated" when King is Destroy
+//= 1.0a
+//= ---- Added NPC inscription.
+//= 1.1
+//= ---- Optimization
+//= ---- Change effect in the case
+//= ---- Correct bug with the Bishop & Queen.
+//= 1.2
+//= ---- Add effect when pawn is killed.
+//= ---- Big Optimization.
+//= ---- Added "Check" when King is in danger
+//= ---- Correct a -1 bug in array (@array[-1])
+//= 1.3
+//= ---- The King can't go in case where he will die
+//= ---- Added "Check Mated" when the king is in danger and can't be protect
+//= ---- Added "Pat" is no one can't move.
+//= ---- Change the Pawn Class when it go in other side of the chessboard.
+//= 1.4
+//= ---- Big optimization to remove the "check_gotocount" (655000) XD now is 2048 :p
+//=      And consume very less ressource !
+//= ---- Change effect in cases.
+//= ---- Correct a bug with inscription
+//= 1.5
+//= ---- Added a function to work the script with a simple @loadnpc.
+//= ---- Added a debug function : if(player don't play >= 10 min) reset.
+//= ---- Added The Roque !!!
+//= 1.6
+//= ---- If the King is in Check, the player can play just to flee or block the Check.
+//= ---- Added Multi Language (French/English)
+//=      You have just to change the NPC language to change all language (NPC name, announce, messages, menu...)
+//= 1.7
+//= ---- Possibility to change all chess class with an array (more simple than to change all NPC Sprite num)
+//= 1.8
+//= ---- Correct a little bug in the auto-reset
+//= ---- Optimize the effect code.
+//= ---- Add a settings conf with a multi choice (roque etc...)
+//= ---- Change the menu "changeclass" to dynamic
+//= ---- Optimize the changeclass menu.
+//= 1.9
+//= ---- Added a debug menu.
+//= ---- Completed settings
+//= 2.0
+//= ---- Replaced many "$" var into ".@"
+//= ---- with getarg()
+//= 2.1
+//= ---- Added a reward system with items (64 different items Max.)
+//= ---- Added a reward system with variables (64 variables different max)
+//= 2.2
+//= ---- Added a ranking (win + loose + average)
+//= 2.3
+//= ---- Add a GM menu debug (useless, the script is debug automaticly Oo)
+//= ---- Gm can clean the ranking.
+//= 2.4
+//= ---- Remove @unloadnpc / @loadnpc to reset the game correctly :P
+//= ---- Added emoticones.
+//= 2.5
+//= ---- Big Optimization (-25% lines).
+//= ---- Now it's just one file.
+//===================================================================
+
+chess01,65,37,4	script	Chess Master#ChessGame	108,{
+
+    function	load_settings	{
+
+    /**************************************************** 
+    ****************** SETTINGS !!! ********************
+    ***************************************************/
+
+    /*********************
+    ***** NPC Name  *****
+    ********************/
+
+        set .npcname$, "^0000FF["+strnpcinfo(1)+"]^000000";
+
+    /***************************************************************************
+    **** Sprites ID : If you want to change the Sprites ID, just edit that. ****
+    **** I do this for everyone who are annoyed to modify all duplicates ID ;p**
+    ***************************************************************************/
+
+        setarray $@Chess_spritenum[0],
+
+            1776, //White Pawn
+            1837, //Black Pawn
+            1319, //White Rook
+            1318, //Black Rook
+            1778, //White Bishop
+            1705, //Black Bishop
+            1775, //White Knight
+            1310, //Black Knight
+            1777, //White Queen
+            1833, //Black Queen
+            1779, //White King
+            1832, //Black King
+            139, //Invisible -> don't use -1 !!!
+            111; //Invible but can clik !
+
+    /**********************************************
+    ********** /!\ CHESS SETTINGS /!\ *************
+    ** 1: Enable Combo Roque **********************
+    ** 2: Pawn can change to Rook *****************
+    ** 4: Pawn can change to Bishop ***************
+    ** 8: Pawn can change to Knight ***************
+    * 16: Pawn can change to Queen ****************
+    * 32: Enable Chess Ranking (Top winner) *******
+    * 64: Enable Chess Ranking (Top Looser) *******
+     128: Enable Chess Ranking (Average) **********
+     256: Enable Rewards (give items) *************
+     512: Enable Rewards (+ variables for winner) *
+    1024: Enable Rewards (- variables for looser) *
+    ***********************************************
+    2047: Enable All Settings. ********************
+    ***********************************************
+    ***********************************************
+    * Example: ************************************ 
+    **** Roque + Pawn into Rook + Reward Item *****
+    **** -->    1 + 2 + 128  = 131 ****************
+    **********************************************/
+
+        set $@Chess_Settings,127;
+
+    /******************************************************************
+    ** CHESS LADDER : /!\  Need The option in chess Settings enable. **
+    ** How many players the Chess Ranquing show in the npc window.*****
+    ******************************************************************/ 
+
+        set .CH_nbshowladder,10;
+
+    /*******************************************************************
+    ** REWARDS : /!\  Need The option in chess Settings enable. ********
+    ** /!\ don't use more than 64 differents items (64*2=128) /!\ ******
+    ********************************************************************
+    
+    /***********
+    ** ITEMS: **
+    ***********/
+
+        setarray $@CH_RewardItem[0],
+
+        /****************************
+        ******  ID     How Many *****
+        *****************************
+        ** Ex:  512,    5;       ****
+        ** Will give 5 apple. *******
+        ****************************/
+            
+        /*1*/    0,    0,
+        /*2*/    0,    0,
+        /*3*/    0,    0;
+
+    /***************
+    ** VARIABLES: **
+    ***************/
+
+        setarray $@CH_RewardVar$[0],
+
+        /************************************
+        ******    NAME        VALUE  ********
+        *************************************
+        ** Ex:"#CASHPOINTS",    "5";  *******
+        ** Will give 5 #CASHPONTS (winner)***
+        ** Will remove 5 #CASHPONTS (looser)*
+        ************************************/
+            
+        /*1*/    "",        "",
+        /*2*/    "",        "",
+        /*3*/    "",        "";
+        
+        /**************************
+        ****** DIALOGUE ***********
+        **************************/
+    
+                setarray .npctalk$[0],
+                /** All messages of the NPC
+                to register at the game. **/
+                
+                "Hi,",
+                "How can I help you?",
+                "Alright then, see you soon.",
+                "",
+                "I'm sorry, but a game is currently running. Please come again later.",
+                "Choose the color you wish to have, then ask for your friends to do the same.",
+                "If you choose the same color, I'll randomly pick who will have which color.",
+                "What color do you want?",
+                "Okay, I will now wait for your friends.",
+                "Great! The game can now start!",
+                "You have chosen the same color as your friend...",
+                "I will pick the colors randomly...",
+                "Wait...",
+                "You have already registered. Do you want to quit playing?";
+      
+      
+      
+                setarray .npcmenu$[0],
+                /** All NPC's menus
+                to register ~~ **/ 
+                
+                "Register for a Chess Game",
+                "Records",
+                "Cancel",
+                "White",
+                "Red",
+                "Return",
+                "Yes",
+                "No",
+                "See Rankings",
+                "by number of...",
+                "Loses",
+                "Victories",
+                "General Ranking",
+                "GM menu",
+                "Game Debug",
+                "Reset Ranking",
+                "", /** "Reload Preferences"
+                    [Function Remove, can never
+                    work with the current definition
+                    of NPC ]**/
+		"Warp back";
+
+
+                setarray $@CH_ANNONCE$[0],
+                /** All announce during
+                the game **/
+
+                " plays with the white color! The Game can now begin!",
+                "Check !!",
+                "Checkmate !!",
+                " is the winner!!",
+                "The game has been stopped by a Game Master!",
+                "The game has been canceled: a player has fallen asleep...",
+                "Pat !!";
+
+
+
+                setarray $@CH_name$[0],
+                /** All name of the pieces
+                of game.**/
+
+                "Pawn",
+                "Rook",
+                "Bishop",
+                "Knight",
+                "Queen",
+                "King";
+                
+                setarray .npcdebug$[1],
+                /** /!\ IMPORTANT !
+                It will show you the errors
+                in the configs. **/
+                
+                "^FF0000[Debug]^000000: Items settings : It must have as much as items than quantity of items: $@CH_RewardItem[0]",
+                "^FF0000[Debug]^000000: Variables settings : It must have as much as variables than variables's value : $@CH_RewardVar$[0]",
+                "";
+
+      /*/!\  /!\  /!\  /!\  /!\  /!\  /!\  /!\  /!\  /!\  /!\  /!\  /!\  /!\ 
+        /!\  /!\  /!\    EDIT AT YOUR OWN RISK !!!   /!\  /!\  /!\  /!\  /!\  
+        /!\  /!\  /!\  /!\  /!\  /!\  /!\  /!\  /!\  /!\  /!\  /!\  /!\  /!\*/
+
+        set .init,1;
+        set $@CH_reset,0;
+        set $@echec,0;
+        set $@CH_game,0;
+        set $@CH_blanc$,"";
+        set $@CH_noir$,"";
+        setarray $@CH_combo[17], 1, 1, 1, 1;
+         
+        setarray $@chesspositionx[1],27,31,35,39,43,47,51,55;
+        setarray $@chesspositiony[1],24,28,32,36,40,44,48,52;
+        cleararray $@casedanger[0],0,128;
+            
+        setarray $@caseall[11],    17,    1,    0,    0,    0,     0,    9,    19;
+        setarray $@caseall[21],    25,    2,    0,    0,    0,    0,    10,    27;
+        setarray $@caseall[31],    21,    3,    0,    0,    0,    0,    11,    23;
+        setarray $@caseall[41],    29,    4,    0,    0,    0,    0,    12,    30;
+        setarray $@caseall[51],    31,    5,    0,    0,    0,    0,    13,    32;
+        setarray $@caseall[61],    22,    6,    0,    0,    0,    0,    14,    24;
+        setarray $@caseall[71],    26,    7,    0,    0,    0,    0,    15,    28;
+        setarray $@caseall[81],    18,    8,    0,    0,    0,    0,    16,    20;
+
+        setarray $@casecolor[11],    1,    0,    1,    0,    1,    0,    1,    0;
+        setarray $@casecolor[21],    0,    1,    0,    1,    0,    1,    0,    1;
+        setarray $@casecolor[31],    1,    0,    1,    0,    1,    0,    1,    0;
+        setarray $@casecolor[41],    0,    1,    0,    1,    0,    1,    0,    1;
+        setarray $@casecolor[51],    1,    0,    1,    0,    1,    0,    1,    0;
+        setarray $@casecolor[61],    0,    1,    0,    1,    0,    1,    0,    1;
+        setarray $@casecolor[71],    1,    0,    1,    0,    1,    0,    1,    0;
+        setarray $@casecolor[81],    0,    1,    0,    1,    0,    1,    0,    1;
+
+    /********************************************************************************************
+    *********************************************************************************************
+    PS : a lot of "1" and "0" in $@casecolor but it's the more quicliky to do an action :/
+    
+        Without Array:
+            set .@color, ( ((.CH_Piece/10+.CH_Piece%10)& 1)?1:0);
+
+        With Array:
+            set .@color, $@casecolor[.CH_Piece];
+
+    The second script is more rapid, that's why I use it. But yes it's not very beautiful to see 81 value with just 1 or 0...
+    *********************************************************************************************
+    ********************************************************************************************/
+
+
+        setarray $@chessXYall[1],12,22,32,42,52,62,72,82,17,27,37,47,57,67,77,87,11,81,18,88,31,61,38,68,21,71,28,78,41,48,51,58;
+        setarray $@chesscolorall[1],0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,1,1,0,0,1,1,0,0,1,1,0,1,0,1;
+        setarray $@chessclass[1] ,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,7,7;
+        
+        return 1;
+    }
+
+
+
+    function	look_at_settings	{
+            
+        if($@CH_reset || !.init || getarg(0,0))
+        {
+            donpcevent "::OnChessInit";
+               sleep2 100;
+               set $@CH_reset,0;
+        }
+
+        if(getarraysize($@CH_RewardItem)& 1 && $@Chess_Settings & 256)
+            set .@i,1;
+        if(getarraysize($@CH_RewardVar$)& 1 && ($@Chess_Settings & 512 || $@Chess_Settings & 1024) )
+            set .@i,2;
+
+        return .@i;
+    }
+    
+    function	show_ladder	{
+
+        while(1)
+        {
+            mes .npcname$;
+            mes .npcmenu$[8] + " " + .npcmenu$[9];
+            next;
+            set .@j,select(
+                (($@Chess_Settings & 32)?.npcmenu$[11]:"")+":"+
+                (($@Chess_Settings & 64)?.npcmenu$[10]:"")+":"+
+                (($@Chess_Settings & 128)?.npcmenu$[12]:"")+":"+
+                .npcmenu$[5]);
+
+            if(.@j == 4)
+                return 1;
+            
+            set .@temp$,(.@j==3)?"M":(.@j==2)?"L":"W";
+            
+                for(set .@i, 0; .@i <
+                    ((getarraysize(getd("$ChessLadder" + .@temp$ + $CH_ResetLadder + "$")) < .CH_nbshowladder)
+                    ? getarraysize(getd("$ChessLadder" + .@temp$ + $CH_ResetLadder + "$"))
+                    : .CH_nbshowladder); set .@i, .@i+1)
+                {
+                
+                    set .@string$,"";
+                        mes    "^FF0000"+(.@i+1) + (  (.@i < 10)?"- ":"-") +
+                        ( (.@j == 3 )?"":"^0000FF["+ getd("$ChessLadder" + .@temp$ + $CH_ResetLadder + "[" + .@i + "]") ) +"] ^000000  "+
+                        getd("$ChessLadder" + .@temp$ + $CH_ResetLadder + "$[" + .@i + "]");
+                }
+            next;
+        }
+    }
+
+    //=== SCRIPT ==========================================
+
+
+        if(look_at_settings() )
+        {
+            if(getgmlevel()<10) end;
+            mes .npcname$;
+            mes .npcdebug$[.@debug];
+            close;
+        }
+
+
+    while(1)
+    {
+
+        mes .npcname$;
+        mes .npctalk$[0];
+        mes .npctalk$[1];
+        next;
+
+        if($@CH_noir$==strcharinfo(0) || $@CH_blanc$==strcharinfo(0))
+        {
+               mes .npcname$;
+            mes .npctalk$[13];
+            next;
+            if( select( .npcmenu$[6], .npcmenu$[7] ) == 1)
+            {
+                   mes .npcname$;
+                   mes .npctalk$[2];
+                   doEvent "EchecsMat#ChessGame::OnCancel";
+                   close;
+            }
+            else
+            {
+                   mes .npcname$;
+                   mes .npctalk$[2];
+                   close;
+            }
+        }
+
+        switch( select( (
+                ($@CH_blanc$ != "" && $@CH_noir$ != "")?"":.npcmenu$[0] ),
+                (($@Chess_Settings & 32 || $@Chess_Settings & 64 || $@Chess_Settings & 128)?.npcmenu$[8]:""),
+                ((getgmlevel()>10)?.npcmenu$[13]:""),
+                .npcmenu$[17],
+                .npcmenu$[2] ) )
+        {
+
+            case 1:
+            
+                mes .npcname$;
+                mes .npctalk$[5];
+                mes .npctalk$[6];
+                next;
+                mes .npcname$;
+                mes .npctalk$[7];
+                next;
+                switch(select( .npcmenu$[3], .npcmenu$[4] ))
+                {
+
+                case 1:
+                    if($@CH_blanc$ != "")
+                    {
+                        set .@randomchess,rand(0,1);
+                        if(.@randomchess) set $@CH_noir$,strcharinfo(0);
+                        else
+                        {
+                            set $@CH_noir$,$@CH_blanc$;
+                            set $@CH_blanc$,strcharinfo(0);
+                        }
+                        mes .npcname$;
+                        mes .npctalk$[10];
+                        next;
+                        mes .npcname$;
+                        mes .npctalk$[11];
+                        next;
+                        mes .npcname$;
+                        mes .npctalk$[12];
+                        next;
+                        mes .npcname$;
+                        mes .npctalk$[9];
+                        close2;
+                        mapannounce "chess01",$@CH_blanc$+" "+$@CH_ANNONCE$[0],8;
+                        set $@CH_player,0;
+                        stopnpctimer;
+                        end;
+                    } 
+                    else
+                    {
+                        set $@CH_blanc$,strcharinfo(0);
+                        mes .npcname$;
+                        mes .npctalk$[9];
+                        close2;
+                        if($@CH_blanc$ == "" || $@CH_noir$ == "") end;
+                        mapannounce "chess01",$@CH_blanc$+" "+$@CH_ANNONCE$[0],8;
+                        set $@CH_player,0;
+                        stopnpctimer;
+                        end;
+                    }
+
+                case 2:
+                    if($@CH_noir$ != "")
+                    {
+                        set .@randomchess,rand(0,1);
+                        if(.@randomchess) set $@CH_blanc$,strcharinfo(0);
+                        else
+                        {
+                            set $@CH_blanc$,$@CH_noir$;
+                            set $@CH_noir$,strcharinfo(0);
+                        }
+                        mes .npcname$;
+                        mes .npctalk$[10];
+                        next;
+                        mes .npcname$;
+                        mes .npctalk$[11];
+                        next;
+                        mes .npcname$;
+                        mes .npctalk$[12];
+                        next;
+                        mes .npcname$;
+                        mes .npctalk$[9];
+                        close2;
+                        mapannounce "chess01",$@CH_blanc$+" "+$@CH_ANNONCE$[0],8;
+                        set $@CH_player,0;
+                        stopnpctimer;
+                        end;
+                    } 
+                    else
+                    {
+                        set $@CH_noir$,strcharinfo(0);
+                        mes .npcname$;
+                        mes .npctalk$[9];
+                        close2;
+                        if($@CH_blanc$ == "" || $@CH_noir$ == "") end;
+                        mapannounce "chess01",$@CH_blanc$+" "+$@CH_ANNONCE$[0],8;
+                        set $@CH_player,0;
+                        stopnpctimer;
+                        end;
+                    }
+                }
+        
+        case 2:
+
+            do
+            {
+                set .@m, show_ladder();
+            } while(!.@m);
+             
+            break;
+
+        case 3:
+
+            mes .npcname$;
+            mes .npctalk$[1];
+            next;
+            switch(select(.npcmenu$[14],.npcmenu$[15],.npcmenu$[16],.npcmenu$[5]) )
+            {
+            
+            case 1:
+                mapannounce "chess01",$@CH_ANNONCE$[4],8;
+                donpcevent "::OnChessInit";
+                sleep2 100;
+                set $@CH_reset,0;
+                break;
+
+            case 2:
+                cleararray getd("$@ChessScoreM"+$CH_ResetLadder+"$[0]"),0,128;
+                cleararray getd("$@ChessScoreM"+$CH_ResetLadder+"[0]"),0,128;
+                cleararray getd("$@ChessScoreL"+$CH_ResetLadder+"$[0]"),0,128;
+                cleararray getd("$@ChessScoreL"+$CH_ResetLadder+"[0]"),0,128;
+                cleararray getd("$@ChessScoreW"+$CH_ResetLadder+"$[0]"),0,128;
+                cleararray getd("$@ChessScoreW"+$CH_ResetLadder+"[0]"),0,128;
+                set $CH_ResetLadder,$CH_ResetLadder+1;
+                break;
+            
+            case 3:
+
+                donpcevent "::OnChessInit";
+            case 4:
+
+             }
+        break;
+
+	case 4:
+		warp "prontera",155,182;
+		end;
+
+        case 5:
+        
+            mes .npcname$;
+            mes .npctalk$[2];
+            close;
+        }
+    }
+    
+    
+    OnTimer30000:
+        set $@CH_game,0;
+        set $@CH_blanc$,"";
+        set $@CH_noir$,"";
+        end;
+
+
+
+    OnInit:
+    
+        donpcevent "::OnChessInit";
+        end;
+
+
+    OnChessInit:
+        load_settings();
+        end;
+}
+
+
+
+
+/* * * * * * * * * * * * * * * * * * * *
+* * * * * * * *  PIONS  * * * * * * * *
+ * * * * * * * * * * * * * * * * * * */
+ 
+-	script	Pion#hide	-1,{
+
+
+    function	look_if_echec	{
+
+        set $@echec,0;
+        set .ChessXY,$@CH_newXY;
+        cleararray $@casedanger[0],0,128;
+        set .@j,1;
+
+        switch($@chessclass[.CH_piece])
+        {
+        
+            
+            case 1:
+
+                if(.ChessXY+11 == $@chessXYall[32])
+                {
+                    set $@echec,1;
+                    setarray $@casedanger[1],.ChessXY+11;
+                }
+                else if(.ChessXY-9 == $@chessXYall[32])
+                {
+                    set $@echec,1;
+                    setarray $@casedanger[1],.ChessXY-9;
+                }
+                break;
+
+
+
+            case 2:
+            
+                if(.ChessXY+9 == $@chessXYall[31])
+                {
+                    set $@echec,1;
+                    setarray $@casedanger[1],.ChessXY+9;
+                }
+                else if(.ChessXY-11 == $@chessXYall[31])
+                {
+                    set $@echec,1;
+                    setarray $@casedanger[1],.ChessXY-11;
+                }
+                break;
+
+
+
+            case 3:
+            
+                for(set .@n,0; .@n < 2; set .@n,.@n+1)
+                {
+					if($@echec) break;
+                    cleararray $@casedanger[0],0,128;
+                    set .@j,1;
+                    for (set .@i, 1; .@i < 8; set .@i, .@i + 1)
+                    {
+                        set .@CH_futurxy,.ChessXY+((.@n)?.@i:.@i*-1);
+                        if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+                        if(($@caseall[.@CH_futurxy]==32 || $@caseall[.@CH_futurxy]==31) &&
+						   $@chesscolorall[$@caseall[.@CH_futurxy]] != .chesscolor &&
+						   .ChessXY/10==.@CH_futurxy/10)
+                        {
+                            set $@echec,1;
+                            set .@i,9;
+                        }
+                        setarray $@casedanger[.@j],.@CH_futurxy;
+                        if($@caseall[.@CH_futurxy]) break;
+                        set .@j,.@j+1;
+                    }
+                }
+                
+                if($@echec) break;
+
+                for(set .@n,0; .@n < 2; set .@n,.@n+1)
+                {
+					if($@echec) break;
+                    cleararray $@casedanger[0],0,128;
+                    set .@j,1;
+                    for (set .@i, 10; .@i < 80; set .@i, .@i + 10)
+                    {
+                        set .@CH_futurxy,.ChessXY+.@i*((.@n)?1:-1);
+                        if(.@CH_futurxy>90 || .@CH_futurxy< 10) break;
+                        if(($@caseall[.@CH_futurxy]==32 || $@caseall[.@CH_futurxy]==31) &&
+						   $@chesscolorall[$@caseall[.@CH_futurxy]] != .chesscolor)
+                        {
+                            set $@echec,1;
+                            set .@i,90;
+                        }
+                        setarray $@casedanger[.@j],.@CH_futurxy;
+                        if($@caseall[.@CH_futurxy]) break;
+                        set .@j,.@j+1;
+                    }
+                }
+				
+                break;
+
+
+
+            case 4:
+            
+                setarray .@move[0],11,-11,9,-9;
+                for(set .@n,0; .@n < 4; set .@n, .@n+1)
+                {
+                    if($@echec) break;
+                    cleararray $@casedanger[0],0,128;
+                    set .@j,1;
+                    for (set .@i, .@move[.@n]; .@i < .@move[.@n]*9*((.@n &1)?-1:1); set .@i, .@i + .@move[.@n])
+                    {
+                        set .@CH_futurxy,.ChessXY+.@i;
+                        if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+                        if(($@caseall[.@CH_futurxy]==32 || $@caseall[.@CH_futurxy]==31) &&
+                            $@chesscolorall[$@caseall[.@CH_futurxy]] != .chesscolor &&
+                            $@casecolor[.ChessXY] == $@casecolor[.@CH_futurxy])
+                        {
+                            set $@echec,1;
+                            set .@i,90;
+                        }
+                        setarray $@casedanger[.@j],.@CH_futurxy;
+                        if($@caseall[.@CH_futurxy]) break;
+                        set .@j,.@j+1;
+                    }
+                }
+                break;
+
+
+            case 5:
+
+                cleararray $@casedanger[0],0,128;
+                setarray .@move[0],21,-21,19,-19,8,-8,12,-12;
+                
+                for(set .@n, 0; .@n < 8; set .@n, .@n+1)
+                {
+                    set .@CH_futurxy,.ChessXY+.@move[.@n];
+                    if(.@CH_futurxy>10 && .@CH_futurxy < 90)
+                        if(($@caseall[.@CH_futurxy]==32 || $@caseall[.@CH_futurxy]==31) &&
+                            $@chesscolorall[$@caseall[.@CH_futurxy]] != .chesscolor)
+                        {
+                            set $@echec,1;
+                            setarray $@casedanger[.@j],.@CH_futurxy;
+                        }
+                }
+                break;
+
+
+
+            case 6:
+
+                for(set .@n,0; .@n < 2; set .@n,.@n+1)
+                {
+					if($@echec) break;
+                    cleararray $@casedanger[0],0,128;
+                    set .@j,1;
+                    for (set .@i, 1; .@i < 8; set .@i, .@i + 1)
+                    {
+                        set .@CH_futurxy,.ChessXY+.@i*((.@n)?1:-1);
+                        if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+                        if(($@caseall[.@CH_futurxy]==32 || $@caseall[.@CH_futurxy]==31) &&
+                            $@chesscolorall[$@caseall[.@CH_futurxy]] != .chesscolor &&
+                            .ChessXY/10==.@CH_futurxy/10)
+                        {
+                            set $@echec,1;
+                            set .@i,9;
+                        }
+                        setarray $@casedanger[.@j],.@CH_futurxy;
+                        if($@caseall[.@CH_futurxy]) break;
+                        set .@j,.@j+1;
+                    }
+                }
+    
+                if($@echec) break;
+
+                for(set .@n,0; .@n < 2; set .@n,.@n+1)
+                {
+					if($@echec) break;
+                    cleararray $@casedanger[0],0,128;
+                    set .@j,1;
+                    for (set .@i, 10; .@i < 80; set .@i, .@i + 10)
+                    {
+                        set .@CH_futurxy,.ChessXY+.@i*((.@n)?1:-1);
+                        if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+                        if(($@caseall[.@CH_futurxy]==32 || $@caseall[.@CH_futurxy]==31) &&
+                            $@chesscolorall[$@caseall[.@CH_futurxy]] != .chesscolor)
+                        {
+                            set $@echec,1;
+                            set .@i,90;
+                        }
+                        setarray $@casedanger[.@j],.@CH_futurxy;
+                        if($@caseall[.@CH_futurxy]) break;
+                        set .@j,.@j+1;
+                    }
+                }
+
+                if($@echec) break;
+
+                setarray .@move[0],11,-11,9,-9;
+                for(set .@n,0; .@n < 4; set .@n, .@n+1)
+                {
+                    if($@echec) break;
+                    cleararray $@casedanger[0],0,128;
+                    set .@j,1;
+                    for (set .@i, .@move[.@n]; .@i < .@move[.@n]*9*((.@n &1)?-1:1); set .@i, .@i + .@move[.@n])
+                    {
+                        set .@CH_futurxy,.ChessXY+.@i;
+                        if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+                        if(($@caseall[.@CH_futurxy]==32 || $@caseall[.@CH_futurxy]==31) &&
+                            $@chesscolorall[$@caseall[.@CH_futurxy]] != .chesscolor &&
+                            $@casecolor[.ChessXY] == $@casecolor[.@CH_futurxy])
+                        {
+                            set $@echec,1;
+                            set .@i,90;
+                        }
+                        setarray $@casedanger[.@j],.@CH_futurxy;
+                        if($@caseall[.@CH_futurxy]) break;
+                        set .@j,.@j+1;
+                    }
+                }
+
+            break;
+        }
+
+        return $@echec;
+
+    }
+
+    function	load_move	{
+
+        /** ** ** ** ** ** ** ** ** **
+        getarg(0) = $@chessclass[.CH_piece]
+        getarg(1) = .CH_piece
+        getarg(2) = .ChessXY
+        getarg(3) = .chesscolor
+        ** ** ** ** ** ** ** ** ** **/
+
+        if(!getarraysize($@casedanger)) set $@casedanger[0],1;
+        
+        switch(getarg(0))
+        {
+        
+        
+            default:
+                logmes "Bug npc Chess";
+                debugmes "Bug npc Chess";
+                end;
+
+            case 1:
+
+                if(!$@echec || $@chesscolorall[ $@caseall[ $@casedanger[ getarraysize($@casedanger)-1 ] ] ] != getarg(3) )
+                {
+
+                            set .@CH_futurxy,getarg(2)+1;
+                            if($@caseall[.@CH_futurxy]) set .@CH_futurxy,0;
+                            else
+                            {
+                                if($@verifpat) return 1;
+                                else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                            }
+                            
+                            if(    !(getarg(2)%10-2) )
+                            {
+                                set .@CH_futurxy,getarg(2)+2;
+                                if($@caseall[.@CH_futurxy] || $@caseall[.@CH_futurxy-1]) set .@CH_futurxy,0;
+                                else
+                                {
+                                    if($@verifpat) return 1;
+                                    else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                                }
+                            }
+
+                            set .@CH_futurxy,getarg(2)+11;
+                            if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3))
+                            {
+                                if($@verifpat) return 1;
+                                else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                            }
+        
+                            if(getarg(2)>10) set .@CH_futurxy,getarg(2)-9;
+                            if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3))
+                            {
+                                if($@verifpat) return 1;
+                                else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                            }
+
+                }
+                else
+                {
+                            
+                            set .@CH_futurxy,getarg(2)+1;
+                            for (set .@i, 0; .@i < 9; set .@i, .@i + 1)
+                            {
+                                if(!$@caseall[.@CH_futurxy] && $@casedanger[.@i] == .@CH_futurxy)
+                                {
+                                    if($@verifpat) return 1;
+                                    else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                                }
+                            }
+                            
+                            if(!(getarg(2)%10-2) )
+                            {
+                                set .@CH_futurxy,getarg(2)+2;
+                                for (set .@i, 0; .@i < 9; set .@i, .@i + 1)
+                                {
+                                    if((!$@caseall[.@CH_futurxy] && !$@caseall[.@CH_futurxy-1]) &&
+                                    $@casedanger[.@i]==.@CH_futurxy)
+                                    {
+                                        if($@verifpat) return 1;
+                                        else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                                    }
+                                }
+                            }
+                        
+                            set .@CH_futurxy,getarg(2)+11;
+                            for (set .@i, 0; .@i < 9; set .@i, .@i + 1)
+                            {
+                                if($@caseall[.@CH_futurxy] &&
+                                   $@casedanger[.@i]==.@CH_futurxy &&
+                                   $@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3))
+                                {
+                                    if($@verifpat) return 1;
+                                    else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                                }
+                            }
+                            set .@CH_futurxy,getarg(2)-9;
+                            for (set .@i, 0; .@i < 9; set .@i, .@i + 1)
+                            {
+                                if(.@CH_futurxy < 11)break;
+                                if($@caseall[.@CH_futurxy] &&
+                                   $@casedanger[.@i]==.@CH_futurxy &&
+                                   $@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3))
+                                {
+                                    if($@verifpat) return 1;
+                                    else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                                }
+                            }                                    
+                }
+        return 0;
+
+            case 2:
+
+                    if(!$@echec || $@chesscolorall[$@caseall[$@casedanger[getarraysize($@casedanger)-1]]] != getarg(3))
+                    {
+                            if(getarg(2)>10) set .@CH_futurxy,getarg(2)-1;
+                            if($@caseall[.@CH_futurxy]) set .@CH_futurxy,0;
+                            else
+                            {
+                                if($@verifpat) return 1;
+                                else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                            }
+
+                            if(!(getarg(2)%10-7) )
+                            {
+                                if(getarg(2)>10) set .@CH_futurxy,getarg(2)-2;
+                                if($@caseall[.@CH_futurxy] || $@caseall[.@CH_futurxy+1]) set .@CH_futurxy,0;
+                                else
+                                {
+                                    if($@verifpat) return 1;
+                                    else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                                }
+                            }
+        
+                            if(getarg(2)>10) set .@CH_futurxy,getarg(2)-11;
+                            if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3))
+                            {
+                                if($@verifpat) return 1;
+                                else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                            } else set .@CH_futurxy,0;
+
+                            set .@CH_futurxy,getarg(2)+9;
+                            if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3))
+                            {
+                                if($@verifpat) return 1;
+                                else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                            } else set .@CH_futurxy,0;
+                            
+                    }
+                    else
+                    {
+                    
+                            set .@CH_futurxy,getarg(2)-1;
+                            for (set .@i, 0; .@i < 9; set .@i, .@i + 1)
+                            {
+                            if(.@CH_futurxy<=0)break;
+                                if(!$@caseall[.@CH_futurxy] && $@casedanger[.@i] == .@CH_futurxy)
+                                {
+                                    if($@verifpat) return 1;
+                                    else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                                }
+                            }
+                            
+                            if(!(getarg(2)%10-7) )
+                            {
+                                set .@CH_futurxy,getarg(2)-2;
+                                for (set .@i, 0; .@i < 9; set .@i, .@i + 1)
+                                {
+                                    if(.@CH_futurxy<11)break;
+                                    if((!$@caseall[.@CH_futurxy] && !$@caseall[.@CH_futurxy+1]) &&
+                                         $@casedanger[.@i]==.@CH_futurxy)
+                                    {
+                                        if($@verifpat) return 1;
+                                        else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                                    }
+                                }
+                            }
+                        
+                            set .@CH_futurxy,getarg(2)-11;
+                            for (set .@i, 0; .@i < 9; set .@i, .@i + 1)
+                            {
+                                if(.@CH_futurxy<11)break;
+                                if($@caseall[.@CH_futurxy] &&
+                                   $@casedanger[.@i]==.@CH_futurxy &&
+                                   $@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3))
+                                {
+                                    if($@verifpat) return 1;
+                                    else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                                }
+                            }
+                            set .@CH_futurxy,getarg(2)+9;
+                            for (set .@i, 0; .@i < 9; set .@i, .@i + 1)
+                            {
+                                if($@caseall[.@CH_futurxy] &&
+                                   $@casedanger[.@i]==.@CH_futurxy &&
+                                   $@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3))
+                                {
+                                    if($@verifpat) return 1;
+                                    else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                                }
+                            }
+                    }
+
+                return 0;
+
+            case 3:
+					
+                    if(!$@echec || $@chesscolorall[$@caseall[$@casedanger[getarraysize($@casedanger)-1]]] != getarg(3))
+					{
+
+						for(set .@n,0; .@n < 2; set .@n, .@n+1)
+		                    for (set .@i, 1; .@i < 9; set .@i, .@i + 1)
+							{
+		                        set .@CH_futurxy,getarg(2) + .@i *((.@n)?1:-1);
+		                        if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+		                        if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] == getarg(3) || getarg(2)/10 != .@CH_futurxy/10)
+								{
+		                            set .@CH_futurxy,0;
+		                            set .@i,9;
+		                        }
+								else if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3))
+								{
+		                            if($@verifpat) return 1;
+		                            donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+		                            set .@i,9;
+		                        }
+								else
+								{
+		                            if($@verifpat) return 1;
+		                            else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+		                        }
+		                    }
+
+							for(set .@n,0; .@n < 2; set .@n, .@n+1)
+			                    for (set .@i, 10; .@i < 90; set .@i, .@i + 10)
+								{
+			                        set .@CH_futurxy,getarg(2)+.@i *((.@n)?1:-1);
+			                        if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+			                        if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] == getarg(3))
+									{
+			                            set .@CH_futurxy,0;
+			                            set .@i,90;
+			                        }
+									else if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3))
+									{
+			                            if($@verifpat) return 1;
+			                            donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+			                            set .@i,90;
+			                        }
+									else
+									{
+			                            if($@verifpat) return 1;
+			                            else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+			                        }
+			                    }
+
+                    } else {
+                    
+							for(set .@n,0; .@n < 2; set .@n, .@n+1)
+			                    for (set .@i, 1; .@i < 9; set .@i, .@i + 1){
+			                        set .@CH_futurxy,getarg(2)+.@i *((.@n)?1:-1);
+			                        if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+			                        for (set .@j, 0; .@j < 9; set .@j, .@j + 1){
+			                            if((getarg(2)/10==.@CH_futurxy/10 && $@casedanger[.@j]==.@CH_futurxy) && (($@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3) && $@caseall[.@CH_futurxy]) || !$@caseall[.@CH_futurxy])){
+			                                if($@verifpat) return 1;
+			                                else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+			                            }
+			                        }
+			                        if($@caseall[.@CH_futurxy]) break;
+			                    }
+
+							for(set .@n,0; .@n < 2; set .@n, .@n+1)
+			                    for (set .@i, 10; .@i < 90; set .@i, .@i + 10){
+			                        set .@CH_futurxy,getarg(2)+ .@i *((.@n)?1:-1);
+			                        if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+			                        for (set .@j, 0; .@j < 9; set .@j, .@j + 1){
+			                            if(($@casedanger[.@j]==.@CH_futurxy) && (($@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3) && $@caseall[.@CH_futurxy]) || !$@caseall[.@CH_futurxy])){
+			                                if($@verifpat) return 1;
+			                                else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+			                            }
+			                        }
+			                        if($@caseall[.@CH_futurxy]) break;
+			                    }
+					}
+
+
+                return 0;
+
+        case 4:
+
+                setarray .@move[0],11,-11,9,-9;
+
+                if(!$@echec || $@chesscolorall[$@caseall[$@casedanger[getarraysize($@casedanger)-1]]] != getarg(3))
+
+                    for(set .@n,0; .@n < 4; set .@n, .@n+1)
+                        for (set .@i, .@move[.@n];
+                             .@i < .@move[.@n]*9*((.@n & 1)?-1:1);
+                             set .@i, .@i + .@move[.@n])
+                        {
+                            set .@CH_futurxy,getarg(2)+.@i;
+                            if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+                            if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] == getarg(3))
+                            {
+                                set .@CH_futurxy,0;
+                                set .@i,.@move[.@n]*9*((.@n & 1)?-1:1);
+                            }
+                            else if($@caseall[.@CH_futurxy] &&
+                                    $@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3) &&
+                                    $@casecolor[getarg(2)] == $@casecolor[.@CH_futurxy] )
+                            {
+                                if($@verifpat) return 1;
+                                donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                                set .@i,.@move[.@n]*9*((.@n & 1)?-1:1);
+                            }
+                            else if($@casecolor[getarg(2)] == $@casecolor[.@CH_futurxy])
+                            {
+                                    if($@verifpat) return 1;
+                                    else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                            }
+                        }
+
+                else 
+
+                    for(set .@n,0; .@n < 4; set .@n, .@n+1)
+                        for (set .@i, .@move[.@n];
+                             .@i < .@move[.@n]*9*((.@n & 1)?-1:1);
+                             set .@i, .@i + .@move[.@n])
+                        {
+                            set .@CH_futurxy,getarg(2)+.@i;
+                            if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+                            for (set .@j, 0; .@j < 8; set .@j, .@j + 1)
+                            {
+                                if(($@casedanger[.@j]==.@CH_futurxy &&
+                                    $@casecolor[getarg(2)] == $@casecolor[.@CH_futurxy]) &&
+                                    (($@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3) &&
+                                     $@caseall[.@CH_futurxy]) || !$@caseall[.@CH_futurxy]))
+                                {
+                                    if($@verifpat) return 1;
+                                    else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                                }
+                            }
+                            if($@caseall[.@CH_futurxy]) break;
+                        }
+
+                return 0;
+
+
+        case 5:
+
+                setarray .@move[0],21,-21,19,-19,12,-12,8,-8;
+                
+                if(!$@echec || $@chesscolorall[$@caseall[$@casedanger[getarraysize($@casedanger)-1]]] != getarg(3))
+
+                    for(set .@n,0; .@n < 8; set .@n, .@n+1)
+                    {
+                        set .@CH_futurxy,getarg(2)+.@move[.@n];
+                        if(.@CH_futurxy > 10 && .@CH_futurxy < 90)
+                            if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] == getarg(3))
+                                set .@CH_futurxy,0;
+                            else
+                            {
+                                if($@verifpat && .@CH_futurxy) return 1;
+                                else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                            }
+                        else continue;
+                    }
+
+                else
+
+                    for(set .@n,0; .@n < 8; set .@n, .@n+1)
+                    {
+                        set .@CH_futurxy,getarg(2)+.@move[.@n];
+                        if(.@CH_futurxy > 10 && .@CH_futurxy < 90)
+                        for (set .@i, 0; .@i < 9; set .@i, .@i + 1)
+                        {
+                            if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] == getarg(3))
+                                set .@CH_futurxy,0;
+                            else if($@casedanger[.@i]==.@CH_futurxy)
+                            {
+                                if($@verifpat && .@CH_futurxy) return 1;
+                                else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+                            }
+                        }
+                    }
+
+                    return 0;
+                
+                
+            case 6:
+
+                    if(!$@echec || $@chesscolorall[$@caseall[$@casedanger[getarraysize($@casedanger)-1]]] != getarg(3))
+                    {
+					
+						for(set .@n,0; .@n < 2; set .@n, .@n+1)
+		                    for (set .@i, 1; .@i < 9; set .@i, .@i + 1){
+		                        set .@CH_futurxy,getarg(2) + .@i *((.@n)?1:-1);
+		                        if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+		                        if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] == getarg(3) || getarg(2)/10 != .@CH_futurxy/10){
+		                            set .@CH_futurxy,0;
+		                            set .@i,9;
+		                        } else if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3)){
+		                            if($@verifpat) return 1;
+		                            donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+		                            set .@i,9;
+		                        } else {
+		                            if($@verifpat) return 1;
+		                            else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+		                        }
+		                    }
+
+						for(set .@n,0; .@n < 2; set .@n, .@n+1)
+		                    for (set .@i, 10; .@i < 90; set .@i, .@i + 10){
+		                        set .@CH_futurxy,getarg(2)+.@i *((.@n)?1:-1);
+		                        if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+		                        if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] == getarg(3)){
+		                            set .@CH_futurxy,0;
+		                            set .@i,90;
+		                        } else if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3)){
+		                            if($@verifpat) return 1;
+		                            donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+		                            set .@i,90;
+		                        } else {
+		                            if($@verifpat) return 1;
+		                            else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+		                        }
+		                    }
+
+                        setarray .@move[0],11,-11,9,-9;
+	                    for(set .@n,0; .@n < 4; set .@n, .@n+1)
+	                        for (set .@i, .@move[.@n];
+	                             .@i < .@move[.@n]*9*((.@n & 1)?-1:1);
+	                             set .@i, .@i + .@move[.@n])
+	                        {
+	                            set .@CH_futurxy,getarg(2)+.@i;
+	                            if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+	                            if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] == getarg(3))
+	                            {
+	                                set .@CH_futurxy,0;
+	                                set .@i,.@move[.@n]*9*((.@n & 1)?-1:1);
+	                            }
+	                            else if($@caseall[.@CH_futurxy] &&
+	                                    $@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3) &&
+	                                    $@casecolor[getarg(2)] == $@casecolor[.@CH_futurxy] )
+	                            {
+	                                if($@verifpat) return 1;
+	                                donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+	                                set .@i,.@move[.@n]*9*((.@n & 1)?-1:1);
+	                            }
+	                            else if($@casecolor[getarg(2)] == $@casecolor[.@CH_futurxy])
+	                            {
+	                                    if($@verifpat) return 1;
+	                                    else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+	                            }
+	                        }
+                        
+                    }
+                    else
+                    {
+						for(set .@n,0; .@n < 2; set .@n, .@n+1)
+		                    for (set .@i, 1; .@i < 9; set .@i, .@i + 1){
+		                        set .@CH_futurxy,getarg(2)+.@i *((.@n)?1:-1);
+		                        if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+		                        for (set .@j, 0; .@j < 9; set .@j, .@j + 1){
+		                            if((getarg(2)/10==.@CH_futurxy/10 && $@casedanger[.@j]==.@CH_futurxy) && (($@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3) && $@caseall[.@CH_futurxy]) || !$@caseall[.@CH_futurxy])){
+		                                if($@verifpat) return 1;
+		                                else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+		                            }
+		                        }
+		                        if($@caseall[.@CH_futurxy]) break;
+		                    }
+
+
+						for(set .@n,0; .@n < 2; set .@n, .@n+1)
+		                    for (set .@i, 10; .@i < 90; set .@i, .@i + 10){
+		                        set .@CH_futurxy,getarg(2)+ .@i *((.@n)?1:-1);
+		                        if(.@CH_futurxy > 90 || .@CH_futurxy < 10) break;
+		                        for (set .@j, 0; .@j < 9; set .@j, .@j + 1){
+		                            if(($@casedanger[.@j]==.@CH_futurxy) && (($@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3) && $@caseall[.@CH_futurxy]) || !$@caseall[.@CH_futurxy])){
+		                                if($@verifpat) return 1;
+		                                else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+		                            }
+		                        }
+		                        if($@caseall[.@CH_futurxy]) break;
+		                    }
+
+						setarray .@move[0],11,-11,9,-9;
+	                    for(set .@n,0; .@n < 4; set .@n, .@n+1)
+	                        for (set .@i, .@move[.@n];
+	                             .@i < .@move[.@n]*9*((.@n & 1)?-1:1);
+	                             set .@i, .@i + .@move[.@n])
+	                        {
+	                            set .@CH_futurxy,getarg(2)+.@i;
+	                            if(.@CH_futurxy > 90 || .@CH_futurxy < 11) break;
+	                            for (set .@j, 0; .@j < 8; set .@j, .@j + 1)
+	                            {
+	                                if(($@casedanger[.@j]==.@CH_futurxy &&
+	                                    $@casecolor[getarg(2)] == $@casecolor[.@CH_futurxy]) &&
+	                                    (($@chesscolorall[$@caseall[.@CH_futurxy]] != getarg(3) &&
+	                                     $@caseall[.@CH_futurxy]) || !$@caseall[.@CH_futurxy]))
+	                                {
+	                                    if($@verifpat) return 1;
+	                                    else donpcevent "move#"+.@CH_futurxy+"::OnEffect";
+	                                }
+	                            }
+	                            if($@caseall[.@CH_futurxy]) break;
+	                        }
+	                    }
+                    
+                    return 0;
+
+            case 7:
+                        
+                        setarray .@move[0],1,-1,10,-10,11,-11,9,-9;
+                        for(set .@n,0; .@n < 8; set .@n, .@n+1)
+                        {
+                            set .@CH_futurxy,getarg(2)+ .@move[.@n];
+                            if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] == getarg(3))
+                                set .@CH_futurxy,0;
+                            else
+                                callsub OnVerif,getarg(0),.@CH_futurxy,getarg(2),getarg(3);
+                            if(.@CH_futurxy && $@verifpat &&
+                               .@CH_futurxy%10!=9 && .@CH_futurxy%10 &&
+                               .@CH_futurxy<89 && .@CH_futurxy>10) return 1;
+                        }
+                            
+                            if($@verifpat) return 0;
+
+                            if(getarg(1) == 31 && $@Chess_Settings & 1)
+                            {
+                                if($@CH_combo[17] && !$@caseall[21] && !$@caseall[31] && !$@caseall[41])
+                                {
+                                    set .@CH_futurxy,getarg(2)-20;
+                                    if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] == getarg(3))
+                                        set .@CH_futurxy,0;
+                                    else
+                                        callsub OnVerif,getarg(0),.@CH_futurxy,getarg(2),getarg(3);
+                                }
+                                if($@CH_combo[18] && !$@caseall[61] && !$@caseall[71])
+                                {
+                                    set .@CH_futurxy,getarg(2)+20;
+                                    if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] == getarg(3))
+                                        set .@CH_futurxy,0;
+                                    else
+                                        callsub OnVerif,getarg(0),.@CH_futurxy,getarg(2),getarg(3);
+                                }
+                            }
+                            else if(getarg(1) == 32  && $@Chess_Settings & 1)
+                            {
+                                if($@CH_combo[19] && !$@caseall[28] && !$@caseall[38] && !$@caseall[48])
+                                {
+                                    set .@CH_futurxy,getarg(2)-20;
+                                    if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] == getarg(3))
+                                        set .@CH_futurxy,0;
+                                    else
+                                        callsub OnVerif,getarg(0),.@CH_futurxy,getarg(2),getarg(3);
+                                }
+                                if($@CH_combo[20] && !$@caseall[68] && !$@caseall[78])
+                                {
+                                    set .@CH_futurxy,getarg(2)+20;
+                                    if($@caseall[.@CH_futurxy] && $@chesscolorall[$@caseall[.@CH_futurxy]] == getarg(3))
+                                        set .@CH_futurxy,0;
+                                    else
+                                        callsub OnVerif,getarg(0),.@CH_futurxy,getarg(2),getarg(3);
+                                }
+                            }
+                end;
+        }
+
+        OnVerif:
+
+        if(getarg(3))
+        {
+            
+                for (set .@i, 1; .@i < 9; set .@i, .@i + 1)
+                {
+                    if(getarg(1)+.@i > 90) break;
+                    if(getarg(1) /10 != (getarg(1)+.@i)/10) break;
+                    if($@caseall[getarg(1)+.@i] && !$@chesscolorall[$@caseall[getarg(1)+.@i]] &&
+                        ($@chessclass[$@caseall[getarg(1)+.@i]]==3 ||
+                         $@chessclass[$@caseall[getarg(1)+.@i]]==6)) set getarg(1),0;
+						if(!getarg(1)) break;
+                        if($@caseall[getarg(1)+.@i] && $@caseall[getarg(1)+.@i] != $@caseall[getarg(2)]) break;
+                }
+
+                if(!getarg(1)) return;
+                
+                for (set .@i, 1; .@i < 9; set .@i, .@i + 1)
+                {
+                    if(getarg(1)-.@i < 10) break;
+                    if(getarg(1) /10 != (getarg(1)-.@i)/10) break;
+                    if($@caseall[getarg(1)-.@i] && !$@chesscolorall[$@caseall[getarg(1)-.@i]] &&
+                        ($@chessclass[$@caseall[getarg(1)-.@i]]==3 ||
+                         $@chessclass[$@caseall[getarg(1)-.@i]]==6)) set getarg(1),0;
+						if(!getarg(1)) break;
+                        if($@caseall[getarg(1)-.@i] && $@caseall[getarg(1)-.@i] != $@caseall[getarg(2)]) break;
+                }
+                
+                if(!getarg(1)) return;
+
+                for (set .@i, 10; .@i < 90; set .@i, .@i + 10)
+                {
+                    if(getarg(1)+.@i>90) break;
+                    if($@caseall[getarg(1)+.@i] && !$@chesscolorall[$@caseall[getarg(1)+.@i]] &&
+                        ($@chessclass[$@caseall[getarg(1)+.@i]]==3 ||
+                         $@chessclass[$@caseall[getarg(1)+.@i]]==6)) set getarg(1),0;
+						if(!getarg(1)) break;
+                        if($@caseall[getarg(1)+.@i] && $@caseall[getarg(1)+.@i] != $@caseall[getarg(2)]) break;
+                }
+
+                if(!getarg(1)) return;
+
+                for (set .@i, 10; .@i < 90; set .@i, .@i + 10)
+                {
+                    if(getarg(1)-.@i < 10) break;
+                    if($@caseall[getarg(1)-.@i] && !$@chesscolorall[$@caseall[getarg(1)-.@i]] &&
+                        ($@chessclass[$@caseall[getarg(1)-.@i]]==3 ||
+                        $@chessclass[$@caseall[getarg(1)-.@i]]==6)) set getarg(1),0;
+						if(!getarg(1)) break;
+                        if($@caseall[getarg(1)-.@i] && $@caseall[getarg(1)-.@i] != $@caseall[getarg(2)]) break;
+                }
+
+                if(!getarg(1)) return;
+
+                setarray .@move[0],11,-11,9,-9;
+                for(set .@n,0; .@n < 4; set .@n, .@n+1)
+                {
+                    for (set .@i, .@move[.@n];
+                         .@i < .@move[.@n]*9*((.@n & 1)?-1:1);
+                         set .@i, .@i + .@move[.@n])
+                    {
+                        if(getarg(1)+.@i>90 || getarg(1)+.@i < 10) break;
+                        if($@caseall[getarg(1)+.@i] && !$@chesscolorall[$@caseall[getarg(1)+.@i]] &&
+                           $@casecolor[getarg(1)+.@i] == $@casecolor[getarg(1)] &&
+                          ($@chessclass[$@caseall[getarg(1)+.@i]]==4 ||
+                           $@chessclass[$@caseall[getarg(1)+.@i]]==6)) set getarg(1),0;
+                            if(!getarg(1)) break;
+                            if($@caseall[getarg(1)+.@i] && $@caseall[getarg(1)+.@i] != $@caseall[getarg(2)]) break;
+                    }
+                    if(!getarg(1)) return;
+                }
+            
+
+                setarray .@cavaliermove[0], 21,19,12,8;
+                for (set .@i, 0; .@i < 8; set .@i, .@i + 1)
+                {
+                    if(getarg(1)+.@cavaliermove[.@i]>90) break;
+                    if($@caseall[getarg(1)+.@cavaliermove[.@i]] &&
+                      !$@chesscolorall[$@caseall[getarg(1)+.@cavaliermove[.@i]]] &&
+                      ($@chessclass[$@caseall[getarg(1)+.@cavaliermove[.@i]]]==5)) set getarg(1),0;
+                }
+                
+                if(!getarg(1)) return;
+                
+                for (set .@i, 0; .@i < 4; set .@i, .@i + 1)
+                {
+                    if(getarg(1)-.@cavaliermove[.@i]<0) break;
+                    if($@caseall[getarg(1)-.@cavaliermove[.@i]] &&
+                      !$@chesscolorall[$@caseall[getarg(1)-.@cavaliermove[.@i]]] &&
+                      ($@chessclass[$@caseall[getarg(1)-.@cavaliermove[.@i]]]==5)) set getarg(1),0;
+                }
+                
+                if(!getarg(1)) return;
+                
+                    if(getarg(1)-11>10)
+                    if($@caseall[getarg(1)-11] &&
+                      !$@chesscolorall[$@caseall[getarg(1)-11]] &&
+                      ($@chessclass[$@caseall[getarg(1)-11]]== 1 ||
+                       $@chessclass[$@caseall[getarg(1)-11]]== 2)) set getarg(1),0;
+
+                    if($@caseall[getarg(1)+9] &&
+                      !$@chesscolorall[$@caseall[getarg(1)+9]] &&
+                      ($@chessclass[$@caseall[getarg(1)+9]]== 1 ||
+                       $@chessclass[$@caseall[getarg(1)+9]]== 2)) set getarg(1),0;
+
+
+                if(!getarg(1)) return;
+                if(!$@verifpat) donpcevent "move#"+getarg(1)+"::OnEffect";
+
+                return;
+                
+                
+        }
+        else
+        {
+
+                for (set .@i, 1; .@i < 9; set .@i, .@i + 1)
+                {
+                    if(getarg(1)+.@i>90) break;
+                    if(getarg(1) /10 != (getarg(1)+.@i)/10) break;
+                    if($@caseall[getarg(1)+.@i] && $@chesscolorall[$@caseall[getarg(1)+.@i]] &&
+                        ($@chessclass[$@caseall[getarg(1)+.@i]]==3 ||
+                         $@chessclass[$@caseall[getarg(1)+.@i]]==6))  set getarg(1),0;
+                        if(!getarg(1)) break;
+                        if($@caseall[getarg(1)+.@i] && $@caseall[getarg(1)+.@i] != $@caseall[getarg(2)]) break;
+                }
+                if(!getarg(1)) return;
+
+                
+                for (set .@i, 1; .@i < 9; set .@i, .@i + 1)
+                {
+                    if(getarg(1)-.@i < 10) break;
+                    if(getarg(1) /10 != (getarg(1)-.@i)/10) break;
+                    if( $@caseall[getarg(1)-.@i] && $@chesscolorall[$@caseall[getarg(1)-.@i]] &&
+                        ($@chessclass[$@caseall[getarg(1)-.@i]]==3 ||
+                         $@chessclass[$@caseall[getarg(1)-.@i]]==6)) set getarg(1),0;
+                        if(!getarg(1)) break;
+                        if($@caseall[getarg(1)-.@i] && $@caseall[getarg(1)-.@i] != $@caseall[getarg(2)]) break;
+                }
+                if(!getarg(1)) return;
+                
+                for (set .@i, 10; .@i < 90; set .@i, .@i + 10)
+                {
+                    if(getarg(1)+.@i > 90) break;
+                    if($@caseall[getarg(1)+.@i] && $@chesscolorall[$@caseall[getarg(1)+.@i]] &&
+                        ($@chessclass[$@caseall[getarg(1)+.@i]]==3 ||
+                         $@chessclass[$@caseall[getarg(1)+.@i]]==6)) set getarg(1),0;
+                        if(!getarg(1)) break;
+                        if($@caseall[getarg(1)+.@i] && $@caseall[getarg(1)+.@i] != $@caseall[getarg(2)]) break;
+                }
+                if(!getarg(1)) return;
+                for (set .@i, 10; .@i < 90; set .@i, .@i + 10)
+                {
+                    if(getarg(1)-.@i < 10) break;
+                    if($@caseall[getarg(1)-.@i] && $@chesscolorall[$@caseall[getarg(1)-.@i]] &&
+                        ($@chessclass[$@caseall[getarg(1)-.@i]]==3 ||
+                         $@chessclass[$@caseall[getarg(1)-.@i]]==6)) set getarg(1),0;
+                        if(!getarg(1)) break;
+                        if($@caseall[getarg(1)-.@i] && $@caseall[getarg(1)-.@i] != $@caseall[getarg(2)]) break;
+                }
+                if(!getarg(1)) return;
+
+                
+                setarray .@move[0],11,-11,9,-9;
+                for(set .@n,0; .@n < 4; set .@n, .@n+1)
+                {
+                    for (set .@i, .@move[.@n]; .@i < .@move[.@n]*((.@n & 1)?-1:1); set .@i, .@i + .@move[.@n])
+                    {
+                        if(getarg(1)+.@i > 90 || getarg(1)+.@i<10) break;
+                        if($@caseall[getarg(1)+.@i] && $@chesscolorall[$@caseall[getarg(1)+.@i]] &&
+                            $@casecolor[getarg(1)+.@i] == $@casecolor[getarg(1)] &&
+                            ($@chessclass[$@caseall[getarg(1)+.@i]]==4 ||
+                             $@chessclass[$@caseall[getarg(1)+.@i]]==6)) set getarg(1),0;
+                            if(!getarg(1)) break;
+                            if($@caseall[getarg(1)+.@i] && $@caseall[getarg(1)+.@i] != $@caseall[getarg(2)]) break;
+                    }
+                }
+                if(!getarg(1)) return;
+
+
+                setarray .@cavaliermove[0], 21,19,12,8;
+                
+                for (set .@i, 0; .@i < 4; set .@i, .@i + 1)
+                {
+                    if(getarg(1)+.@cavaliermove[.@i]>90) break;
+                    if($@caseall[getarg(1)+.@cavaliermove[.@i]] && $@chesscolorall[$@caseall[getarg(1)+.@cavaliermove[.@i]]] &&
+                        ($@chessclass[$@caseall[getarg(1)+.@cavaliermove[.@i]]]==5)) set getarg(1),0;
+                }
+                if(!getarg(1)) return;
+                
+                for (set .@i, 0; .@i < 4; set .@i, .@i + 1)
+                {
+                    if(getarg(1)-.@cavaliermove[.@i] < 10) break;
+                    if($@caseall[getarg(1)-.@cavaliermove[.@i]] && $@chesscolorall[$@caseall[getarg(1)-.@cavaliermove[.@i]]] &&
+                        ($@chessclass[$@caseall[getarg(1)-.@cavaliermove[.@i]]]==5)) set getarg(1),0;
+                }
+                
+                if(!getarg(1)) return;
+                
+                    if($@caseall[getarg(1)+11] && $@chesscolorall[$@caseall[getarg(1)+11]] &&
+                        ($@chessclass[$@caseall[getarg(1)+11]]==1 || $@chessclass[$@caseall[getarg(1)+11]]==2)) set getarg(1),0;
+                    if(getarg(1)-9 > 10)
+                    if($@caseall[getarg(1)-9] && $@chesscolorall[$@caseall[getarg(1)-9]] &&
+                        ($@chessclass[$@caseall[getarg(1)-9]]==1 || $@chessclass[$@caseall[getarg(1)-9]]==2)) set getarg(1),0;
+                        
+                if(!getarg(1)) return;
+                if(!$@verifpat) donpcevent "move#"+getarg(1)+"::OnEffect";
+                return;
+        }
+    }
+    
+        if(!$@Chess_GM_Testing)
+        {
+            if( $@CH_noir$ != strcharinfo(0) && $@CH_blanc$ != strcharinfo(0)) end;
+            if( (!$@CH_player && $@CH_noir$ == strcharinfo(0) )
+            || ($@CH_player && $@CH_blanc$ == strcharinfo(0)) ) end;
+        }
+        stopnpctimer "EchecsMat#ChessGame";
+        initnpctimer "EchecsMat#ChessGame";
+
+        set $@verifpat,0;
+        set $@CH_RID,getcharid(3);
+        set .CH_ataque,0;
+
+        for (set .@i, 10; .@i < 89; set .@i, .@i + 1)
+            donpcevent "move#"+.@i+"::OnHide";
+    
+        sleep2 200; //delay to hide effects (don't remove !!!)
+
+        set .CH_piece,atoi(strnpcinfo(2));
+        set .ChessXY,$@chessXYall[.CH_piece];
+
+        if(($@CH_blanc$ == strcharinfo(0) && $@chesscolorall[.CH_piece]) ||
+        ($@CH_noir$ == strcharinfo(0) && !$@chesscolorall[.CH_piece])) end;
+
+        set .chesscolor,$@chesscolorall[.CH_piece];
+        MiscEffect(400);
+        load_move($@chessclass[.CH_piece],.CH_piece,.ChessXY,.chesscolor);
+        end;
+
+
+
+    OnHide:
+    
+        MiscEffect(585);
+        sleep 600;
+        setnpcdisplay("Pion#"+getvariableofnpc(.CH_ataque,"move#true"),$@Chess_spritenum[12]);
+        end;
+
+
+
+    OnMove:
+
+        set .CH_ataque, getvariableofnpc(.CH_ataque,"move#true");
+        if($@chessXYall[.CH_ataque])
+        {
+            donpcevent "Pion#"+.CH_ataque+"::OnHide";
+            emotion (rand(2)?18:29),0;
+        }
+        else
+        {
+            setarray .@j[0],45,76,77,43,44,53,55,78,79,82,1,36;
+            emotion .@j[rand(0,getarraysize(.@j))],0;
+        }
+
+        if(.CH_ataque > 16 && .CH_ataque < 21) set $@CH_combo[.CH_ataque],0;
+        if(.CH_piece == 31) setarray $@CH_combo[17], 0, 0;
+        if(.CH_piece == 32) setarray $@CH_combo[19], 0, 0;
+        if(.CH_piece > 16 && .CH_ataque < 21) set $@CH_combo[.CH_ataque],0;
+
+        npcwalkto $@chesspositionx[$@CH_newX],$@chesspositiony[$@CH_newY];
+        set $@chessXYall[.CH_ataque],0;
+        set $@chessXYall[.CH_piece],$@CH_newXY;
+        set $@caseall[.ChessXY],0;
+        set $@caseall[$@chessXYall[.CH_piece]],.CH_piece;
+        
+        if(.CH_ataque > 30)
+        {
+            set $@echec,1;
+            donpcevent "EchecsMat#ChessGame::OnReset";
+            end;
+        }
+        
+        if($@Chess_Settings & 4 || $@Chess_Settings & 8 || $@Chess_Settings & 16 || $@Chess_Settings & 32)
+            if( .CH_piece && .CH_piece < 9 && $@CH_newY == 8 && $@chessclass[.CH_piece] == 1)
+            || (.CH_piece > 8 && .CH_piece < 17 && $@CH_newY == 1 && $@chessclass[.CH_piece] == 2)
+        {
+            attachrid $@CH_RID;
+            doevent "Pion#"+.CH_piece+"::OnChangeClass";
+            end;
+        }
+
+
+
+    CH_Continue:
+
+        if(look_if_echec() )
+        {
+            mapannounce "chess01",$@CH_ANNONCE$[1],1, (.chesscolor)? 0xFF3333 : 0x00FFFF;
+            set $@casedanger[0],.ChessXY;
+            donpcevent "Pion#"+((.chesscolor)?31:32)+"::OnEmo";
+        }
+
+        set .VarPat,0;
+        if(.chesscolor) setarray .coul[0], 31, 1,  2,  3,  4,  5,  6,  7,  8, 17, 18, 21, 22, 25, 26, 29;
+        else  setarray .coul[0],32, 9, 10, 11, 12, 13, 14, 15, 16, 19, 20, 23, 24, 27, 28, 30;
+
+        donpcevent "Pion#"+.coul[0]+"::OnVerifPat";
+        set $@CH_player,($@CH_player)?0:1;
+        end;
+
+
+
+
+    OnEmo:
+    
+        emotion ( (rand(2) )?16:(rand(2) )?23:79 ),0;
+        end;
+
+    OnEmo2:
+    
+        emotion 57,0;
+        end;
+
+
+
+    OnCombo:
+
+        set .@save,$@chessXYall[atoi(strnpcinfo(2))];
+        set .@x,.@save/10;
+        set .@y,.@save-.@x*10;
+        set .@piece,atoi(strnpcinfo(2));
+
+        if(.@piece == 17 || .@piece == 19) set .@move,3;
+        else if(.@piece == 18 || .@piece == 20) set .@move,-2;
+
+        npcwalkto $@chesspositionx[.@x+.@move],$@chesspositiony[.@y];            
+        set $@chessXYall[.@piece],(.@x+.@move)*10+.@y;
+        set $@caseall[.@save],0;
+        set $@caseall[$@chessXYall[.@piece]],.@piece;
+        end;
+
+
+
+    OnVerifPat:
+
+        set .ChessXY,$@chessXYall[atoi(strnpcinfo(2))];
+        set .CH_piece,atoi(strnpcinfo(2));
+        set .chesscolor,$@chesscolorall[.coul[.VarPat]];
+        set .save,.VarPat;
+        set $@verifpat,1;
+        
+        if(!load_move($@chessclass[.CH_piece],.CH_piece,.ChessXY,.chesscolor)
+        || !$@chessXYall[.coul[.VarPat]])
+        {
+            do
+            {
+              set .VarPat,.VarPat+1;
+            } while (!$@chessXYall[.coul[.VarPat]] && getarraysize(.coul)>= .varPat);
+        } else end;
+
+        donpcevent "Pion#"+.coul[.VarPat]+"::OnVerifPat";
+        if(!.coul[.VarPat] && .VarPat) donpcevent "EchecsMat#ChessGame::OnReset";
+        set .VarPat,0;    
+        end;
+
+
+
+    OnChangeClass:
+
+        do
+        {
+            mes "["+$@CH_name$[0]+"]";
+            for(set .@i, 1; .@i < 5; set .@i, .@i + 1)
+                set .@menu$, .@menu$ + ( ( $@Chess_Settings & ( 1 << .@i ) ) ? $@CH_name$[.@i]+":" : ":");
+            set .@i,prompt(.@menu$);
+        } while(.@i > 4);
+        
+        set $@chessclass[.CH_piece],.@i+2;
+        setnpcdisplay("Pion#"+.CH_piece,$@CH_name$[.@i]+"#"+.CH_piece, $@Chess_spritenum[(.@i*2)+.chesscolor]);
+        MiscEffect(371+.chesscolor);
+        close2;
+        goto CH_Continue; //pfff goto... I hate this...(no "return" with doevent... T_T)
+
+
+
+    OnChessInit:
+
+        sleep 100;
+        if(strnpcinfo(2) == "hide") end;
+        
+        set .@i,atoi(strnpcinfo(2));
+        
+        setnpcdisplay("Pion#"+.@i,
+            $@CH_name$[ (
+                        (.@i < 17)?0:
+                        (.@i < 21)?1:
+                        (.@i < 25)?2:
+                        (.@i < 29)?3:
+                        (.@i < 31)?4:
+                        (.@i < 33)?5:
+                        0) ] +"#"+.@i,
+            $@Chess_spritenum[ (
+                               (.@i < 9 )?0:
+                               (.@i < 17)?1:
+                               (.@i < 19)?2:
+                               (.@i < 21)?3:
+                               (.@i < 23)?4:
+                               (.@i < 25)?5:
+                               (.@i < 27)?6:
+                               (.@i < 29)?7:
+                               (.@i < 30)?8:
+                               (.@i < 31)?9:
+                               (.@i < 32)?10:
+                               (.@i < 33)?11:
+                               0) ]);
+        movenpc "Pion#"+atoi( strnpcinfo(2) ),
+            $@chesspositionx[ $@chessXYall[ atoi(strnpcinfo(2) ) ]/10],
+            $@chesspositiony[ $@chessXYall[ atoi(strnpcinfo(2) ) ]%10];
+        end;
+}
+
+
+
+/* * * * * * * * * * * * * * * * * * * * *
+* * * * * * * Effect Case * * * * * *  *
+* * * * * * * * * * * * * * * * * * * * */
+
+-	script	move#true	-1,{
+
+        if(!$@Chess_GM_Testing)
+        {
+            if($@CH_noir$ != strcharinfo(0) && $@CH_blanc$ != strcharinfo(0)) end;
+            if((!$@CH_player && $@CH_noir$ == strcharinfo(0)) || ( $@CH_player && $@CH_blanc$ == strcharinfo(0))) end;
+        }
+
+        for(set .@i,0; .@i < 90; set .@i,.@i+1)
+            if(.enable[.@i] == atoi(strnpcinfo(2)) ) break;
+        
+        if(.@i==90)
+        {
+            logmes strcharinfo(0)+" : try to cheat in Chess Game !!! >.<";
+            debugmes strcharinfo(0)+" : try to cheat in Chess Game !!! >.<";
+            end;
+        }
+        
+        set $@CH_newXY,atoi(strnpcinfo(2));
+        set $@CH_newX,$@CH_newXY/10;
+        set $@CH_newY,$@CH_newXY%10;
+
+        if(getvariableofnpc(.CH_piece,"Pion#hide") == 31)
+        {
+            if($@CH_newXY-getvariableofnpc(.ChessXY,"Pion#hide") == -20 ) 
+                donpcevent "Pion#"+17+"::OnCombo";
+            else if($@CH_newXY-getvariableofnpc(.ChessXY,"Pion#hide") == 20 )
+                donpcevent "Pion#"+18+"::OnCombo";
+        }
+        if(getvariableofnpc(.CH_piece,"Pion#hide") == 32)
+        {
+            if($@CH_newXY-getvariableofnpc(.ChessXY,"Pion#hide") == -20 )
+                donpcevent "Pion#"+19+"::OnCombo";
+            else if($@CH_newXY-getvariableofnpc(.ChessXY,"Pion#hide") == 20 )
+                donpcevent "Pion#"+20+"::OnCombo";
+        }
+        
+        set .CH_ataque,$@caseall[$@CH_newXY];
+        donpcevent "Pion#"+getvariableofnpc(.CH_piece,"Pion#hide")+"::OnMove";
+
+        for (set .@i, 10; .@i < 89; set .@i, .@i + 1)
+            donpcevent "move#"+.@i+"::OnHide";
+
+        end;
+
+
+
+    OnEffect:
+
+        set .enable[ getarraysize(.enable) ],atoi(strnpcinfo(2) );
+        setnpcdisplay( strnpcinfo(0),$@Chess_spritenum[13] );
+        set .effectcase, 1;
+        set .@i,5;
+    
+        while(.effectcase)
+        {
+            set .@i,.@i+1;
+            if(!(.@i%6) )
+			{
+                specialeffect 389;
+				set .@i,0;
+			}
+            else
+                sleep 200;
+        }
+
+
+
+    OnHide:
+    OnChessInit:
+        set .effectcase, 0;
+        cleararray .enable[0],0,120;
+        sleep 1;
+        setnpcdisplay(strnpcinfo(0),$@Chess_spritenum[12]);
+        end;
+}
+
+
+
+
+
+
+
+chess01,65,40,4	script	EchecsMat#ChessGame	-1,{
+end;
+
+
+        function	load_reset	{
+            stopnpctimer "EchecsMat#ChessGame";
+            attachrid getarg(0);
+                donpcevent "::OnChessInit";
+                sleep 20;
+                set $@CH_reset,1;
+            return;
+        }
+
+
+        function	load_ranking	{
+
+            switch(getarg(2))
+            {
+
+
+                case 1:
+                
+                //Win and Loose Ranquing
+                    set .@temp$, (getarg(0))?"W":"L";
+                    attachrid getarg(1);
+                    
+                    setd "ChessScore" + .@temp$ + $CH_ResetLadder, getd( "ChessScore" + .@temp$ + $CH_ResetLadder ) + 1;
+                    for(set .@i,0; .@i < 11; set .@i, .@i+1)
+                        if( getd( "$ChessLadder" + .@temp$ + $CH_ResetLadder +"[" + .@i + "]") < getd("ChessScore" + .@temp$ + $CH_ResetLadder) )
+                        {
+                            for(set .@j,0; .@j < 11; set .@j, .@j+1)
+                                if(getd( "$ChessLadder" + .@temp$ + $CH_ResetLadder +"$[" + .@j + "]" ) == strcharinfo(0) )
+                                {
+                                    copyarray getd( "$ChessLadder" + .@temp$ + $CH_ResetLadder + "[" + .@j + "]" ), getd( "$ChessLadder" + .@temp$ + $CH_ResetLadder + "[" + (.@j+1) + "]" ), 10-.@j ;
+                                    copyarray getd( "$ChessLadder" + .@temp$ + $CH_ResetLadder + "$[" + .@j + "]" ),getd( "$ChessLadder" + .@temp$ + $CH_ResetLadder +"$[" + (.@j+1) + "]" ), 10-.@j ;
+					//if(.@j>.@i && .@temp$=="W") 
+					//	announce strcharinfo(0)+" just claimed the "+(.@i+1)+". Position in the Top "+10+" Chess ladder.",16;
+					//set .@announced,1;
+                                } else continue;
+				//if(!.@announced)
+				//		announce strcharinfo(0)+" just claimed the "+(.@i+1)+". Position in the Top "+10+" Chess ladder by defeating "+getarg(3)+".",16;
+                            copyarray getd( "$ChessLadder" + .@temp$ + $CH_ResetLadder + "[" + (.@i+1) + "]" ), getd( "$ChessLadder" + .@temp$ + $CH_ResetLadder + "[" + .@i + "]" ), 10-.@i;
+                            copyarray getd( "$ChessLadder" + .@temp$ + $CH_ResetLadder + "$[" + (.@i+1) + "]" ),getd( "$ChessLadder" + .@temp$ + $CH_ResetLadder + "$[" + .@i + "]" ), 10-.@i;
+                            setd "$ChessLadder" + .@temp$ + $CH_ResetLadder +"[" + .@i + "]", getd( "ChessScore" + .@temp$ + $CH_ResetLadder);
+                            setd "$ChessLadder" + .@temp$ + $CH_ResetLadder +"$[" + .@i + "]", strcharinfo(0);
+                            break;
+                        }
+                        else
+                            continue;
+                    
+                    sleep 1;
+                    
+                //Remove old variables ranking (if GM reset).
+                    attachrid getarg(1);
+                    for(set .@i,0; .@i < $CH_ResetLadder-1; set .@i, .@i + 1)
+                    {
+                        setd "ChessScoreW" + .@i, 0;
+                        setd "ChessScoreL" + .@i, 0;
+                    }
+
+                    return;
+
+
+
+
+                case 2:
+
+                    for(set .@i,0; .@i < getarraysize($@CH_RewardItem); set .@i, .@i+2)
+                        getitem $@CH_RewardItem[.@i],$@CH_RewardItem[.@i+1],getarg(1);
+                    return;
+
+
+                    
+
+                case 3:
+
+                    attachrid getarg(1);
+                    if(getarg(0))
+                        for(set .@i,0; .@i < getarraysize($@CH_RewardVar$); set .@i, .@i+2)
+                            setd $@CH_RewardVar$[.@i],getd($@CH_RewardVar$[.@i]) + atoi($@CH_RewardVar$[.@i+1]);
+                    else
+                        for(set .@i,0; .@i < getarraysize($@CH_RewardVar$); set .@i, .@i+2)
+                            setd $@CH_RewardVar$[.@i],getd($@CH_RewardVar$[.@i]) - atoi($@CH_RewardVar$[.@i+1]);
+                    return;
+
+
+
+
+
+                case 4:
+                
+                //Average Ranquing
+                    attachrid getarg(1);
+                    set .@value,getd("ChessScoreW" + $CH_ResetLadder)-getd("ChessScoreL" + $CH_ResetLadder);
+                    for(set .@i,0; .@i < 127; set .@i, .@i+1)
+                        if( getd("$ChessLadderM" + $CH_ResetLadder + "[" + .@i + "]") < .@value )
+                        {
+                            for(set .@j,0; .@j < 127; set .@j, .@j+1)
+                                if(getd("$ChessLadderM"+ $CH_ResetLadder +"$[" + .@i + "]") == strcharinfo(0) )
+                                {
+                                    copyarray getd("$ChessLadderM" + $CH_ResetLadder + "$[" + .@j + "]"), getd("$ChessLadderM" + $CH_ResetLadder +"$[" + (.@j+1) + "]"), 126-.@j ;
+                                    copyarray getd("$ChessLadderM" + $CH_ResetLadder +"[" + .@j + "]"), getd("$ChessLadderM" + $CH_ResetLadder + "[" + (.@j+1) + "]"), 126-.@j ;
+                                }
+                                else
+                                    continue;
+                            copyarray getd("$ChessLadderM" + $CH_ResetLadder + "[" + (.@i+1) + "]"), getd("$ChessLadderM" + $CH_ResetLadder + "[" + .@i + "]"), 126-.@i;
+                            copyarray getd("$ChessLadderM" + $CH_ResetLadder + "$[" + (.@i+1) + "]"), getd("$ChessLadderM" + $CH_ResetLadder + "$[" + .@i + "]"), 126-.@i;
+                            setd "$ChessLadderM" + $CH_ResetLadder + "[" + .@i + "]", .@value;
+                            setd "$ChessLadderM" + $CH_ResetLadder + "$[" + .@i + "]", strcharinfo(0);
+                            break;
+                        } else
+                            continue;
+                    return;
+            }
+        }
+
+
+
+    OnTimer600000:
+   
+        mapannounce "chess01",$@CH_ANNONCE$[5],1,0x00FFFF;
+        stopnpctimer;
+
+
+
+
+    OnCancel:
+
+        set $@echec,0;
+        load_reset($@CH_RID);
+        end;
+
+
+
+    OnReset:
+
+        mapannounce "chess01",$@CH_ANNONCE$[($@echec)?2:6],8;
+        donpcevent "Pion#"+((getvariableofnpc(.chesscolor,"Pion#hide"))?32:31)+"::OnEmo2";
+        sleep 3000;
+        
+        if($@echec)
+        {
+
+            //Announce
+            attachrid $@CH_RID;
+            mapannounce "chess01",strcharinfo(0)+" "+$@CH_ANNONCE$[3],8;
+
+            //define winner/looser
+            set .@winner,getcharid(3,($@CH_noir$ == strcharinfo(0))?$@CH_noir$:$@CH_blanc$);
+            set .@looser,getcharid(3,($@CH_noir$ == strcharinfo(0))?$@CH_blanc$:$@CH_noir$);
+
+		//         set $@Chess_Settings,1631;
+		//	1024, 512, 64, 
+            //Load Settings
+            if($@Chess_Settings & 32) load_ranking 1,.@winner,1;
+            if($@Chess_Settings & 64) load_ranking 0,.@looser,1;
+            if($@Chess_Settings & 128) load_ranking 1,.@winner,4;
+            if($@Chess_Settings & 256) load_ranking 1,.@winner,2;
+            if($@Chess_Settings & 512) load_ranking 1,.@winner,3;
+            if($@Chess_Settings & 1024) load_ranking 0,.@looser,3;
+        }
+        
+        sleep 3000;
+        load_reset($@CH_RID);
+        end;
+}
+
+
+
+
+/* * * * * * * * * * * * * * * *
+* * * * * DUPLICATES  * *
+* * * * * * * * * * * * * */
+	
+chess01,27,28,8	duplicate(Pion#hide)	Pion#1	1776
+chess01,31,28,8	duplicate(Pion#hide)	Pion#2	1776
+chess01,35,28,8	duplicate(Pion#hide)	Pion#3	1776
+chess01,39,28,8	duplicate(Pion#hide)	Pion#4	1776
+chess01,43,28,8	duplicate(Pion#hide)	Pion#5	1776
+chess01,47,28,8	duplicate(Pion#hide)	Pion#6	1776
+chess01,51,28,8	duplicate(Pion#hide)	Pion#7	1776
+chess01,55,28,8	duplicate(Pion#hide)	Pion#8	1776
+chess01,27,48,4	duplicate(Pion#hide)	Pion#9	1837
+chess01,31,48,4	duplicate(Pion#hide)	Pion#10	1837
+chess01,35,48,4	duplicate(Pion#hide)	Pion#11	1837
+chess01,39,48,4	duplicate(Pion#hide)	Pion#12	1837
+chess01,43,48,4	duplicate(Pion#hide)	Pion#13	1837
+chess01,47,48,4	duplicate(Pion#hide)	Pion#14	1837
+chess01,51,48,4	duplicate(Pion#hide)	Pion#15	1837
+chess01,55,48,4	duplicate(Pion#hide)	Pion#16	1837
+chess01,27,24,8	duplicate(Pion#hide)	Pion#17	1319
+chess01,55,24,8	duplicate(Pion#hide)	Pion#18	1319
+chess01,27,52,4	duplicate(Pion#hide)	Pion#19	1318
+chess01,55,52,4	duplicate(Pion#hide)	Pion#20	1318
+chess01,35,24,8	duplicate(Pion#hide)	Pion#21	1778
+chess01,47,24,8	duplicate(Pion#hide)	Pion#22	1778
+chess01,35,52,4	duplicate(Pion#hide)	Pion#23	1705
+chess01,47,52,4	duplicate(Pion#hide)	Pion#24	1705
+chess01,31,24,8	duplicate(Pion#hide)	Pion#25	1775
+chess01,51,24,8	duplicate(Pion#hide)	Pion#26	1775
+chess01,31,52,4	duplicate(Pion#hide)	Pion#27	1310
+chess01,51,52,4	duplicate(Pion#hide)	Pion#28	1310
+chess01,39,24,8	duplicate(Pion#hide)	Pion#29	1777
+chess01,39,52,4	duplicate(Pion#hide)	Pion#30	1833
+chess01,43,24,8	duplicate(Pion#hide)	Pion#31	1779
+chess01,43,52,4	duplicate(Pion#hide)	Pion#32	1832
+
+//Effect
+chess01,26,25,4	duplicate(move#true)	move#11	139
+chess01,26,29,4	duplicate(move#true)	move#12	139
+chess01,26,33,4	duplicate(move#true)	move#13	139
+chess01,26,37,4	duplicate(move#true)	move#14	139
+chess01,26,41,4	duplicate(move#true)	move#15	139
+chess01,26,45,4	duplicate(move#true)	move#16	139
+chess01,26,49,4	duplicate(move#true)	move#17	139
+chess01,26,53,4	duplicate(move#true)	move#18	139
+chess01,30,25,4	duplicate(move#true)	move#21	139
+chess01,30,29,4	duplicate(move#true)	move#22	139
+chess01,30,33,4	duplicate(move#true)	move#23	139
+chess01,30,37,4	duplicate(move#true)	move#24	139
+chess01,30,41,4	duplicate(move#true)	move#25	139
+chess01,30,45,4	duplicate(move#true)	move#26	139
+chess01,30,49,4	duplicate(move#true)	move#27	139
+chess01,30,53,4	duplicate(move#true)	move#28	139
+chess01,34,25,4	duplicate(move#true)	move#31	139
+chess01,34,29,4	duplicate(move#true)	move#32	139
+chess01,34,33,4	duplicate(move#true)	move#33	139
+chess01,34,37,4	duplicate(move#true)	move#34	139
+chess01,34,41,4	duplicate(move#true)	move#35	139
+chess01,34,45,4	duplicate(move#true)	move#36	139
+chess01,34,49,4	duplicate(move#true)	move#37	139
+chess01,34,53,4	duplicate(move#true)	move#38	139
+chess01,38,25,4	duplicate(move#true)	move#41	139
+chess01,38,29,4	duplicate(move#true)	move#42	139
+chess01,38,33,4	duplicate(move#true)	move#43	139
+chess01,38,37,4	duplicate(move#true)	move#44	139
+chess01,38,41,4	duplicate(move#true)	move#45	139
+chess01,38,45,4	duplicate(move#true)	move#46	139
+chess01,38,49,4	duplicate(move#true)	move#47	139
+chess01,38,53,4	duplicate(move#true)	move#48	139
+chess01,42,25,4	duplicate(move#true)	move#51	139
+chess01,42,29,4	duplicate(move#true)	move#52	139
+chess01,42,33,4	duplicate(move#true)	move#53	139
+chess01,42,37,4	duplicate(move#true)	move#54	139
+chess01,42,41,4	duplicate(move#true)	move#55	139
+chess01,42,45,4	duplicate(move#true)	move#56	139
+chess01,42,49,4	duplicate(move#true)	move#57	139
+chess01,42,53,4	duplicate(move#true)	move#58	139
+chess01,46,25,4	duplicate(move#true)	move#61	139
+chess01,46,29,4	duplicate(move#true)	move#62	139
+chess01,46,33,4	duplicate(move#true)	move#63	139
+chess01,46,37,4	duplicate(move#true)	move#64	139
+chess01,46,41,4	duplicate(move#true)	move#65	139
+chess01,46,45,4	duplicate(move#true)	move#66	139
+chess01,46,49,4	duplicate(move#true)	move#67	139
+chess01,46,53,4	duplicate(move#true)	move#68	139
+chess01,50,25,4	duplicate(move#true)	move#71	139
+chess01,50,29,4	duplicate(move#true)	move#72	139
+chess01,50,33,4	duplicate(move#true)	move#73	139
+chess01,50,37,4	duplicate(move#true)	move#74	139
+chess01,50,41,4	duplicate(move#true)	move#75	139
+chess01,50,45,4	duplicate(move#true)	move#76	139
+chess01,50,49,4	duplicate(move#true)	move#77	139
+chess01,50,53,4	duplicate(move#true)	move#78	139
+chess01,54,25,4	duplicate(move#true)	move#81	139
+chess01,54,29,4	duplicate(move#true)	move#82	139
+chess01,54,33,4	duplicate(move#true)	move#83	139
+chess01,54,37,4	duplicate(move#true)	move#84	139
+chess01,54,41,4	duplicate(move#true)	move#85	139
+chess01,54,45,4	duplicate(move#true)	move#86	139
+chess01,54,49,4	duplicate(move#true)	move#87	139
+chess01,54,53,4	duplicate(move#true)	move#88	139

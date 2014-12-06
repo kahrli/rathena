@@ -1,0 +1,127 @@
+//===== eAthena Script ======================================= 
+//= Loki Mask Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+niflheim.gat,351,251,6	script	Cursed Spirit#loki	802,{
+
+	mes "[Cursed Spirit]";
+	completequest 16000;
+	mes "For what business hast thou come?";
+	next;
+	menu "I'm here to spread the word of God!",L_god,"Got any good treasures?",-,"I have what you requested.",L_make;
+	mes "[Cursed Spirit]";
+	mes "Hmm... Before I answer that, you";
+	mes "must answer some of my own questions.";
+	next;
+	mes "[Cursed Spirit]";
+	mes "Do you still wish to know?";
+	next;
+	menu "You bet!",-,"Uh, I dunno...",L_fail;
+	mes "[Cursed Spirit]";
+	mes "Very well then.";
+	mes "Here is your first question...";
+	next;
+	mes "[Cursed Spirit]";
+	mes "Who was Loki's blood-brother?";
+	next;
+	menu "Baldur!",L_wrong,"Odin!",-,"Thor!",L_wrong;
+	mes "[Cursed Spirit]";
+	mes "What is Loki to the great, eight-legged horse Sleipnir?";
+	next;
+	menu "Brother!",L_wrong,"Mother!",-,"Father!",L_wrong;
+	mes "[Cursed Spirit]";
+	mes "Hmm, you're doing better than I thought.";
+	mes "Here is your final question:";
+	mes "What will happen to Loki once Ragnarok occurs?";
+	next;
+	menu "He will die!",L_wrong,"He will be free from his bindings!",-,"He'll choke a bitch!",L_wrong;
+	mes "[Cursed Spirit]";
+	mes "Congratulations, you have passed my test.";
+	mes "I didn't think you'd do so well; but in any case,";
+	mes "I'll tell you what I can make.";
+	next;
+	mes "[Cursed Spirit]";
+	mes "I can make you the mask of Loki for you to wear for yourself.";
+	mes "What I'll need are the following:";
+	next;
+	mes "[Cursed Spirit]";
+	mes "^3355FF5 Loki's Whispers, 150 Amulets, 200 Tangled Chains, 100 Worn Out Scrolls, 15 Fragment of Agony, 5 Fragment of Hatred, 1 Shackles, 1 Manacles, 1 Mr. Smile, 75 Elastic Bands, 1 Scarlet Dyestuff, 1 Cobaltblue Dyestuff, and 2 Lemon Dyestuff.^000000";
+	next;
+	mes "[Cursed Spirit]";
+	mes "I await your return, should you ever.";
+	close;
+
+L_god:
+	mes "[Cursed Spirit]";
+	mes "Tcha!";
+	close;
+
+L_fail:
+	mes "[Cursed Spirit]";
+	mes "Ah, I am disappointed, young one.";
+	close;
+
+L_wrong:
+	mes "[Cursed Spirit]";
+	mes "I'm sorry, that it is incorrect.";
+	mes "Perhaps you should study your mythology next time.";
+	close;
+
+L_make:
+	mes "[Cursed Spirit]";
+	mes "Do you, now?";
+	next;
+	if ( (countitem(7019)<5) || (countitem(609)<150) || 
+		(countitem(7221)<200) || (countitem(618)<100) || 
+		(countitem(7436)<15) || (countitem(7438)<5) || 
+		(countitem(2408)<1) || (countitem(1098)<1) || 
+		(countitem(2278)<1) || (countitem(7200)<75) || 
+		(countitem(975)<1) || (countitem(978)<1) || 
+		(countitem(976)<2) ) goto L_no;
+	mes "[Cursed Spirit]";
+	mes "It appears that you do have everything in order.";
+	mes "I shall now make you the mask.";
+	next;
+	delitem 7019,5;
+	delitem 609,150;
+	delitem 7221,200;
+	delitem 618,100;
+	delitem 7436,15;
+	delitem 7438,5;
+	delitem 2408,1;
+	delitem 1098,1;
+	delitem 2278,1;
+	delitem 7200,75;
+	delitem 975,1;
+	delitem 978,1;
+	delitem 976,2;
+	mes "[Cursed Spirit]";
+	mes "^660000Combine Loki's Whispers of mischief with the Smiling Mask,^000000";
+	mes "^660000And using the sacred Amulets, fuse the Agony and Hatred with the mask in homage to Loki,^000000";
+	mes "^660000Make the band of elastic, and dye the mask to suit its master's needs,^000000";
+	mes "^660000Using the Worn-Out Scrolls, say the incantation to symbolize Loki's freedom,^000000";
+	mes "^660000By destroying his shackles.^000000";
+	mes "^660000And then its master shall become the mask.^000000";
+	next;
+	mes "[Cursed Spirit]";
+	mes "There. It is done.";
+	next;
+	getitem 5332,1;
+	mes "[Cursed Spirit]";
+	mes "I can sense the time of Loki's freedom fast approaching.";
+	mes "I thank you, young one, for allowing me to perform this rite.";
+	mes "Beware Loki's wrath.";
+	close;
+
+L_no:
+	mes "[Cursed Spirit]";
+	mes "It would be wise not to lie to such a deadly force in this, of all hallowed places.";
+	close;
+
+}

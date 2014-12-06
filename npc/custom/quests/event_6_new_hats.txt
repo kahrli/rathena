@@ -324,7 +324,6 @@ L3:
 	close;
 }
 
-
 //these scripts make our brothers to appear and disappear in order
 -	script	EDZac	-1,{
 OnInit:

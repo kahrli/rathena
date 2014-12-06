@@ -1,0 +1,457 @@
+//===== eAthena Script ======================================= 
+//= Baseball Cap Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+kh_school,37,32,4	script	Maria#bbcap	859,{
+	if (bbcap == 2) goto L_safe;
+	if (bbcap == 1) goto L_safe1;
+	if (bbcap) goto L_safe2;
+	if (countitem(7509) > 0) {
+		completequest 16008;
+		mes "[Maria]";
+		mes "Oh wow, you're " +strcharinfo(0) + "?";
+		mes "The one who defeated Kiehl at Lighthalzen?";
+		next;
+		mes "[" +strcharinfo(0) + "]";
+		mes "Yes, I am, how do you know that?";
+		next;
+		mes "[Maria]";
+		mes "I am Maria, a teacher here. Everyone in the academy is talking about you. Thanks to you, everyone knows the truth now.";
+		mes "I would like to ask if you can help us with an unfinished matter.";
+		next;
+		mes "[" +strcharinfo(0) + "]";
+		mes "What kind of unfinished matter?";
+		next;
+		mes "[Maria]";
+		mes "Do you remember there was a rumor about a ghost in the academy?";
+		mes "Well... the thing kidnapping people isn't a real ghost. I saw it with my own eyes. It's a monster, but the guards won't belive me when I tell them...";
+		next;
+		mes "[" +strcharinfo(0) + "]";
+		mes "Looks like a simple task. You just want me to defeat the ghost, right?";
+		mes "Piece of cake.";
+		next;
+		mes "[Maria]";
+		mes "Then you'll help us?";
+		next;
+		mes "[" +strcharinfo(0) + "]";
+		mes "Sure, just tell me where I can find him.";
+		next;
+		mes "[Maria]";
+		mes "I saw him at--";
+		next;
+		mes "^FF0000*KYAAAAAAA~!!*^000000";
+		next;
+		mes "^3355FFYou hear girls screaming in the upper part of the room. They're scared stiff.^000000";
+		next;
+		mes "[Students]";
+L_mobspawn:
+		mes "Please save us!! It's the ghost!!";
+		close2;
+		set bbcap,1;
+		if(!mobcount("kh_school","Maria#bbcap::OnMobDead"))
+			monster "kh_school",47,26,"Library Ghost",1921,1,"Maria#bbcap::OnMobDead";
+		end;
+	} else {
+		mes "[Maria]";
+		mes "Hi, welcome to the Kiel Hyre academy!";
+		close;
+	}
+
+OnMobDead:
+	if(bbcap==1)
+		set bbcap,2;
+	end;
+
+L_safe:
+	mes "[Maria]";
+	mes "Thank you very much!";
+	mes "Finally we'll have some peace here! I'm so happy~";
+	close;
+
+L_safe1:
+	mes "[Maria]";
+	goto L_mobspawn;
+
+L_safe2:
+	mes "[Maria]";
+	mes "Have a nice time in the academy~";
+	close;
+}
+
+kh_school,48,36,4	script	Student#bbcap002	906,{
+	if (!bbcap) goto L_safe;
+	if (bbcap == 1) goto L_safe1;
+	if (bbcap == 3) goto L_hunt1;
+	if (bbcap >= 6) goto L_date2;
+	if (bbcap >= 4) goto L_date1;
+	mes "[Student]";
+	mes "Thanks so much for beating that ghost!";
+	mes "I was scared to death!";
+	emotion e_panic;
+	next;
+	mes "^3355FFShe's still in shock. You can see her trembling.^000000";
+	next;
+	mes "[" +strcharinfo(0) + "]";
+	mes "Calm down, everything is fine now~";
+	next;
+	mes "[Student]";
+	mes "......";
+	mes "Oh no, my gift box was... destroyed...";
+	mes "It got in the middle of the battle...";
+	next;
+	mes "[" +strcharinfo(0) + "]";
+	mes "Sorry, I didn't see... Wait, I can buy another one for you. What was it?";
+	next;
+	mes "[Student]";
+	mes "I can't accept that!";
+	mes "You just saved me! It's all right, I don't know why I was keeping that thing anyway.";
+	mes "I'm just feeling bad because... Well, I wasted like... 1000 feathers, 10 cobaltblue dyestuffs and one feather beret to make it.";
+	emotion e_sob;
+	next;
+	mes "[" +strcharinfo(0) + "]";
+	mes "I'm really sorry...";
+	next;
+	mes "^3355FFShe made such a sad face... I think I'm going to get those things she used for her anyway. What was it...? Oh yeah.";
+	next;
+	mes "[" + strcharinfo(0) + "]";
+	mes "^3355FF(1000 feathers,";
+	mes "10 cobaltblue dyestuffs,";
+	mes "and one Feather Beret.)^000000";
+	set bbcap,3;
+	close;
+L_safe1:
+	mes "[Student]";
+	mes "Please save us!!";
+	close;
+L_hunt1:
+	if (countitem(949) >= 1000 && countitem(978) >= 10 && countitem(5170) >= 1) goto L_DIQ;
+	emotion e_sob;
+	mes "^3355FFShe made such a sad face... I think I'm going to get those things she used for her anyway. What was it...? Oh yeah.";
+	next;
+	mes "[" + strcharinfo(0) + "]";
+	mes "^3355FF(1000 feathers,";
+	mes "10 cobaltblue dyestuffs,";
+	mes "and one Feather Beret.)^000000";
+	close;
+
+L_DIQ:
+	mes "[" +strcharinfo(0) + "]";
+	mes "Hey, pretty lady...";
+	mes "About the other day, I got the things you said you needed to make that gift.";
+	mes "Sorry again, it was all my fault.";
+	next;
+	mes "[Student]";
+	mes "Oh... That's too much trouble for a person like me...";
+	mes "But you're so kind. Thank you so much.";
+	mes "Can I ask your name?";
+	next;
+	mes "[" +strcharinfo(0) + "]";
+	mes "I'm " +strcharinfo(0) + ".";
+	next;
+	mes "[Ar]";
+	mes "My name is Ar. It's nice to meet you.";
+	mes "I promise I'll never forget what you did for me.";
+	next;
+	mes "[" +strcharinfo(0) + "]";
+	mes "It's not that big of a deal, but I was wondering why you look so sad. Did something happen?";
+	next;
+	mes "[Ar]";
+	mes "I'm really easy to read, huh?";
+	mes "I was feeling like I wanted to die, you know.";
+	mes "But when we met, I felt a little better...";
+	next;
+	mes "[" +strcharinfo(0) + "]";
+	mes "If you need someone to talk to, I'm here. I'll help you.";
+	next;
+	mes "[Ar]";
+	mes "I dont know...";
+	next;
+	mes "[" +strcharinfo(0) + "]";
+	mes "Oh, come on, I know something that might cheer you up.";
+	if(sex)
+		mes "How about we go out on a date?";
+	mes "Just a simple walk, we chat a bit, maybe eat some ice cream.";
+	next;
+	emotion e_shy;
+	mes "^3355FFAs you say that, she blushes and looks away.^000000";
+	next;
+	mes "[Ar]";
+	mes "...";
+	next;
+	mes "[Ar]";
+	mes "...";
+	mes "......";
+	next;
+	mes "[Ar]";
+	mes "...";
+	mes "......";
+	mes ".........";
+	next;
+	mes "[Ar]";
+	emotion e_wah;
+	mes "A-Alright.";
+	mes "If it's you, it's okay. Where are we are going?";
+	next;
+	mes "[" +strcharinfo(0) + "]";
+	mes "Let's go to Hugel. It's nearby *and* beautiful.";
+	mes "I know a nice place there.";
+	next;
+	mes "[Ar]";
+	mes "Okay, then, you go first and wait for me.";
+	mes "I need to tell the teacher.";
+	next;
+	mes "[" +strcharinfo(0) + "]";
+	mes "I'll be waiting for you near the airship.";
+	set bbcap,4;
+	delitem 949, 1000;
+	delitem 978, 10;
+	delitem 5170, 1;
+	close;
+
+L_date1:
+	mes "[Ar]";
+	mes "" +strcharinfo(0) + ", you go first and wait for me";
+	mes "near the airship in Hugel, okay?";
+	mes "I need to tell the teacher.";
+	set bbcap,4;
+	close;
+
+L_date2:
+	mes "[Ar]";
+	emotion e_lv;
+	mes "Thanks again for that.";
+	mes "Let's go " + (sex?"on a date":"for a walk") + " again someday.";
+	close;
+L_safe:
+	mes "[Ar]";
+	mes "Where is that book...?";
+	close;
+}
+
+hugel,162,145,4	script	Artrigg#01	-1,6,6,{
+OnTouch:
+	if (bbcap == 4) {
+		mes "^3355FFI think I'll wait here.^000000";
+		next;
+		mes "^3355FF........^000000";
+		next;
+		mes "^3355FF........^000000";
+		next;
+		mes "^3355FF........^000000";
+		next;
+		mes "^3355FF........^000000";
+		next;
+		mes "^3355FF........^000000";
+		next;
+		mes "^3355FF........^000000";
+		next;
+		mes "^3355FFAfter a long time you see Ar coming out of the airship.^000000";
+		enablenpc "Ar#01";
+		close;
+	}
+}
+
+hugel,165,138,4	script	Ar#01	906,{
+	if (bbcap == 4) {
+		mes "[Ar]";
+		mes "Hi " +strcharinfo(0) + ".";
+		mes "Sorry if I took too long...";
+		next;
+		mes "[" +strcharinfo(0) + "]";
+		mes "It's alright. I'm glad that you came~";
+		mes "Let's go for a little walk, alright?";
+		next;
+		mes "[Ar]";
+		mes "Sure..";
+		mes F_Navi("Follow her.","hugel,147,146","^B9062F");
+		close2;
+		set bbcap,5;
+		enablenpc "Ar#02";
+		disablenpc "Ar#01";
+	end;
+	} else {
+		mes "[Ar]";
+		mes "This is a nice city...";
+		close;
+	}
+}
+
+hugel,147,146,4	script	Ar#02	906,{
+	if (bbcap == 5) {
+		mes "[" +strcharinfo(0) + "]";
+		mes "That gift of yours was important, wasn't it?";
+		next;
+		mes "[Ar]";
+		mes "Yeah... It was for my ex-boyfriend. I made a special hat for him.";
+		next;
+		mes "[" +strcharinfo(0) + "]";
+		mes "I see. Looks like you still like him a lot, so why did you break up?";
+		next;
+		mes "[Ar]";
+		mes "The main reason was actually the truth about the academy. You see, he's a Juno student. He's a human being.";
+		next;
+		mes "^3355FFWe continued to chat while we walked.^000000";
+		mes F_Navi("Follow her.","hugel,130,158","^B9062F");
+		close2;
+		enablenpc "Ar#03";
+		disablenpc "Ar#02";
+	end;
+	} else {
+		mes "[Ar]";
+		mes "This is a nice city...";
+		close;
+	}
+}
+
+hugel,130,158,4	script	Ar#03	906,{
+	if (bbcap == 5) {
+		mes "[" +strcharinfo(0) + "]";
+		mes ".....";
+		mes "I see...";
+		next;
+		mes "[Ar]";
+		mes "When I talked to him about that gift, we ended up like this.";
+		next;
+		mes "[" +strcharinfo(0) + "]";
+		mes "I don't think he understood the truth of the academy at all.";
+		mes F_Navi("Follow her.","hugel,99,154","^B9062F");
+		close2;
+		enablenpc "Ar#04";
+		disablenpc "Ar#03";
+	end;
+	} else {
+	mes "[Ar]";
+	mes "This is a nice city...";
+	close;
+	}
+}
+
+hugel,99,154,4	script	Ar#04	906,{
+	if (bbcap == 5) {
+		mes "[Ar]";
+		mes "Why? He's right. I'm just a robot...";
+		next;
+		mes "[" +strcharinfo(0) + "]";
+		mes "That's not true. Come on, I'll show you what I learned from Elly...";
+		mes F_Navi("Follow her.","hugel,81,165","^B9062F");
+		close2;
+		enablenpc "Ar#05";
+		disablenpc "Ar#04";
+		end;
+	} else {
+		mes "[Ar]";
+		mes "This is a nice city...";
+		close;
+	}
+}
+
+hugel,81,165,4	script	Ar#05	906,{
+		if (bbcap == 5) {
+		mes "[" +strcharinfo(0) + "]";
+		mes "Let's buy a mastela~ It's so sweet~~ ";
+		next;
+		mes "^3355FFYou buy two mastelas and give one to Ar. She still seemed so sad, but you swore you saw a faint smile.^000000";
+		if (zeny >= 17000) 
+			set zeny,zeny-17000;
+		else
+			set zeny,0;
+		next;
+		mes "[Ar]";
+		mes "It's true, mastelas are very nice. Thank you.";
+		next;
+		mes "[" +strcharinfo(0) + "]";
+		mes "See? You like sweet things and that's one proof that you're not a machine. You need food to survive, just like every living being.";
+		mes "But, I'll give you something better. Come to the harbor and I'll tell you.";
+		mes F_Navi("Follow her.","hugel,191,99","^B9062F");
+		close2;
+		enablenpc "Ar#06";
+		disablenpc "Ar#05";
+	end;
+	} else {
+		mes "[Ar]";
+		mes "This is a nice city...";
+		close;
+	}
+}
+
+hugel,191,99,4	script	Ar#06	906,{
+	if (bbcap == 5) {
+		mes "[Ar]";
+		mes "Whoa, what a nice view of the sea!";
+		next;
+		mes "[" +strcharinfo(0) + "]";
+		mes "Yeah~ I like this place.";
+		next;
+		mes "^3355FFYou slowly touch her face, and look in her eyes with a simple smile.^000000";
+		next;
+		mes "[" +strcharinfo(0) + "]";
+		mes "Can you feel it?";
+		next;
+		mes "[Ar]";
+		mes "W-w-what?";
+		next;
+		mes "[" +strcharinfo(0) + "]";
+		mes "Your skin, it's so soft and warm.";
+		next;
+		mes "^3355FFShe blushes.^000000";
+		next;
+		mes "[" +strcharinfo(0) + "]";
+		mes "Well after I met Elly, and you, I learned that even if you are artificially created, you have a soul.";
+		mes "You can love, hate, be happy, unhappy, anything. And that's what makes us human. You're no different from me.";
+		next;
+		mes "^3355FFShe was nearly crying, and you hugged her for a moment.^000000";
+		next;
+		mes "[Ar]";
+		mes "Th-thank you " +strcharinfo(0) + "...";
+		mes "You're right. He just didn't love me enough...";
+		next;
+		mes "[" +strcharinfo(0) + "]";
+		mes "Yes, it's not your fault. You will find a nice guy that will make you even happier than him, and won't leave you because of things like that.";
+		next;
+		mes "[Ar]";
+		mes "Yeah...";
+		mes "I'm feeling better now. You're such a nice person.";
+		next;
+		mes "[Ar]";
+		mes "But I really need to go.";
+		mes "Thanks again for caring for me.";
+		next;
+		mes "^3355FFAr runs for the airship and leaves.^000000";
+		close2;
+		set bbcap,6;
+		disablenpc "Ar#06";
+		end;
+	} else {
+		mes "[Ar]";
+		mes "This is a nice city...";
+		close;
+	}
+}
+
+-	script	Baseballquest	-1,{
+
+OnInit:
+	disablenpc "Ar#01";
+	disablenpc "Ar#02";
+	disablenpc "Ar#03";
+	disablenpc "Ar#04";
+	disablenpc "Ar#05";
+	disablenpc "Ar#06";
+end;
+
+OnPCLoginEvent:
+	if (bbcap == 6) {
+		mes "^3355FFSomeone's sent you a package with a letter from Kiel Academy.^000000";
+		next;
+		mes "Hello, it's me, Ar from the Kiel Academy. I just wanted to thank you for that time. You helped me a lot. I finished that giftbox again and realized that it would fit you perfectly. I hope you like it~";
+		set bbcap,7;
+		getitem 5147,1;
+		close;
+	}
+}

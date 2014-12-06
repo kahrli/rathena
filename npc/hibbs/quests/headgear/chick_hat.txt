@@ -1,0 +1,92 @@
+//===== eAthena Script ======================================= 
+//= Chick Hat Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+moc_fild01,36,250,5	script	Wild Picky#chick	1049,{
+	completequest 16005;
+	if(chick_hat==3) end;
+	if(chick_hat==2) {
+		mes "[Wild Picky]";
+		mes "Supercalifra...?";
+		next;
+		if(countitem(1004)<20) {
+			mes "[Wild Picky]";
+			mes "Where are my ^3355FF20 chivalry emblems^000000?!";
+			close;
+		}
+		mes "[Wild Picky]";
+		mes "What?  You got 'em?  That was fast!";
+		next;
+		mes "[Wild Picky]";
+		mes "Oh my gosh!! You are so awesome, I want to come with you!! Can I??";
+		next;
+		mes "[Wild Picky]";
+		mes "I won't be in the middle and maybe I'll help you a little... Come on, give me a chance!!";
+		next;
+		select("I don't know...");
+		mes "[Wild Picky]";
+		mes "Come on!! I'm stronger than I look; maybe I'll be of some help!  You won't regret it!";
+		next;
+		select("Okay then.");
+		mes "[Wild Picky]";
+		mes "Yay!!  See ya ole oasis, I'm an adventurer now!";
+		set chick_hat,3;
+		delitem 1004,20;
+		getitem 5283,1;
+		close;
+	}
+	if(chick_hat==1) {
+		mes "[Wild Picky]";
+		mes "Got the ^3355FF100 desert wolf claws^000000?";
+		if(countitem(7030)<100) close;
+		next;
+		select("Yeah, there you go.");
+		mes "[Wild Picky]";
+		mes "Oh my gosh... I can't believe it! You bought them, right?  You seem so weak...";
+		next;
+		mes "[Wild Picky]";
+		mes "I want another proof!";
+		next;
+		mes "[Wild Picky]";
+		mes "This time ^3355FF20 chivalry emblems^000000, from the raydrics.  That would be enough.";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "I'll be back faster than you can say supercalifragilisticexpialidocious.";
+		delitem 7030,100;
+		set chick_hat,2;
+		close;
+	}
+	mes "[Wild Picky]";
+	mes "Oh my gosh, are you an Adventurer?? I'm so envious... I can't leave this place, kind of stuck here.";
+	next;
+	select("Envious?  Why?");
+	mes "[Wild Picky]";
+	mes "Why?! Because you can go on adventures, and like I said, I'm STUCK here!";
+	next;
+	select("Why don't you go on adventures yourself?");
+	mes "[Wild Picky]";
+	mes "Are you deaf? I'm telling you that I'm stuck here, that's why.";
+	next;
+	select("But I see no schackles what-so-ever.");
+	mes "[Wild Picky]";
+	mes "Yeah... About that... It's just that I'm so weak...";
+	next;
+	mes "[Wild Picky]";
+	mes "I would love to beat some wolves!  That would be awesome!";
+	next;
+	select("I can do that.");
+	mes "[Wild Picky]";
+	mes "Really?! I don't believe you! Show me proof!";
+	next;
+	select("I don't have proof.");
+	mes "[Wild Picky]";
+	mes "Ha! You're such a phony... Want me to believe you? Bring me ^3355FF100 desert wolf claws^000000.";
+	set chick_hat,1;
+	close;
+}

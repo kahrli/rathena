@@ -1,0 +1,143 @@
+//===== eAthena Script ======================================= 
+//= Angeling Hat Quest
+//===== By: ================================================== 
+//= Joey, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+payon.gat,275,140,6	script	Hunter#Cap	855,{
+	completequest 16001;
+	mes "[Hunter]";
+	mes "Hey there! What's up?";
+	next;
+	if(hunter_cap)
+		goto L_make;
+	if ( !( (countitem(1026)<50) || (countitem(7106)<75) || 
+		(countitem(7161)<100) || (countitem(7442)<20) || 
+		(countitem(7053)<35) || (countitem(707)<10) || 
+		(countitem(7192)<30) || (countitem(7006)<50) ) )
+		goto L_tell;
+	menu "Nothin'.",L_not,"Hey, nice hat!",-;
+	mes "[Hunter]";
+	mes "Oh, so you like it, eh?";
+	mes "I made this hat meself, you know.";
+	mes "If you really like it, I could make one for ya.";
+	next;
+	mes "[Hunter]";
+	mes "So, you want one?";
+	next;
+	menu "Yes, please!",-,"Nah, thanks.",L_no;
+	mes "[Hunter]";
+	mes "Great! But first, I'll need you to prove yourself as a Hunter.";
+	next;
+	mes "[Hunter]";
+	mes "Hmm? What's that? You thought I'd just make it for you?";
+	mes "Ha!";
+	next;
+	mes "[Hunter]";
+	mes "Anyway, bring me these and I'll tell you what I need for the hat itself.";
+	next;
+	mes "[Hunter]";
+	mes "^3355FF50 Acorn, 75 Antelope Horn, 100 Black Bear Skin, 20 Cursed Seal,";
+	mes "35 Cyfar, 10 Singing Plant, 30 Vane, and 50 Wing of Red Bat.^000000";
+	next;
+	mes "[Hunter]";
+	mes "Talk to me again once you have everything to move on to the next step.";
+	close;
+
+L_not:
+	mes "[Hunter]";
+	mes "Well go out and do something instead of just standin' there!";
+	close;
+
+L_tell:
+	menu "Here's your proof!",-;
+	mes "[Hunter]";
+	mes "Oh, so you think you're a hunter, eh?";
+	mes "Well, let me check.";
+	next;
+	if ( (countitem(1026)<50) || (countitem(7106)<75) || 
+		(countitem(7161)<100) || (countitem(7442)<20) || 
+		(countitem(7053)<35) || (countitem(707)<10) || 
+		(countitem(7192)<30) || (countitem(7006)<50) ) goto L_nope;
+	mes "[Hunter]";
+	mes "Wow, you DID get everything. Nice!";
+	mes "I guess you are worthy of this hat after all.";
+	next;
+	delitem 1026,50;
+	delitem 7106,75;
+	delitem 7161,100;
+	delitem 7442,20;
+	delitem 7053,35;
+	delitem 707,10;
+	delitem 7192,30;
+	delitem 7006,50;
+	mes "[Hunter]";
+	mes "Okay, here's the deal:";
+	mes "You need to get me ^3355FF1 Boy's Cap, 5 Darkgreen Dyestuffs,";
+	mes "1 Hunter Bow, 100 Fabric, and 15 Elastic Bands.^000000";
+	next;
+	mes "[Hunter]";
+	mes "Talk to me again once you have everything.";
+	set hunter_cap,1;
+	close;
+
+L_no:
+	mes "[Hunter]";
+	mes "Ah well. Nice talkin' to ya.";
+	close;
+
+L_nope:
+	mes "[Hunter]";
+	mes "Pshoff! You don't have what it takes. You're missing something.";
+	close;
+
+L_make:
+	if ( (countitem(5016)<1) || (countitem(979)<5) || 
+		(countitem(1718)<1) || (countitem(1059)<100) || 
+		(countitem(7200)<15) ) goto N_make;
+	menu "I got whatcha asked for!",-;
+	mes "[Hunter]";
+	mes "That's good to hear! Let me see what you've brought.";
+	next;
+	mes "[Hunter]";
+	mes "Well, it appears that you've got everything with ya!";
+	mes "I'll make you that hat now.";
+	next;
+	delitem 5016,1;
+	delitem 979,5;
+	delitem 1718,1;
+	delitem 1059,100;
+	delitem 7200,15;
+	mes "[Hunter]";
+	mes "^666666*Sew* *sew*";
+	mes "*Clip* *Dip*";
+	mes "*Sew* *Sew*";
+	mes "*Feel Nostalgic*^000000";
+	next;
+	mes "[Hunter]";
+	mes "I'm finished!";
+	mes "Now, take this Hunter Cap with ya as a symbol of your great prowess as a hunter!";
+	next;
+	mes "[Hunter]";
+	mes "^666666*takes one last look at the hat*^000000";
+	mes "Ah, it so reminds me of the hunt!";
+	next;
+	getitem 5383,1;
+	mes "[Hunter]";
+	mes "I'll be glad to make this for you again sometime.";
+	mes "See ya!";
+	set hunter_cap,0;
+	close;
+
+N_make:
+	mes "[Hunter]";
+	mes "Okay, here's the deal:";
+	mes "You need to get me ^3355FF1 Boy's Cap, 5 Darkgreen Dyestuffs,";
+	mes "1 Hunter Bow, 100 Fabric, and 15 Elastic Bands.^000000";
+	close;
+	
+}

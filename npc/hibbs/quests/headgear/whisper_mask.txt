@@ -1,0 +1,124 @@
+//===== eAthena Script ======================================= 
+//= Whisper Mask Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+treasure02.gat,22,144,4	script	Vengeful Swordsman	796,{
+
+	completequest 16011;
+	mes "[Vengeful Swordsman]";
+	mes "What do YOU want?";
+	next;
+	menu "Sheesh! What's YOUR problem?",-,"(Start crying)",L_weak, "(Smile smugly)",L_make;
+	mes "[Vengeful Swordsman]";
+	mes "You wanna know what my problem is? Huh? HUH?!";
+	next;
+	menu "YEAH.",-,"Calm the @#$% down, jerk.",L_jerk;
+	mes "[Vengeful Swordsman]";
+	mes "What MY problem is, is that I was totally ganged up on by these ghosts!";
+	mes "They all killed me!";
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "..........";
+	next;
+	mes "[Vengeful Swordsman]";
+	mes "...What?";
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "...You...You got beat up by GHOSTS?";
+	next;
+	mes "[Vengeful Swordsman]";
+	mes "Yeah, what of it?!";
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "BA HA HA HA!";
+	next;
+	mes "[Vengeful Swordsman]";
+	mes "HEY, SHUT UP!";
+	mes "You think it's easy?!";
+	mes "Huh? DO YA, PUNK?";
+	next;
+	menu "Tcha! Hell yeah.",-,"No, I'm too weak!",I_weak;
+	mes "[Vengeful Swordsman]";
+	mes "Psh! If you think it's so easy, go and kill those Whispers for me.";
+	mes "I'll need you to bring me back these as proof:";
+	next;
+	mes "[Vengeful Swordsman]";
+	mes "^3355FF250 Fabric, 150 Star Dust, 100 Ectoplasm, and 1 Ghost Bandana.^000000";
+	mes "What're you still standin' there for? Go on, ya git!";
+	close;
+
+L_weak:
+	mes "[Vengeful Swordsman]";
+	mes "Ugh, get outta here, you big baby.";
+	close;
+
+L_jerk:
+	mes "[Vengeful Swordsman]";
+	mes "You don't even KNOW me, jerk.";
+	close;
+
+I_weak:
+	mes "[Vengeful Swordsman]";
+	mes "Ha! I knew it. You are such a wimp.";
+	mes "I could probably even beat YOU up, ha!";
+	close;
+
+L_make:
+	mes "[Vengeful Swordsman]";
+	mes "...What's that look for?";
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "I did it.";
+	next;
+	mes "[Vengeful Swordsman]";
+	mes "...Did what?";
+	mes "....You...you killed the Whispers?";
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "Hell yeah!";
+	next;
+	mes "[Vengeful Swordsman]";
+	mes "What?! Wait a minute, show me the proof!";
+	next;
+	if ( (countitem(1059)<250) || (countitem(1001)<150) || 
+		(countitem(7220)<100) || (countitem(2274)<1) ) goto D_make;
+	mes "[Vengeful Swordsman]";
+	mes "Holy crap! You actually did it!";
+	mes ".....";
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "Not so tough now, are ya?";
+	mes "Not that you were before, though.";
+	mes "Ha!";
+	next;
+	mes "[Vengeful Swordsman]";
+	mes "Shut up!";
+	mes "Well, I suppose I should give you something for your work...";
+	next;
+	mes "[Vengeful Swordsman]";
+	mes "Oh! I know. I was making this mask so I could try and sneak past the Whispers...";
+	mes "But since you killed them all I guess I don't need it anymore.";
+	mes "Here, take it!";
+	next;
+	delitem 1059,250;
+	delitem 1001,150;
+	delitem 7220,100;
+	delitem 2274,1;
+	getitem 5294,1;
+	mes "[Vengeful Swordsman]";
+	mes "Now get outta here, I got some training to do!";
+	close;
+	
+D_make:
+	mes "[Vengeful Swordsman]";
+	mes "Psht! You're all talk! You don't have everything!";
+	mes "Get the hell back to killing them, if you think you're so tough!";
+	close;
+
+}

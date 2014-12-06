@@ -97,6 +97,8 @@ auction_02,43,17,0	warp	auction_enterance_lhz	1,1,lighthalzen,209,169
 	mes "[Auction Broker]";
 	mes "Welcome to the Auction Hall.";
 	mes "Would you like to view the goods?";
+	mes "Note the fee for selling is";
+	mes "^3355FF100 zeny^000000 per hour."; // [Pyeus]
 	next;
 	if (select("Yes:No") == 1) {
 		mes "[Auction Broker]";

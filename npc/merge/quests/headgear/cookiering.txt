@@ -1,0 +1,186 @@
+// Needs item re-added
+
+prontera,140,167,6	script	Christmas Past#ghost	411,{
+	if(cghosts > 2) {
+		mes "[Ghost of Christmas Past]";
+		mes "^666666OooooOOOOOoooooOOOOoooo...^000000";
+		emotion e_whisp;
+		close;
+	}
+	if(cghosts == 2) {
+		mes "[Ghost of Christmas Past]";
+		mes "You will find the Ghost of Christmas Present in a town full of rich folk. I hear it has a fa-boo-lous hotel there.  ^FF0000Now GOOOOOOO.^000000";
+		close;
+	}
+	if(cghosts == 1 && countitem(12018)>=100) {
+		mes "[Ghost of Christmas Past]";
+		mes "^FF0000Your repenting is not yet over! You must now find the Ghost of Christmas Present! ^666666OoooOOOOOoooo!!!^000000";
+		next;
+		mes "[Ghost of Christmas Past]";
+		mes "You will find the Ghost of Christmas Present in a town full of rich folk. I hear it has a fa-boo-lous hotel there.  ^FF0000Now GOOOOOOO.^000000";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "^ff0000FINE^000000, I will find the ghost, just ^ff0000shut up^000000!";
+		next;
+		mes "[Ghost of Christmas Past]";
+		mes "...fine, don't need to be so snobby about it...";
+		set cghosts,2;
+		delitem 12018,100;
+		close;
+	}
+	mes "[Ghost of Christmas Past]";
+	mes "^666666OooooOOOOOoooooOOOOoooo...^000000";
+	emotion e_whisp;
+	next;
+	mes "[Ghost of Christmas Past]";
+	mes "Child, you have been oh-so-naughty this year!";
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "^666666(Oh god, what the heck?!)^000000";
+	next;
+	mes "[Ghost of Christmas Past]";
+	mes "Youuuuuu need to repent for your treacherous wayyyyyyys.";
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "I've been good, I swear!";
+	next;
+	mes "[Ghost of Christmas Past]";
+	mes "To repent you must bring me ^3355FF100 Firecrackers^000000!";
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "Er... Okay...";
+	set cghosts,1;
+	close;
+}
+
+lighthalzen,186,133,5	script	Christmas Present#ghost	72,{
+	if(cghosts == 4) {
+		mes "[Miss Present]";
+		mes "Now you must find the Ghost of Yet to Come! She is at a town that starts with an ^3355FFA^000000 and ends with ^3355FFyothaya^000000!  NOW GO!";
+		close;
+	}
+	if(cghosts == 3 && countitem(515)>=5 && countitem(622)>=11 && countitem(517)>=10 && countitem(7212)) {
+		mes "[Miss Present]";
+		mes "THANK YOU. Now you must find the Ghost of Yet to Come! She is at a town that starts with an ^3355FFA^000000 and ends with ^3355FFyothaya^000000!  NOW GO!";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "OH GOD DON'T HURT ME. I WILL FIND THEM!!";
+		next;
+		mes "[Miss Present]";
+		mes "Teehee~!";
+		set cghosts,4;
+		delitem 515,5;
+		delitem 622,11;
+		delitem 517,10;
+		delitem 7212,1;
+		close;
+	}
+	if(cghosts == 3) {
+		mes "[Miss Present]";
+		mes "In order to make up for your wrong-doings, you must bring me ^3355FF10 pieces of Meat, 5 Carrots, 11 Rainbow Carrots, and 1 Hung Doll^000000.";
+		close;
+	}
+	mes "[Ghost of Christmas Present]";
+	mes "Oh... Look at that family in there.  So happy... What a wonderful meal...";
+	emotion e_slur;
+	if(cghosts == 2) {
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Excuse me, ma'am? Are you the Ghost...";
+		next;
+		mes "[Ghost of Christmas Present]";
+		mes "I PREFER TO BE CALLED MISS PRESENT.";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Oh god, okay, Miss Present!";
+		next;
+		mes "[Miss Present]";
+		mes "You must repent for your evil ways!";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "^666666(Evil ways?  What did I do??)^000000";
+		next;
+		mes "[Miss Present]";
+		mes "In order to make up for your wrong-doings, you must bring me ^3355FF10 pieces of Meat, 5 Carrots, 11 Rainbow Carrots, and 1 Hung Doll^000000.";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "(Dirty joke, hehehehehe.)";
+		next;
+		mes "[Miss Present]";
+		mes "WHAT WAS THAT?!?!?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "NOTHING, I WILL GET YOUR STUFF.";
+		next;
+		mes "[Miss Present]";
+		mes "THAT'S WHAT I THOUGHT.";
+		set cghosts,3;
+		close;
+	}
+	close;
+}
+
+ayothaya,215,191,4	script	Yet to Come#cghost	437,{
+	if(cghosts == 5) {
+		mes "["+strcharinfo(0)+"]";
+		mes "PLEASE. I just need to repent!!";
+		next;
+		mes "[Ghost of Yet to Come]";
+		mes "In order to repent you must do one thing.";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "YES. ANYTHING. YES.";
+		next;
+		mes "[Ghost of Yet to Come]";
+		mes "You must...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "YES?!";
+		next;
+		mes "[Ghost of Yet to Come]";
+		mes "You muuuuuuusstt...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "ANYTHING!!";
+		next;
+		mes "[Ghost of Yet to Come]";
+		mes "Take this nice candy ring.";
+		emotion e_ok;
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Uh... Okay then... Thank you.";
+		next;
+		mes "[Ghost of Yet to Come]";
+		mes "REPENTING COMPLETE.";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Finally!";
+		next;
+		mes "[Ghost of Yet to Come]";
+		mes "REPENTED!";
+		set cghosts,6;
+		getitem 17010,1;
+		close2;
+		specialeffect2 183;
+		percentheal -100,0;
+		end;
+	}
+	if(cghosts == 4) {
+		mes "["+strcharinfo(0)+"]";
+		mes "Are you... Are you the Ghost of Yet to Come?";
+		next;
+		mes "[Ghost of Yet to Come]";
+		mes "REPENTED!";
+		close2;
+		specialeffect2 183;
+		percentheal -100,0;
+		set cghosts,5;
+		end;
+	}
+	mes "[Ghost of Yet to Come]";
+	mes "REPENTED!";
+	close2;
+	specialeffect2 183;
+	percentheal -100,0;
+	end;
+}

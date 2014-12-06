@@ -1,0 +1,41 @@
+prtg_cas04,292,14,0	script	AgitGM	-1,{
+OnEnable:
+	announce "An event War of Emperium is about to begin: the GM War!",bc_all;
+	sleep 4000;
+	announce "Enter the portal in Prontera for a ride to the castle, where your goal is to be first to claim the castle!",bc_all;
+	enablenpc "GM#prtg_cas04";
+	GvgOn "prtg_cas04";
+	monster "prtg_cas04",291,14,"Emperium",1288,1,"AgitGM::OnBreak";
+	end;
+	
+OnBreak:
+	set .@GID,getcharid(2);
+	announce strcharinfo(0)+" of guild ["+getguildname(.@GID)+"] has broken the GM Emperium!",bc_all;
+	disablenpc "GM#prtg_cas04";
+	GvgOff "prtg_cas04";
+	sleep 4000;
+	set .@GLead$,getguildmaster(.@GID);
+	if(isloggedin(getcharid(3,.@GLead$)))
+		attachrid(getcharid(3,.@GLead$));
+	announce "For members of ["+getguildname(.@GID)+"], see "+strcharinfo(0)+" for your prize.",bc_all;
+	getitem 12281,5;
+	sleep 4000;
+	announce "Thanks to all who played.",bc_all;
+	end;
+	
+OnWhisperGlobal:
+		mes "[GM WoE Manager]";
+		mes "Would you like to start a War?";
+		next;
+		if(select("No:Yes")==1) close;
+		close2;
+		donpcevent "AgitGM::OnEnable";
+}
+
+prontera,159,171,0	script	GM#prtg_cas04	45,1,1,{
+OnTouch:
+	warp "prtg_cas04",86,13;
+end;
+OnInit:
+	disablenpc "GM#prtg_cas04";
+}

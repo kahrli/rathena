@@ -1,0 +1,576 @@
+//===== eAthena Script ======================================= 
+//= Captain Hat Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+// ===== Revisions ==========================================
+// = Updated 6 individual sailor variables to one bitmask variable
+//============================================================
+
+alberta,220,28,5	script	Old Captain#ch	119,{
+	if(captain_hat==2) {
+		mes "[Proud Captain]";
+		mes "Ahh 'tis a fine crew! I'd lay me own life down for those scalley-wags!";
+		close;
+	}
+	if(cap_sailor&63) {
+		mes "[Proud Captain]";
+		mes "Aye! There ye be! I'd like ta thank ye fer all yer hard work! Seeing those lily-livered swabs again after all those years puts a tear in yer eye.";
+		next;
+		mes "[Proud Captain]";
+		mes "^666666*sniff*^000000 Now I can go happy... I won't be much of a captain where I'm goin' so you can have me hat. But if you so much as get her dirty, I'll run a hook through ye!";
+		getitem 5184,1;
+		set captain_hat,2;
+		close;
+	}
+	if(captain_hat) {
+		mes "[Proud Captain]";
+		mes "The las' thing I remember is we crashed near the city of Izlude and our boat sank to Davey Jones' Locker. Seein' as we couldn't get her back, we decided to spread out and see the world fer what she really is.";
+		next;
+		mes "[Proud Captain]";
+		mes "Once we disbanded, we took off to all corners of the world. They be a crew of five.";
+		next;
+		mes "[Proud Captain]";
+		mes "One was a drunk. One was a very devout, god-fearin' lad. One wanted to be ninja but he was too damn incompetent, I'd wager he didn't get far. One wanted to give back to the merchants whom pirates stole from, fine sailor there.";
+		next;
+		mes "[Proud Captain]";
+		mes "And the most loyal of 'em all, followed me through 'n' through... I'm surprised he didn't stay wi' me... You be on yer own for him.";
+		close;
+	}
+	if(!captain_hat) {
+		completequest 16007;
+		mes "^3355FFYou see a whithered old man looking longingly out to sea. His leg is broken and held together by a couple of splints.^000000";
+		next;
+		mes "^3355FFObviously he has been here a long time. He sighs and suddenly turns his head toward you as you approach.^000000";
+		next;
+		if(select("Go back to your mashed bananas!:(Remain silent.)")==1) 
+			goto L_Upset;
+		mes "[Proud Captain]";
+		if(Sex == 0)
+			mes "Please! Kind madam,";
+		else
+			mes "Please! Kind sir,";
+		mes "my leg is shot and I be running on me last leg! Please! You have to help me!";
+		next;
+		mes "[Proud Captain]";
+		mes "Help me find me old crew, so I can see them jus' one more time before this old wardog goes to the deep an' briny blue.";
+		next;
+		if(select("(Nod solemnly.):Go back to your pudding.")==2)
+			goto L_Upset;
+		mes "[Proud Captain]";
+		mes "The las' thing I remember is we crashed near the city of Izlude and our boat sank to Davey Jones' Locker. Seein' as we couldn't get her back, we decided to spread out and see the world fer what she really is.";
+		next;
+		mes "[Proud Captain]";
+		mes "Once we disbanded, we took off to all corners of the world. They be a crew of six.";
+		next;
+		mes "[Proud Captain]";
+		mes "One was a drunk. One was a very devout, god-fearin' lad. One wanted to be a ninja but he was too damn incompetent; I'd wager he didn't get far. One wanted to give back to the merchants whom pirates stole from, fine sailor there. One loved the islands we explored.";
+		next;
+		mes "[Proud Captain]";
+		mes "And the most loyal of 'em all, followed me through 'n' through... I'm surprised he didn't stay wi' me... You be on yer own for him.";
+		set captain_hat,1;
+		close;
+	}
+	
+L_Upset:
+	mes "^3355FFThe old man's eyes water up and he looks away.^000000";
+	close;
+	
+}
+
+veins,150,215,1	script	#BeatUp	-1,3,3,{
+
+OnTouch:
+	if(@beatup) {
+		set @beatup,0;
+		sc_start SC_BLEEDING,60000,0;
+		percentheal -50,0;
+		mes "^335500You wake up outside the bar with a very sore eye and a cut in your stomach that has blood pouring out...^000000";
+		close;
+	}
+	if(@nozeny) {
+		set @nozeny,0;
+		percentheal -50,0;
+		sc_start SC_BLEEDING,60000,0;
+		mes "^3355FFYou were roughed up gangster-style and tossed out of the bar! You check your kneecaps instinctively...^000000";
+		close;	
+	}
+}
+
+ve_in,242,109,3	script	Drunken Man#ch	943,{
+	if(cap_sailor&1) {
+		mes "[Jerry]";
+		mes "Ahh such a good captain! I'd lay my life on the line for him any day.";
+		close;
+	}
+	if(captain_hat) {
+		mes "[Drunken Man]";
+		mes "Hey! I haven't seen you around here before! Let me buy you a drink!";
+		next;
+L_Drink:
+		mes "[Waitress]";
+		mes "Here you are, sir.";
+		next;
+		mes "[Drunken Man]";
+		mes "Why thank you!";
+		next;
+		mes "[Drunken Man]";
+		mes "Hey! I haven't seen you around here before! Let me buy you a drink!";
+		next;
+		if(select("Sounds like a plan!:I have urgent business for you.")==1) {
+			if(rand(3) && .@drunk) {
+				set .@drunk,1;
+				goto L_Drink; 
+			}
+			else {
+				mes "^3355FFYou've had too much... You feel yourself passing out...^000000";
+				close2;
+				warp "veins",150,215;
+				end;
+			}
+		}
+		mes "[Drunken Man]";
+		mes "Heh! Urgent busy-ness? What coul' a half-pint like you have wif someone like me, huh?";
+		next;
+		if(select("I heard you were a sailor.:Well I wanted an autograph...")==2) {
+			mes "[Drunken Man]";
+			mes "Is that so? I'm tired of you pipsqueaks always bothering men like me for a piece of paper! Beat it, kid!";
+			close;
+		}
+		mes "[Drunken Sailor]";
+		mes "Yeah? And what of it?";
+		next;
+		if(select("How could a bum like you be a sailor??:Well your captain is injured and...")==1) {
+			mes "[Drunken Man]";
+			mes "Why you...!";
+			close2;
+			set @beatup,1;
+			warp "veins",150,215;
+			end;
+		}
+		mes "[Drunken Sailor]";
+		mes "The captain??";
+		next;
+		mes "^3355FFUpon hearing you mention his captain, he frees himself from his drunken stupor.^000000";
+		next;
+		mes "[Jerry]";
+		mes "What happened to the captain?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		mes "......";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		mes "......";
+		mes ".........";
+		next;
+		mes "[Jerry]";
+		mes "Oh... So it's like that... Alright, I'll get back to him right away.";
+		set cap_sailor,cap_sailor|1;
+		next;
+		mes "[Waitress]";
+		mes "Hey! That man over there says you're paying his tab! That'll be 20,000 zeny and thank you for stopping by!";
+		next;
+		if(zeny>=20000) {
+			set zeny,zeny-20000;
+			mes "^3355FFYou see no way out of this and are forced to pay the tab...^000000";
+			close2;
+			warp "veins",150,215;
+			end;
+		}
+		mes "^FF0000You frantically search your pockets for 20,000 zeny you don't have!^000000";
+		next;
+		mes "[Waitress]";
+		mes "Oh? Don't have the money, eh? We'll show you!";
+		close2;
+		set @nozeny,1;
+		warp "veins",150,215;
+		end;
+	}
+	mes "[Drunken Man]";
+	mes "Hey! I haven't seen you around here before! Let me buy you a drink!";
+	close;
+}
+
+ve_in,242,116,3	script	Waitress#ch	940,{
+	mes "[Waitress]";
+	mes "Take a seat and enjoy your stay!";
+	close;
+}
+
+prt_monk,267,84,5	script	Monk#ch	753,{
+	if(cap_sailor&2) {
+		mes "[Sailor]";
+		mes "Ahh such a good captain! I'd lay my life on the line for him any day.";
+		close;
+	}
+	if(captain_hat) {
+		mes "^3355FFYou see a rather tanned and scarred monk meditating. This might be the devout sailor you were looking for!^000000";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Erm, excuse me?";
+		next;
+		mes "[Monk]";
+		mes "...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "^666666*ahem*^000000 Hello?";
+		next;
+		mes "[Monk]";
+		mes "......";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Hey! Talk to me!";
+		next;
+		mes "[Monk]";
+		mes "Will you please keep it down! This is a place of God! We are all in deep meditation.";
+		next;
+		if(select("Everyone except you.:Sorry, it's just I have news of a captain...:Sounds really boring...")!=2)
+		{
+			mes "^3355FFThe monk glances angrily away.^000000";
+			close;
+		}
+		mes "[Sailor]";
+		mes "I'm sorry... Did you say captain?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Yeah! You wouldn't happen to be that sailor, would you?";
+		next;
+		mes "[Sailor]";
+		mes "I was once, yes... What's the matter?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		mes "......";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		mes "......";
+		mes ".........";
+		next;
+		mes "[Sailor]";
+		mes "Oh no! My poor captain! I'll go see him right away!";
+		set cap_sailor,cap_sailor|2;
+		close;
+	}
+	mes "[Monk]";
+	mes ".........";
+	close;
+}
+
+payon,125,192,5	script	Creepy Man#ch	118,{
+	if(cap_sailor&4) {
+		mes "[Sailor]";
+		mes "Ahh such a good captain! I'd lay my life on the line for him any day.";
+		close;
+	}
+	if(captain_hat) {
+		mes "^3355FFYou see an older-looking man staring at you from behind a wall. He looks very creepy and ready to attack!^000000";
+		next;
+		if(select("(Keep walking quickly.):Hey you!")==1) {
+			mes "[Creepy Man]";
+			mes "...";
+			close;
+		}
+		mes "[Creepy Man]";
+		mes "...! You can see me??";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Of course I can see you! And you look like you're about to kill me!";
+		next;
+		mes "[Creepy Man]";
+		mes "Sorry... You weren't supposed to see me at all...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Alright... That doesn't make you sound like a stalker at all...";
+		next;
+		mes "[Sailor]";
+		mes "Good! I don't want to be a stalker, I want to be a ninja!";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "A ninja? Then why are you in Payon?";
+		next;
+		mes "[Sailor]";
+		mes "To find someone who can teach me to become a ninja...? Are you THAT dense?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "If you want to become a ninja, you should really go to Amatsu. You know, the city of the ninja?";
+		next;
+		mes "[Sailor]";
+		mes "WHAT? That's not the ninja! This is! Look at all the oriental flowers and trees! This has to be the right city. How can you be so sure that it's not?";
+		next;
+		if(Class==Job_Ninja) {
+			mes "["+strcharinfo(0)+"]";
+			mes "Um... Have you tried looking at me?";
+			mes "Anyway, your captain wants his crew.";
+			goto L_What;
+		}
+		else {
+			if(select("I've been around the world looking for you!:How can a pirate want to be a ninja too?")==2) {
+				mes "^3355FFThe man glares at you and looks away.^000000";
+				close;
+			}
+			mes "[Sailor]";
+			mes "Me?";
+			next;
+			mes "[Sailor]";
+			mes "You're a crewmate of a certain captain, yeah?";
+			next;
+L_What:
+			mes "[Sailor]";
+			mes "Wait. Captain? Crew? You don't mean...";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "...";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "...";
+			mes "......";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "...";
+			mes "......";
+			mes ".........";
+			next;
+			mes "[Sailor]";
+			mes "Oh, so that's the way it is... I had better check up on him then. Thanks for your trouble.";
+			set cap_sailor,cap_sailor|4;
+			close;
+		}
+	}
+	mes "^3355FFYou see an older-looking man staring at you from behind a wall. He looks very creepy and ready to attack!^000000";
+	close;
+}
+
+moc_ruins,130,130,5	script	Trader#ch	48,{
+	if(cap_sailor&8) {
+		mes "[Sailor]";
+		mes "Ahh such a good captain! I'd lay my life on the line for him any day.";
+		close;
+	}
+	if(captain_hat && countitem(513)>=5) {
+		mes "[Trader]";
+		mes "Ugh... Bananas... Do you have bananas?";
+		next;
+		mes "^3355FFYou hand him five bananas and watch him devour them.^000000";
+		next;
+		mes "[Trader]";
+		mes "It helps a lot, thanks. Now please let me rest...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Before I do, I have a question to ask.";
+		next;
+		mes "[Trader]";
+		mes "Sure, but make it quick.";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Isn't scurvy a sailor sickness?";
+		next;
+		mes "[Sailor]";
+		mes "Ahh, yes. Believe it or not, I was a sailor helping the best captain on the seven seas!";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Your captain is dying and he wants to see you.";
+		next;
+		mes "[Sailor]";
+		mes "What a thing to tell someone who's ill! Your jokes aren't funny.";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "It's not a joke.";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		mes "......";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		mes "......";
+		mes ".........";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...and he wants you to see him.";
+		next;
+		mes "[Sailor]";
+		mes "I had no idea. Alright, I'll go. I may be sick but I still owe it to the captain to be there like the loyal crewmate I am. Now leave me be so I can gather my things.";
+		delitem 513,5;
+		set cap_sailor,cap_sailor|8;
+		close;
+	}
+	if(captain_hat) {
+		mes "[Trader]";
+		mes "Ugh... my stomach...";
+		next;
+		if(select("Is something wrong?:Eww! Don't get anything on my shoes!")==2)
+			goto L_Urp;
+		mes "[Trader]";
+		mes "Actually, yes. I think I may have scurvy...";
+		next;
+		if(select("Scurvy? Is there any way I can help?:Ack! You're sick? I'm leaving!")==2)
+			goto L_Urp;
+		mes "[Trader]";
+		mes "Hmm... Well th-- ow! The thing is, I need fruit. My favorite fruit are bananas so I won't eat anything other than those...";
+		next;
+		if(select("I'm not running your errands.:How many do you need?")==1)
+			goto L_Urp;
+		mes "[Trade]";
+		mes "I can't eat more than five so get me that many. And please hurry...";
+		close;
+	}
+		
+L_Urp:
+	mes "[Trader]";
+	mes "Urp! Ugh...";
+	close;
+}
+
+yuno,255,349,5	script	Tourist#ch	68,{
+	if(cap_sailor&16) {
+		mes "[Sailor]";
+		mes "Ahh such a good captain! I'd lay my life on the line for him any day.";
+		close;
+	}
+	if(captain_hat) {
+		mes "[Tourist]";
+		mes "Ahh! I've seen my share of islands but these three are amazing! Who knew you could have islands in the sky?";
+		next;
+		if(select("It's not that great...:Other islands?")==1) {
+			mes "[Tourist]";
+			mes "Not that great!? How can you say that when not only is there not any water around these islands but they're floating?? This is the most remarkable thing I have ever seen! Can you imagine that Sages actually live here? I mean there are tons of books on this floating rock! Most islands have gold as treasure but the only treasure here is knowledge! The kafras here are sexy too! How can no one see the...";
+			next;
+			mes "^3355FFYou see no end to his appreciation towards Juno so you decide to sneak away while he's occupied.^000000";
+			close;
+		}
+		mes "[Tourist]";
+		mes "Yes, other islands! Like in the water? What other islands could I be talking about?";
+		next;
+		if(select("Then you must be a sailor, right?:Let me think about it over there.")==2) {
+			mes "[Tourist]";
+			mes "Um, okay.";
+			close;
+		}
+		mes "[Sailor]";
+		mes "Of course I'm a sailor! I love everything land and sea! However, I took a break from both of those to go see what's in the air! That's where the real adventure begins!";
+		next;
+		select("You need to go back to the sea one last time.");
+		mes "[Sailor]";
+		mes "What? Sea? Sure! I'll go! But why?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		mes "......";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		mes "......";
+		mes ".........";
+		next;
+		mes "^3355FFUpon hearing this, all of the eagerness left his eyes.^000000";
+		next;
+		mes "[Sailor]";
+		mes "Oh...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		next;
+		mes "[Sailor]";
+		mes "...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...well?";
+		next;
+		mes "[Sailor]";
+		mes "...I'll go to him...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Alright, thanks.";
+		next;
+		mes "[Sailor]";
+		mes "...";
+		set cap_sailor,cap_sailor|16;
+		close;
+	}
+	mes "[Tourist]";
+	mes "Ahh! I've seen my share of islands but these three are amazing! Who knew you could have islands in the sky?";
+	close;
+}
+
+alberta,70,121,3	script	Sailor#ch	100,{
+	if(cap_sailor&32) {
+		mes "[Sailor]";
+		mes "Ahh such a good captain! I'd lay my life on the line for him any day.";
+		close;
+	}
+	if(captain_hat) {
+		mes "[Sailor]";
+		mes "Wasn't there supposed to be a left here? Or was it a right? But there's nothing here. Did I go too far?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "You seem lost.";
+		next;
+		mes "[Sailor]";
+		mes "Really now? Do I?";
+		next;
+		if(select("If you're going to be that way, nevermind.:What are you looking for?")==1) { 
+			mes "[Sailor]";
+			mes "Right then, off you go.";
+			close;
+		}
+		mes "[Sailor]";
+		mes "I'm looking for a port. I was told this place had a huge one but I can't seem to find it.";
+		next;
+		mes "^3355FFYou remember back to the captain's description of his last loyal crew member.^000000";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "You wouldn't happen to be a certain captain's most loyal crewmate, would you?";
+		next;
+		mes "[Sailor]";
+		mes "Hmm? You've heard about me? From whom?";
+		next;
+		if(select("Nowhere really. Stupid.:From a dying captain.")==1) {
+			mes "[Sailor]";
+			mes "Making fun of me because I'm lost, huh? Now if you've had your fun, leave.";
+			close;
+		}
+		mes "[Sailor]";
+		mes "Dying captain?? What do you mean??";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		mes "......";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...";
+		mes "......";
+		mes ".........";
+		next;
+		mes "[Sailor]";
+		mes "I'm glad I was already on my way to see him! Thanks for the info, I'll be on my way now.";
+		next;
+		mes "^3355FFYou see the sailor turn to leave only to find that he's going the wrong way.";
+		mes "He'll get there eventually.^000000";
+		set cap_sailor,cap_sailor|32;
+		close;
+	}
+	mes "[Sailor]";
+	mes "Wasn't there supposed to be a left here? Or was it a right? But there's nothing here. Did I go too far?";
+	close;
+}

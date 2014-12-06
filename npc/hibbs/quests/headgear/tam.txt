@@ -1,0 +1,76 @@
+//===== eAthena Script ======================================= 
+//= Tam Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//===========================================================
+
+ayothaya.gat,226,168,1	script	Peony#ball	838,{
+	completequest 16014;
+	mes "[Peony]";
+	mes "Hello!";
+	mes "How are you?";
+	next;
+	menu "I'm great!",L_end,"Can you make me a fancy hat?",-,"I have everything!",L_make;
+	mes "[Peony]";
+	mes "Oh, so you've heard, then!";
+	mes "Word of mouth seems to travel pretty fast, huh?";
+	next;
+	mes "[Peony]";
+	mes "Well anyway, yes, I can make you a fancy hat.";
+	mes "I call it, ^FF0000The Balloon Hat^000000!";
+	mes "We, as Ayothayans, adore intricate hats for our festivals.";
+	mes "But you probably already knew that.";
+	next;
+	mes "[Peony]";
+	mes "To make it, I'll need the following:";
+	mes "^3355FF250 Fabric,";
+	mes "350 Soft Silk,";
+	mes "1 Cobaltblue Dyestuff,";
+	mes "1 White Dyestuff,";
+	mes "and 2 Flower Hairpins.^000000";
+	next;
+	mes "[Peony]";
+	mes "I'll be here, waiting!";
+	close;
+	
+L_end:
+	mes "[Peony]";
+	mes "I'm so happy you're so happy!";
+	mes "Just as long as you stay happy~";
+	close;
+
+L_make:
+	mes "[Peony]";
+	mes "Oh, goodie! Let me see so I can check.";
+	next;
+	if (countitem(1059)<250 || countitem(7166)<350 ||
+		countitem(978)<1 || countitem(982)<1 || countitem(5061)<2)
+			goto L_no;
+	mes "[Peony]";
+	mes "Oh, joy, you do have everything!";
+	mes "I'll take them now.";
+	next;
+	delitem 1059,250;
+	delitem 7166,350;
+	delitem 978,1;
+	delitem 982,1;
+	delitem 5061,2;
+	mes "[Peony]";
+	mes "Okay, here you go!";
+	next;
+	getitem 5379,1;
+	mes "[Peony]";
+	mes "Remember, you can always make this hat again if you'd like!";
+	mes "Bye!";
+	close;
+
+L_no:
+	mes "[Peony]";
+	mes "You LIAR!";
+	close;
+
+}

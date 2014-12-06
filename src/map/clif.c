@@ -316,6 +316,9 @@ static int clif_send_sub(struct block_list *bl, va_list ap)
 	case AREA_WOC:
 		if (sd->chatID || bl == src_bl)
 			return 0;
+		/*ARR_FIND(0, MAX_IGNORE_LIST, i, tsd->ignore[i].name[0] == '\0' || strcmp(tsd->ignore[i].name, sd->status.name) == 0);
+		if(i < MAX_IGNORE_LIST && sd->ignore[i].name[0] != '\0')
+			return 0; */// [Pyeus]
 	break;
 	case AREA_WOSC:
 	{

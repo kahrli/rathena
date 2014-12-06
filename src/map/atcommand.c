@@ -5911,6 +5911,7 @@ ACMD_FUNC(autoloot)
 	if (rate > 10000) rate = 10000;
 
 	sd->state.autoloot = rate;
+	pc_setglobalreg(sd, "AT_AUTOLOOT",rate); // [Pyeus]
 	if (sd->state.autoloot) {
 		snprintf(atcmd_output, sizeof atcmd_output, msg_txt(sd,1187),((double)sd->state.autoloot)/100.); // Autolooting items with drop rates of %0.02f%% and below.
 		clif_displaymessage(fd, atcmd_output);
@@ -7979,16 +7980,19 @@ ACMD_FUNC(mapflag) {
 /*===================================
  * Remove some messages
  *-----------------------------------*/
+// [Pyeus] Couple of mods
 ACMD_FUNC(showexp)
 {
 	if (sd->state.showexp) {
 		sd->state.showexp = 0;
 		clif_displaymessage(fd, msg_txt(sd,1316)); // Gained exp will not be shown.
+		pc_setglobalreg(sd,"AT_SHOWEXP",sd->state.showexp);
 		return 0;
 	}
 
 	sd->state.showexp = 1;
 	clif_displaymessage(fd, msg_txt(sd,1317)); // Gained exp is now shown.
+	pc_setglobalreg(sd,"AT_SHOWEXP",sd->state.showexp);
 	return 0;
 }
 

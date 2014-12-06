@@ -1,0 +1,157 @@
+//===== rAthena Script =======================================
+//= War of Emperium - Auto-Start
+//===== By: ==================================================
+//= kalen (1.0)
+//= 1.1 by Akaru and ho|yAnge|
+//===== Current Version: =====================================
+//= 2.0
+//===== Compatible With: =====================================
+//= rAthena SVN; RO Episode 4+
+//===== Description: =========================================
+//= Auto-start for War of Emperium FE.
+//= For instructions, see doc/woe_time_explanation.txt.
+//===== Additional Comments: =================================
+//= v1.1a changed OnInit to OnAgitInit.[kobra_k88]
+//= v1.2 added gettime checks. removed $AgitStarted var.[kobra_k88]
+//= v1.3 Moved treasure spawn time here.[kobra_k88]
+//= v1.3a Implemented Shadowlady's idea to allow for different
+//=       start/stop times on different days.[kobra_k88]
+//= 1.4 Fixed treasure chests spawn! We had to unroll some loops
+//=     Now they appear in castles from 00:01 to 00:24. [Lupus]
+//= 1.5 Fixed WOE end messages on non-WOE days, by Avaj
+//= 1.5a missing tabs [KarLaeda]
+//= 1.6 Corrected multiple "WoE has begun" announces [ultramage]
+//= 1.7 Commented out the WoE start and end announces. [L0ne_W0lf]
+//= 1.8 Castle owners displayed when WoE starts and finished. [L0ne_W0lf]
+//= 1.8a Will now report unoccupied castles at start/end. [L0ne_W0lf]
+//= 1.8b Whoops. Fixed a mistake :D [L0ne_W0lf]
+//= 1.9 Rearranged the time-checks so they no longer use goto. [L0ne_W0lf]
+//=	Removed treasure spawning function calls. (No longer needed)
+//= 2.0 Added WoE Battle Log support for broadcasts. [L0ne_W0lf]
+//============================================================
+
+-	script	Agit_Event	-1,{
+	end;
+
+OnClock1100:
+OnClock1200:
+OnClock0100:
+OnClock0200:
+OnClock0300:
+OnClock2000:
+OnClock2100:
+
+OnAgitInit:
+	setarray .@start[0],11,1,2,20;
+	setarray .@day[0],2,4,6,6;
+	setarray .region$[0],"gef","alde","prt","pay";
+	
+	for (set .@i,0; .@i<getarraysize(.region$); set .@i,.@i+1) {
+		if ( gettime(4)==.@day[.@i] && gettime(3)==.@start[.@i] && !agitcheck() ) {
+			setd "$"+.region$[.@i],rand(1,5);
+			AgitStart;
+			set .@castle$,.region$[.@i]+"g_cas0"+getd("$"+.region$[.@i]);
+			callsub S_DisplayOwners,.@castle$,0;
+			callsub S_Portals,0,.region$[.@i];
+		}
+		
+		if ( gettime(4)==.@day[.@i] && gettime(3)==.@start[.@i]+1 && agitcheck() ) {
+			AgitEnd;
+			set .@castle$,.region$[.@i]+"g_cas0"+getd("$"+.region$[.@i]);
+			callsub S_DisplayOwners,.@castle$,1;
+			callsub S_Portals,1,.region$[.@i];
+		}
+	}
+	end;
+	
+S_Portals:
+	setarray .@alde[0],1,1,1,1,1;
+	setarray .@alde$[0],"aldg01","aldg02","aldg03","aldg04","aldg05";
+	setarray .@gef[0],2,1,4,1,2;
+	setarray .@gef$[0],"gefg01","gefg02",
+		"gefg03",
+		"gefg04","gefg05","gefg06","gef07",
+		"gefg08",
+		"gefg09","gefg09-1";
+	setarray .@pay[0],1,1,1,1,1;
+	setarray .@pay$[0],"payg01","payg02","payg03","payg04","payg05";
+	setarray .@prt[0],1,1,1,1,1;
+	setarray .@prt$[0],"prtg01","prtg02-1","prtg03-1","prtg04-1","prtg05-1";
+	
+	for(set .@i,0; .@i<getarraysize(.region$); set .@i, .@i+1) {
+		set .@k,0;
+		for(set .@j,0; .@j<5; set .@j,.@j+1) {
+			for(set .@m,0; .@m<getd(".@"+.region$[.@i]+"["+.@j+"]"); set .@m,.@m+1) {
+				if(getarg(0)) enablenpc getd(".@"+.region$[.@i]+"$["+.@k+"]");
+				else disablenpc getd(".@"+.region$[.@i]+"$["+.@k+"]");
+				set .@k,.@k+1;
+			}
+		}
+	}
+	
+	if(!getarg(0)) {
+		set .@k,0;
+		for(set .@i,0; .@i<5; set .@i,.@i+1) {
+			set .@temp,getd("$"+getarg(1))-1;
+			if(.@i==.@temp) {
+				for(set .@j,0; .@j<getd(".@"+getarg(1)+"["+.@i+"]"); set .@j,.@j+1) {
+					enablenpc getd(".@"+getarg(1)+"$["+.@k+"]");
+					set .@k,.@k+1;
+				}
+			}
+			else set .@k,.@k+getd(".@"+getarg(1)+"["+.@i+"]");
+		}
+	}
+	
+return;
+
+S_DisplayOwners:
+	if (GetCastleData(getarg(0),1)) 
+		Announce "The [" + GetCastleName(getarg(0)) + "] castle has been conquered by the [" + GetGuildName(GetCastleData(getarg(0),1)) + "] guild.",bc_all|bc_woe;
+	else 
+		Announce "The [" + GetCastleName(getarg(0)) + "] castle is currently unoccupied.",bc_all|bc_woe;
+	if(getarg(1))
+		Announce "The War of Emperium has come to an end.",bc_all|bc_woe;
+	else
+		Announce "The War of Emperium has begun.",bc_all|bc_woe;
+	return;
+}
+
+/*-	script	AgitSmall_Init	-1,{
+OnClock1000:
+OnClock1045:
+OnClock0000:
+OnClock0045:
+OnClock0100:
+OnClock0145:
+OnClock1900:
+OnClock1945:
+OnClock0600:
+OnClock0645:
+	//setarray .@start[0],10,0,6,19;
+	//setarray .@day[0],2,4,6,6;
+	setarray .@start[0],10,0,1,19;
+	setarray .@day[0],2,4,6,6;
+	setarray .@castle[0],"2","1","4","3";
+	
+	for (set .@i,0; .@i<getarraysize(.@castle); set .@i,.@i+1) {
+		if ( gettime(4)==.@day[.@i] && gettime(3)==.@start[.@i] && gettime(2)<45 ) {
+			switch(.@castle[.@i]) {
+				case 1: donpcevent "Agit_N01::OnAgitGo"; break;
+				case 2: donpcevent "Agit_N02::OnAgitGo"; break;
+				case 3: donpcevent "Agit_N03::OnAgitGo"; break;
+				case 4: donpcevent "Agit_N04::OnAgitGo"; break;
+			}
+		}
+
+		if ( gettime(4)==.@day[.@i] && gettime(3)==.@start[.@i] && gettime(2)>=40 ) {
+			switch(.@castle[.@i]) {
+				case 1: donpcevent "Agit_N01::OnAgitStop"; break;
+				case 2: donpcevent "Agit_N02::OnAgitStop"; break;
+				case 3: donpcevent "Agit_N03::OnAgitStop"; break;
+				case 4: donpcevent "Agit_N04::OnAgitStop"; break;
+			}
+		}
+	}
+	end;
+}*/

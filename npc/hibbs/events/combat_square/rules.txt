@@ -1,0 +1,40 @@
+quiz_00,61,33,3	script	Information Staff	69,{
+	mes "[Information Staff]";
+	mes "Why hello there.  I can give you some basic information on how this Tournament works";
+	next;
+	mes "[Information Staff]";
+	mes "To begin with, you would need to sign up with the Registration Staff over there.";
+	next;
+	mes "[Information Staff]";
+	mes "To supply for all the costs of reviving your dead bodies, there is a small 10,000 zeny fee.";
+	next;
+	mes "[Information Staff]";
+	mes "Note that if you sign up, you cannot change your mind later, and will be warped in regardless of what you're doing.";
+	next;
+	mes "[Information Staff]";
+	mes "After all contestants have joined, we will draw names from a hat, so to speak.";
+	next;
+	mes "[Information Staff]";
+	mes "The two names we draw shall be warned of the fight to come, and shortly there-after, warped in.";
+	next;
+	mes "[Information Staff]";
+	mes "Please note that upon being warped in, you will both be returned to full health, as well as debuffed.";
+	next;
+	mes "[Information Staff]";
+	mes "Also of note, all yggdrasil items are disabled in the arena, as well as Flying Side Kick, High Jump, and Teleport.";
+	next;
+	mes "[Information Staff]";
+	mes "Should you defeat your foe, you will be re-entered for a chance at winning the final prize!";
+	next;
+	mes "[Information Staff]";
+	mes "I think that about covers it.  Please enjoy your Tournament, and best of luck.";
+	close;
+}
+
+quiz_00,54,35,5	script	Healer#tourn2	742,{
+	percentheal 100,100;
+}
+
+quiz_00,77,35,3	script	Healer#tourn	742,{
+	percentheal 100,100;
+}

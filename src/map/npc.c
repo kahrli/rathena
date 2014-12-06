@@ -2064,8 +2064,9 @@ int npc_addsrcfile(const char* name)
 	file = npc_src_files;
 	while( file != NULL )
 	{
-		if( strcmp(name, file->name) == 0 )
-			return 0;// found the file, no need to insert it again
+		// [Pyeus]
+		//if( strcmp(name, file->name) == 0 )
+		//	return 0;// found the file, no need to insert it again
 		file_prev = file;
 		file = file->next;
 	}

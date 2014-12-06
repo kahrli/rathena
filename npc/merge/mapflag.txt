@@ -1,0 +1,175 @@
+// Need to re-evalutae what all these are for
+
+
+chess01	mapflag	nobranch
+quiz_00	mapflag	nobranch
+quiz_01	mapflag	nobranch
+quiz_02	mapflag	nobranch
+que_moon	mapflag	nobranch
+heaven_m	mapflag	nobranch
+pvp_2vs2	mapflag	nobranch
+
+poring_w01	mapflag	nomemo
+
+poring_c01	mapflag	nopenalty
+pvp_n_2-1	mapflag	nopenalty
+pvp_n_1-1	mapflag	nopenalty
+pvp_n_1-5	mapflag	nopenalty
+
+pvp_n_1-3	mapflag	noreturn
+pvp_n_1-5	mapflag	noreturn
+que_moon	mapflag	noreturn
+
+poring_c01	mapflag	nosave	SavePoint
+poring_c02	mapflag	nosave	SavePoint
+quiz_02	mapflag	nosave	SavePoint
+quiz_01	mapflag	nosave	SavePoint
+quiz_00	mapflag	nosave	SavePoint
+poring_w01	mapflag	nosave	SavePoint
+poring_w02	mapflag	nosave	SavePoint
+
+quiz_02	mapflag	noteleport
+que_moon	mapflag	noteleport
+
+payo1	mapflag	pvp
+poring_c01	mapflag	pvp
+
+payo1	mapflag	pvp_noguild
+poring_c01	mapflag	pvp_noguild
+payo1	mapflag	pvp_noparty
+pvp_2vs2	mapflag	pvp_noparty
+
+pvp_2vs2	mapflag	pvp_nocalcrank
+poring_c01	mapflag	pvp_nocalcrank
+
+// -- MVP maps
+moc_pryd06	mapflag	pvp
+lhz_dun03	mapflag	pvp
+ra_fild02	mapflag	pvp
+ra_fild03	mapflag	pvp
+ra_fild04	mapflag	pvp
+ve_fild01	mapflag	pvp
+ve_fild02	mapflag	pvp
+lou_dun03	mapflag	pvp
+prt_maze03	mapflag	pvp
+gl_chyard	mapflag	pvp
+abyss_03	mapflag	pvp
+gef_dun02	mapflag	pvp
+gef_dun01	mapflag	pvp
+treasure02	mapflag	pvp
+pay_fild11	mapflag	pvp
+gon_dun03	mapflag	pvp
+abbey02	mapflag	pvp
+abbey03	mapflag	pvp
+xmas_fild01	mapflag	pvp
+ra_san05	mapflag	pvp
+prt_sewb4	mapflag	pvp
+thor_v03	mapflag	pvp
+ama_dun03	mapflag	pvp
+kh_dun02	mapflag	pvp
+xmas_dun02	mapflag	pvp
+ice_dun03	mapflag	pvp
+ayo_dun02	mapflag	pvp
+niflheim	mapflag	pvp
+anthell02	mapflag	pvp
+mjolnir_04	mapflag	pvp
+pay_dun04	mapflag	pvp
+gef_fild02	mapflag	pvp
+gef_fild14	mapflag	pvp
+gef_fild10	mapflag	pvp
+moc_pryd04	mapflag	pvp
+in_sphinx5	mapflag	pvp
+moc_fild17	mapflag	pvp
+ein_dun02	mapflag	pvp
+beach_dun	mapflag	pvp
+thana_boss	mapflag	pvp
+tur_dun04	mapflag	pvp
+odin_tem03	mapflag	pvp
+jupe_core	mapflag	pvp
+lhz_dun02	mapflag	pvp
+mosk_dun03	mapflag	pvp
+man_fild03	mapflag	pvp
+spl_fild03	mapflag	pvp
+moc_fild22	mapflag	pvp
+dic_dun02	mapflag	pvp
+
+moc_pryd06	mapflag	pvp_nocalcrank
+lhz_dun03	mapflag	pvp_nocalcrank
+ra_fild02	mapflag	pvp_nocalcrank
+ra_fild03	mapflag	pvp_nocalcrank
+ra_fild04	mapflag	pvp_nocalcrank
+ve_fild01	mapflag	pvp_nocalcrank
+ve_fild02	mapflag	pvp_nocalcrank
+lou_dun03	mapflag	pvp_nocalcrank
+prt_maze03	mapflag	pvp_nocalcrank
+gl_chyard	mapflag	pvp_nocalcrank
+abyss_03	mapflag	pvp_nocalcrank
+gef_dun02	mapflag	pvp_nocalcrank
+gef_dun01	mapflag	pvp_nocalcrank
+treasure02	mapflag	pvp_nocalcrank
+pay_fild11	mapflag	pvp_nocalcrank
+gon_dun03	mapflag	pvp_nocalcrank
+abbey02	mapflag	pvp_nocalcrank
+abbey03	mapflag	pvp_nocalcrank
+xmas_fild01	mapflag	pvp_nocalcrank
+ra_san05	mapflag	pvp_nocalcrank
+prt_sewb4	mapflag	pvp_nocalcrank
+thor_v03	mapflag	pvp_nocalcrank
+ama_dun03	mapflag	pvp_nocalcrank
+kh_dun02	mapflag	pvp_nocalcrank
+xmas_dun02	mapflag	pvp_nocalcrank
+ice_dun03	mapflag	pvp_nocalcrank
+ayo_dun02	mapflag	pvp_nocalcrank
+niflheim	mapflag	pvp_nocalcrank
+anthell02	mapflag	pvp_nocalcrank
+mjolnir_04	mapflag	pvp_nocalcrank
+pay_dun04	mapflag	pvp_nocalcrank
+gef_fild02	mapflag	pvp_nocalcrank
+gef_fild14	mapflag	pvp_nocalcrank
+gef_fild10	mapflag	pvp_nocalcrank
+moc_pryd04	mapflag	pvp_nocalcrank
+in_sphinx5	mapflag	pvp_nocalcrank
+moc_fild17	mapflag	pvp_nocalcrank
+ein_dun02	mapflag	pvp_nocalcrank
+beach_dun	mapflag	pvp_nocalcrank
+thana_boss	mapflag	pvp_nocalcrank
+tur_dun04	mapflag	pvp_nocalcrank
+odin_tem03	mapflag	pvp_nocalcrank
+jupe_core	mapflag	pvp_nocalcrank
+lhz_dun02	mapflag	pvp_nocalcrank
+mosk_dun03	mapflag	pvp_nocalcrank
+man_fild03	mapflag	pvp_nocalcrank
+spl_fild03	mapflag	pvp_nocalcrank
+dic_dun02	mapflag	pvp_nocalcrank
+
+
+pvp_2vs2	mapflag	restricted	2
+pvp_2vs2	mapflag	restricted	6
+payg_cas01	mapflag	restricted	6
+payg_cas02	mapflag	restricted	6
+payg_cas03	mapflag	restricted	6
+payg_cas04	mapflag	restricted	6
+payg_cas05	mapflag	restricted	6
+aldeg_cas01	mapflag	restricted	6
+aldeg_cas02	mapflag	restricted	6
+aldeg_cas03	mapflag	restricted	6
+aldeg_cas04	mapflag	restricted	6
+aldeg_cas05	mapflag	restricted	6
+gefg_cas01	mapflag	restricted	6
+gefg_cas02	mapflag	restricted	6
+gefg_cas03	mapflag	restricted	6
+gefg_cas04	mapflag	restricted	6
+gefg_cas05	mapflag	restricted	6
+prtg_cas01	mapflag	restricted	6
+prtg_cas02	mapflag	restricted	6
+prtg_cas03	mapflag	restricted	6
+prtg_cas04	mapflag	restricted	6
+prtg_cas05	mapflag	restricted	6
+
+-	script	RemoveMapFlag	-,{
+OnInit:
+	removemapflag "nyd_dun02",mf_noteleport;
+	setmapflag "pvp_n_1-1",mf_nonightmaredrop;
+	setmapflag "pvp_n_1-2",mf_nonightmaredrop;
+	setmapflag "pvp_n_1-5",mf_nonightmaredrop;
+}

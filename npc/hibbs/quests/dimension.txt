@@ -1,0 +1,133 @@
+moc_fild21,301,157,3	script	Assassin#gqu	730,{
+	if (BaseLevel < 120) {
+		npcskilleffect 379,1,301,157;
+		percentheal -100,0;
+		end;
+	}
+	if(gqu == 5)
+		end;
+	if( getnpctimer(1) ) {
+		mes "[Assassin]";
+		mes "Not now!  The beast is loose!";
+		close;
+	}
+	if(gqu == 3) {
+		mes "[Assassin]";
+		mes "Well?";
+		next;
+		if(select("We've done it!!:Is it done?")==1) {
+			mes "[Assassin]";
+			mes "No, we haven't.  We've only just weakened him.";
+			next;
+			mes "[Assassin]";
+			mes "It seems I must get going back to my world.  Here.";
+		}
+		else {
+			mes "[Assassin]";
+			mes "Something's not right...";
+			next;
+			mes "[Assassin]";
+			mes "I'll se you again later on.  Here's a little something for your trouble.";
+		}
+		close2;
+		set gqu,5;
+		getexp 200000,100000;
+		if(BaseClass == Job_Acolyte) getitem 2767,1;
+		else if(BaseClass == Job_Archer) getitem 2769,1;
+		else if(BaseClass == Job_Mage) getitem 2768,1;
+		else if(BaseClass == Job_Merchant) getitem 2771,1;
+		else if(BaseClass == Job_Swordman) getitem 2766,1;
+		else if(BaseClass == Job_Thief) getitem 2770,1;
+		else getitem 2765,1;
+		end;
+	}
+	if( (gqu == 1 && countitem(2536) && countitem(2728) &&
+		countitem(523)>=200 && countitem(7799)>=500 &&
+		countitem(7798)>=500) || gqu==2 ) {
+		mes "[Assassin]";
+		mes "Are you ready to summon the beast?  We will strike him down, while he's weak.";
+		next;
+		if(select("Revenge...:No way, that's far enough.")==2) {
+			mes "[Assassin]";
+			mes "You scared..?";
+			close;
+		}
+		mes "[Assassin]";
+		mes "Now I shall summon this demon.  Be ready!";
+		if(gqu==1) {
+			delitem 2536,1;
+			delitem 2728,1;
+			delitem 523,200;
+			delitem 7799,500;
+			delitem 7798,500;
+			set gqu,2;
+		}
+		close2;
+		monster "moc_fild21",299,155,"Wounded Morroc",1917,1,"Assassin#gqu::OnMySatanDead";
+		initnpctimer;
+		end;
+	}
+	if(gqu == 1) {
+		mes "[Assassin]";
+		mes "I need you to kill some of these bad boys and stock us up with supplies.";
+		next;
+		mes "[Assassin]";
+		mes "^3355FFSkin of Ventus [1]^000000,";
+		mes "^3355FFCursed Hand [1]^000000,";
+		mes "^3355FF200 Holy Water^000000,";
+		mes "^3355FF500 Crystal of Darkness^000000,";
+		mes "and ^3355FF500 Fragment of Darkness^000000.";
+		close;
+	}
+	if(gqu == 4) {
+		mes "[Assassin]";
+		mes "You're not half bad... You seem angry though.  Miss your old town Morroc, eh?";
+		next;
+		select("Yeah, I guess.");
+		mes "[Assassin]";
+		mes "Well, you see, not long ago, Incarnations of Morroc destroyed some wings of the Assassin Guild.";
+		next;
+		mes "[Assassin]";
+		mes "It was a pretty big blow to us.  But you know, I want to take revenge on this demon.  See this scroll here?  It allows me to summon Incarnations.";
+		next;
+		mes "[Assassin]";
+		mes "Incarnations are the source of power for Satan Morroc; the more you kill, the weaker he is.";
+		next;
+		mes "[Assassin]";
+		mes "After you kill a few, he'll probably stop in to see what's disturbing him.  Not too long ago some assassins challenged the beast and weakened him.";
+		next;
+		mes "[Assassin]";
+		mes "My job is to kill his power.  Care to help?";
+		next;
+		select("Morroc was my town.  Let's kill that bastard.");
+		mes "[Assassin]";
+		mes "That's the spirit!  I need you to kill some of these bad boys and stock us up with supplies.";
+		next;
+		set gqu,1;
+		mes "[Assassin]";
+		mes "^3355FFSkin of Ventus [1]^000000,";
+		mes "^3355FFCursed Hand [1]^000000,";
+		mes "^3355FF200 Holy Water^000000,";
+		mes "^3355FF500 Crystal of Darkness^000000,";
+		mes "and ^3355FF500 Fragment of Darkness^000000.";
+		close;
+	}
+	mes "[Assassin]";
+	mes "You there... You shouldn't be wandering around these parts. Incarnations are sure to rip guys like you apart.";
+	close2;
+	monster "moc_fild21",299,155,"Incarnation of Morroc",1924,1,"Assassin#gqu::OnMyMobDead";
+	end;
+
+OnMySatanDead:
+	set gqu,3;
+	stopnpctimer;
+	end;
+	
+OnMyMobDead:
+	set gqu,4;
+	end;
+OnTimer7200000:
+	killmonster "moc_fild21","OnMySatanDead";
+	stopnpctimer;
+	end;
+}

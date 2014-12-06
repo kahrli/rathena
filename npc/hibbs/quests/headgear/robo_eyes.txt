@@ -1,0 +1,355 @@
+//===== eAthena Script ======================================= 
+//= Robo Eyes Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+ein_in01.gat,71,200,3	script	Zelmeto#re	47,{
+	if(robo_eyes) {
+		mes "[Zelmeto]";
+		mes "Her name is Jan O'Canner.";
+		mes "You can get started by, of course, paying her a visit.";
+		close;
+	}
+	if(EinFactory==16) {
+		completequest 16015;
+		mes "[Zelmeto]";
+		mes "Oh hey. I've seen the work you've been doing here and, well...";
+		next;
+		mes "[Zelmeto]";
+		mes "A friend of mine is doing some research here in town... Would you mind helping out?";
+		next;
+		menu "Sure, why not?",-,"I've got other things to do.",bad;
+		mes "[Zelmeto]";
+		mes "Great. Her name is Jan O'Canner.";
+		mes "You can get started by, of course, paying her a visit.";
+		set robo_eyes,1;
+		close;
+	}
+bad:
+	emotion e_sigh;
+	mes "[Zelmeto]";
+	mes "I hope I don't end up doing it myself... Jan works me too hard.";
+	close;
+}
+
+/*
+que_ng.gat,181,23,5	script	Robot#re	1740,{
+	end;
+}*/
+
+que_ng.gat,183,24,5	script	Jan O'Canner#re	982,{
+	if(robo_eyes == 12) {
+		mes "[Jan O'Canner]";
+		mes "Where did I go wrong...?"; 
+		emotion e_desp;
+		close; 
+	}
+	if(robo_eyes == 11 && countitem(7443)) {
+		mes "[Jan O'Canner]";
+		mes "Give it here, give it here!"; 
+		next;
+		mes "^3355FFJan quickly splits the heads and removes the dragon's brains, putting them into the machine. Upon sealing the machine up, it begins to light up, becoming almost alive.^000000"; 
+		monster "que_ng.gat",182,24,"H2590-SAMPLE",1740,1;
+		next;
+		mes "[Jan O'Canner]";
+		mes "Ooh... It's working! It looks like it's working!";
+		next;
+		mes "^3355FFThe machine starts moving erratically, as if something internally was breaking.^000000";
+		next;
+		mes "[Jan O'Canner]";
+		emotion e_gasp; 
+		mes "...What...? Noooo!";
+		next;
+		mes "^3355FFThe machine begins to break down, smoke filling the room as pieces of it fall to the floor.^000000"; 
+		killmonsterall "que_ng.gat";
+		next;
+		mes "[Jan O'Canner]";
+		mes "Damn it... All that work and precious time... wasted."; 
+		next;
+		mes "^3355FFJan bends down and picked up one of the parts of the machine's face and rises, her eyes never leaving the object in her hand.^000000";
+		next;
+		mes "[Jan O'Canner]";
+		mes "I can't bear to look at this anymore. Maybe the world just wasn't ready."; 
+		mes "Take this away from me. Keep it as a symbol of... what could have been..."; 
+		emotion e_sigh; 
+		set robo_eyes,12;
+		delitem 7443,1;
+		getitem 5325,1;
+		close;
+	}
+	if(robo_eyes == 11) {
+		mes "[Jan O'Canner]";
+		mes "Got the heads?";
+		close;
+	}
+	if(robo_eyes == 10 && countitem(7356)>=75 && countitem(7357)>=75 && countitem(7359)>=75 && countitem(7359)>=75) {
+		mes "[Jan O'Canner]";
+		mes "Thank you~ Hand 'em over, I'll attach them now..."; 
+		next;
+		mes "^3355FFIn a matter of what seems like mere seconds, Jan assembles the crest pieces and attaches them to the interior of the machine's shell.^000000";
+		next;
+		emotion e_ic; 
+		mes "[Jan O'Canner]";
+		mes "Hehe... Now for one last item to make this thing work. It needs a brain!"; 
+		mes "No, THREE brains!";
+		next;
+		mes "[Jan O'Canner]";
+		mes "And what better than a brain filled with ancient draconic knowledge...";
+		mes "Bring me a ^3355FFThree-Headed Dragon's Head^000000 from a Hydrolancer... I believe it can be found at the bottom of the Abyss Lakes.";
+		set robo_eyes,11;
+		delitem 7356,75; 
+		delitem 7357,75; 
+		delitem 7358,75; 
+		delitem 7359,75;
+		close;
+	}
+	if(robo_eyes == 10) {
+		mes "[Jan O'Canner]";
+		mes "Hm... You don't have everything. You sure you checked your bags?";
+		close;
+	}
+	if(robo_eyes == 9 && robo_eyes_tick < gettimetick(2)) {
+		emotion e_bzz; 
+		mes "[Jan O'Canner]";
+		mes "...That group of failures! They had forgotten one of the most important components of these machines!";
+		next;
+		mes "[Jan O'Canner]";
+		mes "It seems that I have to try something else... ";
+		next;
+		emotion e_ic; 
+		mes "[Jan O'Canner]";
+		mes "Crest Pieces! I think I'll need some of those."; 
+		mes "Go back into Juperos and pull those crest pieces off those Venatus for me. I'll need about... 75 of each of the four types.";
+		set robo_eyes,10;
+		set robo_eyes_tick,0;
+		close;
+	}
+	if(robo_eyes == 9) {
+		mes "[Jan O'Canner]";
+		mes "Oh, go rest up."; 
+		mes "...No, seriously.";
+		close;
+	}
+	if(robo_eyes == 8 && countitem(7095)>=200 && countitem(7094)>=250 && countitem(7093)>=150) {
+		mes "^3355FFYou look at the towering structure Jan has started to assemble. It seems to have the shape of a humanoid.^000000";
+		next;
+		mes "[Jan O'Canner]";
+		mes "Hm? Admiring my work? Hand everything over, give it here!"; 
+		next;
+		mes "[Jan O'Canner]";
+		mes "Thank you *so* much for all your hard work! You've worked very hard, and I think I can handle it from here."; 
+		next;
+		mes "[Jan O'Canner]";
+		mes "Why don't you take the rest of the day off?";
+		next;
+		mes "[Jan O'Canner]";
+		mes "By this time tomorrow, we should be done...";
+		mes "Prepare yourself to witness one of the greatest things mankind has ever seen!";
+		set robo_eyes,9;
+		set robo_eyes_tick,gettimetick(2)+86400;
+		delitem 7095,200;
+		delitem 7094,250; 
+		delitem 7093,150;
+		close;
+	}
+	if(robo_eyes == 8) {
+		mes "[Jan O'Canner]";
+		mes "What're you doing? Get to work!";
+		close;
+	}
+	if(robo_eyes == 7 && robo_eyes_tick < gettimetick(2)) {
+		mes "[Jan O'Canner]";
+		mes "Well that's done. I got started on the interior, but ran out of parts again...";
+		next;
+		mes "[Jan O'Canner]";
+		mes "Think you could help this poor girl out again? Pretty please?";
+		next;
+		emotion e_swt;
+		mes "[Jan O'Canner]";
+		mes "Before you answer, that was a rhetorical question.";
+		next;
+		mes "[Jan O'Canner]";
+		mes "I'm... going to need some parts from Juperos, if you don't mind.";
+		next;
+		mes "[Jan O'Canner]";
+		mes "This time, I'll need...";
+		mes "^3355FF200 Metal Fragments^000000,";
+		mes "^3355FF250 Fragments^000000,";
+		mes "and ^3355FF150 Cogwheels^000000.";
+		next;
+		mes "[Jan O'Canner]";
+		mes "Bring those things to me and we'll see what I can do.";
+		set robo_eyes,8;
+		set robo_eye_tick,0;
+		close;
+	}
+	if(robo_eyes == 7) {
+		mes "[Jan O'Canner]";
+		mes "Not now, not now, lemme work!";
+		close;
+	}
+	if(robo_eyes == 6 && countitem(7317)>=450 && countitem(7167)>=200 && countitem(7319)>=300) {
+		emotion e_gasp;
+		mes "[Jan O'Canner]";
+		mes "Wow, you actually got 'em! I think I could get started on a basic exterior with these parts.";
+		next;
+		mes "Come back to me in about two hours, mmkay? I may need your help again.";
+		delitem 7317,450;
+		delitem 7167,200;
+		delitem 7319,300;
+		set robo_eyes,7;
+		set robo_eyes_tick,gettimetick(2)+7200;
+		close;
+	}
+	if(robo_eyes == 6) {
+		mes "[Jan O'Canner]";
+		mes "I'm going to need"; 
+		mes "^3355FF200 Strange Steel Pieces^000000,"; 
+		mes "^3355FF300 Used Iron Plates^000000,"; 
+		mes "and ^3355FF450 Rusty Screws^000000.";
+		close;
+	}
+	if(robo_eyes == 5 && robo_eyes_tick < gettimetick(2)) {
+		set robo_eyes_tick,0;
+		mes "[Jan O'Canner]";
+		mes "Hey, you've arrived just in time! I just managed to finish my blueprints..."; 
+		mes "And then I noticed I ran out of materials...";
+		next;
+		mes "[Jan O'Canner]";
+		mes "If you're not too busy, would you mind getting some of the things on this list for me?";
+		next;
+		select("Not like I have anything better to do.");
+		mes "[Jan O'Canner]";
+		mes "Great! I'm going to need"; 
+		mes "^3355FF200 Strange Steel Pieces^000000,"; 
+		mes "^3355FF300 Used Iron Plates^000000,"; 
+		mes "and ^3355FF450 Rusty Screws^000000.";
+		next;
+		mes "[Jan O'Canner]";
+		mes "Think you can do that for me?";
+		set robo_eyes,6;
+		close;
+	}
+	if(robo_eyes == 5) {
+		emotion e_ag; 
+		mes "^3355FFYou notice Jan seems busy working; it looks like she's writing up blueprints. You think it's probably best not to disturb her.^000000";
+		close;
+	}
+	if(robo_eyes == 4 && countitem(7756) && countitem(7343)) {
+		mes "[Jan O'Canner]";
+		mes "Are those the research notes? Gimme!"; 
+		next;
+		mes "[Jan O'Canner]";
+		mes "Thank you so much for doing this for me. Now, I'll need a little time to read over these papers...";
+		next;
+		mes "[Jan O'Canner]";
+		mes "A stack this size will probably take me a couple hours... Come and check on me in about two and a half hours.";
+		delitem 7756,1; delitem 7343,1;
+		set robo_eyes,5; set robo_eyes_tick,gettimetick(2)+9000;
+		close;
+	}
+	if(robo_eyes > 1 && robo_eyes < 5) {
+		mes "[Jan O'Canner]";
+		mes "Can you go check around the old Juperos ruins for our researchers?";
+		close;
+	}
+	if(robo_eyes == 1) {
+		mes "[Jan O'Canner]";
+		mes "What's that? You said Zelmeto sent you?"; 
+		mes "Typical of him to send someone else to do his work for him.";
+		next;
+		mes "[Jan O'Canner]";
+		mes "Actually, I'm doing some heavy research on robotics...";
+		mes "It seems that my colleagues have misplaced their reports.";
+		mes "Would you mind helping me out?";
+		next;
+		menu "Alright.",-,"I'd rather not.",bad;
+		mes "[Jan O'Canner]";
+		mes "I need a second copy of those reports..."; 
+		mes "If you can, get to the old Juperos ruins where at least one of our researchers should be.";
+		set robo_eyes,2;
+		close;
+	}
+	mes "[Jan O'Canner]";
+	mes "I'm researching right now, please don't bother me.";
+	emotion e_dots;
+	close;
+bad:
+	mes "[Jan O'Canner]";
+	mes "Then why are you bothering me? Leave at once.";
+	close;
+}
+
+
+
+juperos_01.gat,245,206,3	script	Agent 47#re	899,{
+	if(robo_eyes == 4) {
+		mes "[Agent 47]";
+		mes "I see you've visited Agent Smith. Take those files back to Jan O'Canner for me, will you?";
+		close;
+	}
+	if(robo_eyes == 3) {
+		mes "[Agent 47]";
+		mes "We sent Agent Smith to Lighthalzen with another packet of notes. You can get the rest from him. I'll let him know you're coming.";
+		close;
+	}
+	if(robo_eyes == 2) {
+		mes "[Agent 47]";
+		mes "Zelmeto sent you?";
+		next;
+		select("Yes, he did.");
+		mes "[Agent 47]";
+		mes "Good. He let me know ahead of time that they misplaced the notes.";
+		mes "Lucky for you we always keep backup copies, eh?";
+		next;
+		mes "[Agent 47]";
+		mes "Here you go. Make sure these get to Zelmeto, it's my last copy.";
+		getitem 7756,1; // sealed_book
+		set robo_eyes,3;
+		next;
+		mes "[Agent 47]";
+		mes "Hm... Actually, there seems to be a couple of pages missing... Oh. I remember now.";
+		next;
+		mes "[Agent 47]";
+		mes "We sent Agent Smith to Lighthalzen with another packet of notes. You can get the rest from him. I'll let him know you're coming.";
+		close;
+	}
+	mes "[Agent 47]";
+	mes "Do not loiter... You could be killed here.";
+	close;
+
+}
+
+
+
+lighthalzen.gat,180,214,5	script	Agent Smith#re	402,{
+	if(robo_eyes == 4) {
+		mes "[Agent Smith]";
+		mes "Take that back to Jan.";
+		close;
+	}
+	if(robo_eyes == 3) {
+		mes "[Agent Smith]";
+		mes "No need for introductions; 47 already told me you were coming.";
+		next;
+		mes "^3355FFAgent Smith pulls a small folder out from inside his coat, looking at you studiously.^000000";
+		next;
+		mes "[Agent Smith]";
+		mes "So with 47's documents and mine combined, it looks like everything's here..."; 
+		getitem 7343,1; // sealed file folder
+		set robo_eyes,4;
+		next;
+		mes "[Agent Smith]";
+		mes "There you go. Take that back to Jan.";
+		close;
+	}
+	mes "[Agent Smith]";
+	emotion e_sigh;
+	mes "Isn't there something else you should be doing?";
+	close;
+}

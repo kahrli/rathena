@@ -1,0 +1,72 @@
+// Hint NPCs for the Dragon Boat Festival
+
+louyang.gat,232,70,3	script	Zhiping#fifths	824,{
+	mes "[Zhiping]";
+	mes "My wife says there's a strange girl on top of the Observatory.";
+	next;
+	mes "[Zhiping]";
+	mes "Honestly! Women these days...";
+	mes "They seem to have no sense of decorum whatsoever!";
+	close;
+}
+
+louyang.gat,238,126,3	script	Xiawen#fifths	815,{
+	mes "[Xiawen]";
+	mes "Do you know Xu Xian, a great doctor here?";
+	mes "They say his wife's a snake demon.";
+	next;
+	mes "[Xiawen]";
+	mes "He's run off to find her, since the scholar, Fa Hai,";
+	mes "has imprisoned her far from here.";
+	next;
+	mes "[Xiawen]";
+	mes "What do I think of all this?";
+	mes "Well, I believe scholars shouldn't ruin a marriage...";
+	mes "just because they themselves do not have one!";
+	close;
+}
+
+louyang.gat,201,51,5	script	Xiaoqing#fifths	719,{
+	mes "[Xiaoqing]";
+	mes "Happy Double Fifths!";
+	next;
+	mes "[Xiaoqing]";
+	mes "Have you seen my twin sister?";
+	mes "She ran off somewhere...";
+	next;
+	mes "[Xiaoqing]";
+	mes "I hope she's getting those boat supplies like Master Qu told her to!";
+	close;
+}
+
+louyang.gat,208,104,5	script	Mao#fifths	819,{
+	mes "[Mao]";
+	mes "Welcome to Louyang!";
+	mes "Do you know what today is?";
+	next;
+	mes "[Mao]";
+	mes "You don't?!";
+	mes "Well, it's the Double Fifths Festival,";
+	mes "known for the Dragon Boat races held by the river!";
+	next;
+	mes "[Mao]";
+	mes "Have fun!";
+	close;
+}
+
+louyang.gat,211,71,3	script	Han Bangqing#fifths	822,{
+	mes "[Han Bangqing]";
+	mes "Ah, what a lovely day for a Dragon Boat race~";
+	next;
+	mes "[Han Bangqing]";
+	mes "I, as a writer, take special leisure on this day.";
+	mes "It helps me to gather my creative genius.";
+	next;
+	mes "[Han Bangqing]";
+	mes "Qu Yuan, a friend of mine, is rather enraptured with the race this year!";
+	mes "I hope he doesn't get carried away out by the river~";
+	next;
+	mes "[Han Bangqing]";
+	mes "If he ever asks where I am, tell him I'll meet him at the Hall of Beauties~";
+	close;
+}

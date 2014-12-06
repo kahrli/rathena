@@ -561,7 +561,7 @@ lhz_in02,282,20,7	script	Fulerr	869,{
 //============================================================
 function	script	refinemain	{
 	disable_items;
-	set .@features,getarg(1);
+	set .@features,getarg(1)?0:1;
 	mes "[" + getarg(0) + "]";
 	mes "I'm the Armsmith.";
 	mes "I can refine all kinds of weapons, armor and equipment, so let me";

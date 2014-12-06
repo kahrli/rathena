@@ -1,0 +1,28 @@
+prontera,166,189,3	script	Support#Info	837,{
+	set .@total,0;
+	set @nb, query_sql("SELECT `account_id` FROM `support` LIMIT 128", .@support_id);
+	mes "^3355FFThe following players are available for support.";
+	mes "PM them for help.^000000";
+	for (set .@i,0; .@i<getarraysize(.@support_id); set .@i,.@i+1) {
+		if(isloggedin(.@support_id[.@i])) {
+			set .@total,.@total+1;
+			mes rid2name(.@support_id[.@i]);
+			if(.@support_id[.@i]==getcharid(3)) set @support,.@support_id[.@i];
+		}
+	}
+	delwaitingroom;
+	waitingroom .@total+" Support Available",0;
+	next;
+	if(@support) {
+		if(select("Cancel:Quit Support")==1) close;
+		set @nb,query_sql("DELETE FROM `support` WHERE `account_id`="+@support+"");
+		set @support,0;
+		mes "You are no longer support.";
+		close;
+	}
+	if(select("Cancel:Join Support")==1) close;
+	set @nb,query_sql("INSERT INTO `support` VALUES ("+getcharid(3)+")");
+	mes "You have joined the support team.";
+	mes "Thank you.";
+	close;
+}

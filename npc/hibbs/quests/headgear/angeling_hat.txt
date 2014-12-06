@@ -1,0 +1,62 @@
+//===== eAthena Script ======================================= 
+//= Angeling Hat Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+pay_fild04,197,178,4	script	Angeling#quest	1096,{
+	if(countitem(5035) && countitem(2254)) {
+		mes "[Angeling]";
+		mes "You've shown me humans aren't all bad.";
+		getitem 5132,1; // Angeling_Hat
+		delitem 5035,1; // Poring_Hat
+		delitem 2254,1; // Angel_Wing
+		close;
+	}
+	if(countitem(523)) {
+		delitem 523,1;
+		mes "^3355FFYou gave the Angeling the holy water.^000000";
+		next;
+		mes "[Angeling]";
+		mes "Ah, that's much better.";
+		next;
+		mes "[Angeling]";
+		mes "So what do you want?";
+		next;
+		if(select("(Talk about the weather.):Make me an Angeling hat!")==1) {
+			mes "[Angeling]";
+			mes "It's nice weather, but I wish it would rain holy water.";
+			close;
+		}
+		mes "[Angeling]";
+		mes "Ah, you want the beauty of porings on your head!";
+		mes "Well, I guess I can trust you. The drink was delicious.";
+		next;
+		mes "[Angeling]";
+		mes "Bring me";
+		mes "^3355FF1 Poring Hat^000000,";
+		mes "and ^3355FF1 Angel Wing^000000.";
+		next;
+		mes "[Angeling]";
+		mes "See you again, human.";
+		close;
+	}
+	completequest 16009;
+	mes "^666666*blop*^000000";
+	next;
+	mes "^666666*blop*^000000";
+	next;
+	mes "[Angeling]";
+	mes "^666666Urgghh!^000000";
+	next;
+	mes "[Angeling]";
+	mes "Hey there human, you got anything to drink?";
+	next;
+	mes "[Angeling]";
+	mes "Give me a holy drink.";
+	close;
+}

@@ -1,0 +1,185 @@
+//===== eAthena Script ======================================= 
+//= The 2nd Bank of Prontera ( with daily 0.01% income! )
+//===== By: ================================================== 
+//= Lupus (1.0)
+//===== Current Version: ===================================== 
+//= 1.2a
+//===== Compatible With: ===================================== 
+//= eAthena 1.x
+//===== Description: ========================================= 
+//= A bank which has an interest %
+//===== Additional Comments: ================================= 
+// Look for this formula and setup your Bank daily % interest
+// #bankstorage/1000 = 0.1% of interest per day
+// #bankstorage/100  =  1%  of interest per day
+// #bankstorage/10   =  10% of interest per day
+//
+// 1.1 Added log of bank operation -> logmes "some info";
+// 1.2 Set max income to 100,000z. It would help to avoid
+//	zeny exploits when you change DATE at your server
+// 1.2a Corrected bad duplicate names. (bugreport:921) [Samuray22]
+//============================================================ 
+
+prt_in,129,65,1	script	Bank Clerk::bankg2	833,{  
+	mes "[Maniss]";
+	mes strcharinfo(0)+", welcome to the 2nd Bank of Prontera!";
+
+	if(#bankstorage) mes "Your account has ^135445" + #bankstorage + "^000000 zeny.";
+	else mes "We could open you an account.";
+	if(getcharid(2)) {
+		query_sql "select gstorage_zeny from `guild` where guild_id = "+getcharid(2),@zeny;
+		mes "Your guild account has ^135445" + @zeny + "^000000 zeny.";
+	}
+
+	mes "How can I help you today?";
+	next;
+	if(#bankstorage) { 
+		setarray .@bank$[0],"Deposit";
+		setarray .@bank$[1],"Withdraw";
+	}
+	else setarray .@bank$[0],"Open an account";
+	if(getcharid(2)) { 
+		setarray .@bank$[2],"Deposit to guild funds";
+		if(@zeny) {
+			setarray .@bank$[3],"Withdraw from guild funds";
+		}
+	}
+	
+	set .@select$,.@bank$[0];
+	for(set .@i,1; .@i<4; set .@i,.@i+1) 
+		set .@select$,.@select$+":"+.@bank$[.@i];
+	
+	switch(select(.@select$)) {
+		case 1: goto M_Deposit;
+		case 2: goto M_Withdraw;
+		case 3: goto M_Guild_Deposit;
+		case 4: goto M_Guild_Withdraw;
+	}
+
+M_Deposit:
+	mes"[Maniss]";
+	mes "Please, tell me how much zeny you would like to deposit.";
+	next;
+	input @kafrabank;
+  
+	if(@kafrabank<1000) goto L_LESS_1000;
+	if(@kafrabank>10000000) goto L_TOO_BIG_AMOUNT;
+	if(@kafrabank>zeny) goto L_NOT_ENOUGH;
+	set zeny,zeny-@kafrabank;
+	set #bankstorage,#bankstorage+@kafrabank;
+	mes"[Maniss]";
+	mes "You've made a deposit of ^135445" + @kafrabank + "z^000000.";
+	goto B_EXIT;
+
+M_Withdraw:
+	if(!#bankstorage) goto L_ZERO_ACCOUNT;
+	mes"[Maniss]";
+	mes "Your account: ^135445" + #bankstorage + "^000000 zeny.";
+	mes "How much zeny would you like to withdraw?";
+	next;
+	input @kafrabank;
+  
+	if(@kafrabank<1) goto B_EXIT2;
+	if(@kafrabank>10000000) goto L_TOO_BIG_AMOUNT;
+	if(@kafrabank>#bankstorage) goto L_NOT_ENOUGH;
+	set #bankstorage,#bankstorage-@kafrabank;
+	set zeny,zeny+@kafrabank;
+	mes"[Maniss]";
+	mes "Here is your ^135445" + @kafrabank + "z^000000, put your signature here...";
+	goto B_EXIT;
+
+M_Guild_Deposit:
+	mes"[Maniss]";
+	mes "Please, tell me how much zeny you would like to deposit.";
+	next;
+	input @kafrabank;
+  
+	if(@kafrabank<1000) goto L_LESS_1000;
+	if(@kafrabank>10000000) goto L_TOO_BIG_AMOUNT;
+	if(@kafrabank>zeny) goto L_NOT_ENOUGH;
+	set zeny,zeny-@kafrabank;
+	query_sql "update `guild` set gstorage_zeny = gstorage_zeny+"+@kafrabank+" where guild_id = "+getcharid(2),@ignore;
+	mes"[Maniss]";
+	mes "You've made a deposit of ^135445" + @kafrabank + "z^000000.";
+	goto B_EXIT;
+	
+M_Guild_Withdraw:
+	if(!@zeny) goto L_ZERO_ACCOUNT;
+	mes"[Maniss]";
+	mes "Your account: ^135445" + @zeny + "^000000 zeny.";
+	mes "How much zeny would you like to withdraw?";
+	next;
+	input @kafrabank;
+  
+	if(@kafrabank<1) goto B_EXIT2;
+	if(@kafrabank>10000000) goto L_TOO_BIG_AMOUNT;
+	if(@kafrabank>@zeny) goto L_NOT_ENOUGH;
+	
+	query_sql "select gstorage_mode,gstorage_pos,gstorage_password from `guild` where guild_id = "+getcharid(2),@mode,@pos,@password$;
+	if (@mode[0] == 1) {
+		query_sql "select position from `guild_member` where guild_id = "+getcharid(2)+" and char_id = "+getcharid(0),@current_pos;
+		if (@current_pos[0] > (@pos[0] - 1)) {
+			mes "[Maniss]";
+			mes "Sorry, but you are not authorized to use guild banking.";
+			close;
+			}
+		}
+	if (@mode[0] == 2) {
+		mes "[Maniss]";
+		mes "The guild leader has instated password-protected guild banking. Please enter the password now.";
+		next;
+		input @pw$;
+		if (@pw$ != @password$[0]) {
+			next;
+			mes "[Maniss]";
+			mes "Sorry, that password is incorrect.";
+			close;
+		}
+	}
+	query_sql "select gstorage_zeny from `guild` where guild_id = "+getcharid(2),@zeny;
+	if(@kafrabank>@zeny) goto L_NOT_ENOUGH;
+	if(!@zeny) goto L_ZERO_ACCOUNT;
+	query_sql "update `guild` set gstorage_zeny = gstorage_zeny-"+@kafrabank+" where guild_id = "+getcharid(2),@ignore;
+	set zeny,zeny+@kafrabank;
+	mes"[Maniss]";
+	mes "Here is your ^135445" + @kafrabank + "z^000000, put your signature here...";
+	goto B_EXIT;
+	
+
+L_NOT_ENOUGH:  
+	mes"[Maniss]";
+	mes "You don't have enough zeny for this operation.";
+	next;
+	goto B_EXIT2;
+
+L_ZERO_ACCOUNT:  
+	mes"[Maniss]";
+	mes "You don't have any zeny on your account!";
+	next;
+	goto B_EXIT2;
+
+L_TOO_BIG_AMOUNT:  
+	mes"[Maniss]";
+	mes "Sorry. The maximum deposit you can make on a time is 10,000,000 zeny.";
+	next;
+	goto B_EXIT2;
+
+L_LESS_1000:  
+	mes"[Maniss]";
+	mes "We're sorry, the minimum amount of zeny you can deposit is 1,000 zeny.";
+	next;
+	goto B_EXIT2;
+  
+B_EXIT:
+	mes "Very well... Come again soon!";
+	next;
+
+B_EXIT2:  
+	mes"[Maniss]";
+	mes "Thank you for using our Bank Service. We hope to see you again soon.";
+	close;
+}
+
+geffen,125,73,3	duplicate(bankg2)	Bank Clerk#2-1	833
+izlude,145,107,1	duplicate(bankg2)	Bank Clerk#3-1	833
+morocc,147,84,7	duplicate(bankg2)	Bank Clerk#4-1	833

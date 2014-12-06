@@ -1,0 +1,95 @@
+//===== eAthena Script ======================================= 
+//= Observer Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+yuno_in03,180,43,5	script	Doofinsmirchtz	402,{
+	completequest 16018;
+	if((countitem(909)+observer_q)>9000 && countitem(7317) && countitem(2239)) {
+		mes "[Doofinsmirchtz]";
+		mes "Ahh, my pack-- err... item collector is here for me. How nice to see you!";
+		next;
+		mes "[Doofinsmirchtz]";
+		mes "You have what I need, yes? Let me make my device!";
+		next;
+		mes "[Doofinsmirchtz]";
+		mes "IT'S OVER NINE THOUSAND!!!";
+		next;
+		mes "^666666(He threw the device... No harm in taking it, right?)^000000";
+		if((countitem(909) + observer_q) < 9002) {
+			set observer_q,observer_q+countitem(909);
+			delitem 909,countitem(909);
+		}
+		else {
+			delitem 909,(9002 - observer_q);
+			set observer_q,9002;
+		}
+		delitem 7317,1;
+		delitem 2239,1;
+		getitem 5315,1;
+		set observer_q,0;
+		close;
+	}
+	if(observer_q) {
+		mes "[Doofinsmirchtz]";
+		mes "You're getting there, lacke-- err! Just hurry up with my device!";
+		if((countitem(909) + observer_q) < 9002) {
+			set observer_q,observer_q+countitem(909);
+			delitem 909,countitem(909);
+		}
+		else {
+			delitem 909,(9002 - observer_q);
+			set observer_q,9002;
+		}
+		close;
+	}
+L_Start:
+	mes "[Doofinsmirchtz]";
+	mes "Aww blast it! I could have swore I had it around here somewhere...";
+	next;
+	mes "[Doofinsmirchtz]";
+	mes "You!! Yes, you! I see.......";
+	next;
+	mes "[Doofinsmirchtz]";
+	mes "...";
+	next;
+	mes "[Doofinsmirchtz]";
+	mes "...";
+	mes "......";
+	next;
+	mes "[Doofinzmirchtz]";
+	mes "Eureka!";
+	next;
+	mes "[Doofinsmirchtz]";
+	mes "You, my name is Professor Doofinsmirchtz. And I, I have a request of you.";
+	next;
+	mes "[Doofinsmirchtz]";
+	mes "Ingredients I need! Get me them so that I may make my device!";
+	next;
+	if(select("Agh, get out of my face!:(Listen to him.)")==1) goto L_Start;
+	mes "[Doofinsmirchtz]";
+	mes "Ahh, good, no objections I see!";
+	next;
+	mes "[Doofinsmirchtz]";
+	mes "It appears I need ^3355FF9001 Jellopy^000000,";
+	mes "^3355FF1 Rusty Screw^000000,";
+	mes "and ^3355FF1 Monocle^000000.";
+	next;
+	mes "[Doofinsmirchtz]";
+	mes "Go get them now, yes?";
+	if(MaxWeight<=90120) {
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "There is no way in hell I can carry that many jellopy.";
+		next;
+		mes "[Doofinsmirchtz]";
+		mes "So it would seem... Well I suppose you can bring them to me in batches then.";
+	}
+	set observer_q,1;
+	close;
+}

@@ -1,0 +1,26 @@
+prt_gld,153,141,0	script	WoE#prtg_cas03	45,1,1,{
+OnTouch:
+	set @nb,query_sql("SELECT `last_ip` FROM `login` WHERE `account_id`="+getcharid(3)+" LIMIT 1",@last_ip$);
+	set @nb,query_sql("SELECT `account_id` FROM `login` WHERE `last_ip`='"+@last_ip$+"' and `lastlogin`>date_sub(now(),interval 1 month) LIMIT 128",@account_id);
+	for (set .@i,0; .@i<getarraysize(@account_id); set .@i,.@i+1) {
+		set @nb,query_sql("SELECT DISTINCT `guild_id` FROM `char` WHERE `account_id`="+@account_id[.@i]+" AND `guild_id`!=0 LIMIT 128",@guild_id);
+		for (set .@j,0; .@j<getarraysize(@guild_id); set .@j,.@j+1) {
+			set @nb,query_sql("SELECT COUNT(*) FROM `char` WHERE `guild_id`="+@guild_id[.@j]+" LIMIT 128",@count);
+			for (set .@k,0; .@k<getarraysize(@count); set .@k,.@k+1) {
+				if (@count[.@k]>20) { set .@size,@guild_id[.@j];
+				set @nb,query_sql("SELECT name FROM `char` WHERE `account_id`="+@account_id[.@i]+" AND `guild_id`="+.@size+" LIMIT 1",@name$);  }
+			}
+			deletearray @count,128;
+		}
+		deletearray @guild_id,128;
+	}
+	deletearray @account_id,128;
+	if(!.@size || !getcharid(2)) {
+		warp "prtg_cas03",168,12;
+		end;
+	}
+	mes "^3355FFOnly guilds, growing and still small, may enter this castle for a chance to win the Emperium.^000000";
+	mes " ";
+	mes "^3355FF"+@name$+"^000000 is barred from entering.";
+	close;
+}

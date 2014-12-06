@@ -1,0 +1,210 @@
+//===== eAthena Script =======================================
+//= eAthena PVP-Ladder
+//===== By: ==================================================
+//= Terces
+//===== Current Version: =====================================
+//= 1.7.2
+//===== Compatible With: =====================================
+//= Any Athena Version that has "for" implemented
+//===== Credits: =============================================
+//= The whole eAthena Board and the eAthena Chat
+//===== Notes: ===============================================
+//= Note 1:
+//= Experience gain works like this formula:
+//= (10-(<new position>-1))*0
+//= so if someone gets the first place he'll get
+//= 10*0 experience points.
+//============================================================
+//= Fixxed by Dante
+//= V1.7.2
+//= Hosted by Dant3 aka Dante
+//= HAFE FUN! READ THE TOPIC! IT DONT WORKS MAYBE ON OLDER REV
+//= LAST UPDATE: 12th,February.2008
+// Main Script - Terces (Main Thanks to Terces ^_^)
+// V1.7.0 - Dant3
+// v1.7.1 - AnnieRuRu
+// v1.7.2 - Dant3
+// v1.7.3 - Dant3
+// THIS SCRIPT WORKS ONLY ON THE NEW EATHENA REVISIONS! ENJOY!
+
+-	script	PVPLADDER	-1,{
+OnPCKillEvent:
+if ( getgmlevel() >= 10 ) end;
+if (terces_PVP_resets != $terces_PVP_resets) {
+	dispbottom "Please relog your character, in order to get the correct kills for you in the PVP ladder.";
+	dispbottom "Because a GM just reset the ladder.";
+	end;
+}
+if ( killedrid == getcharid(3) ) {
+	set PVPDeaths, PVPDeaths +1;
+	set #PVPDeathsAccount, #PVPDeathsAccount +1;
+	set @PVPDeathstoday, @PVPDeathstoday +1;
+	end;
+}
+set $@PVPcounter,$@PVPcounter+1;
+set getd("$@PVPKill"+$@PVPcounter),getcharid(3);	//getd to avoid errors when more than 1 people kill someone
+attachrid(killedrid);
+set PVPDeaths,PVPDeaths+1;
+set @PVPDeathstoday,@PVPDeathstoday+1;
+set #PVPDeathsAccount,#PVPDeathsAccount+1;
+set getd("$@PVPkilledplayer"+$@PVPcounter+"$"), strcharinfo(0);	//again, getd to avoid possible glitches
+detachrid;
+
+attachrid(getd("$@PVPKill"+$@PVPcounter));
+CountKills:
+	set PVPKills,PVPKills+1;
+	set @PVPKillstoday,@PVPKillstoday+1;
+	set #PVPKillsAccount,#PVPKillsAccount+1;
+	setarray @playerstats[0],@PVPKillstoday,@PVPDeathstoday,PVPKills,PVPDeaths,#PVPKillsAccount,#PVPDeathsAccount;
+
+l_ladder:
+	set @considerdeath,0;
+	for (set @PosinLadder, 0; @PosinLadder < 10; set @PosinLadder, @PosinLadder + 1){
+		if (PVPKills >= $terces_PVP_kills[@PosinLadder]){	//Player deserves to be in the ladder
+			//Check if Death plays a role on the position
+			if ((PVPKills == $terces_PVP_kills[@PosinLadder]) && (PVPDeaths > $terces_PVP_deaths[@PosinLadder])) set @considerdeath,1; //Consider Deaths
+			//Check if the player only topped his own scores
+			if ($terces_PVP_names$[@PosinLadder] == strcharinfo(0)){
+				set $terces_PVP_kills[@PosinLadder],PVPKills;
+				set $terces_PVP_deaths[@PosinLadder],PVPDeaths;
+				end;
+			}
+			//Moves all characters in the Ladder
+			for (set @beginmoving, 10; @beginmoving >= (@PosinLadder+@considerdeath); set @beginmoving, @beginmoving - 1){
+				if ($terces_PVP_names$[@beginmoving] == strcharinfo(0)){
+					//If the player already is in the Ladder it only has to move players between characters new position and characters old position
+					callsub L_LadderMove,0;
+					end;
+				}
+				else if (@beginmoving == (@PosinLadder+@considerdeath)){
+					//Player is not in the Ladder and therefor it has to move all players from characters new position downwards
+					callsub L_LadderMove,1;
+					end;
+				}
+			}
+			end;
+		}
+	}
+	end;
+
+L_LadderMove:
+	if (getarg(0) == 0) set @length,@beginmoving;
+	if (getarg(0) == 1) set @length,10;
+	for (set @movecycle, @length; @movecycle > (@PosinLadder+@considerdeath);
+	 set @movecycle, @movecycle - 1){
+
+		set $terces_PVP_names$[@movecycle],$terces_PVP_names$[(@movecycle-1)];
+		set $terces_PVP_kills[@movecycle],$terces_PVP_kills[(@movecycle-1)];
+		set $terces_PVP_deaths[@movecycle],$terces_PVP_deaths[(@movecycle-1)];
+		set $terces_PVP_times[@movecycle],$terces_PVP_times[(@movecycle-1)];
+	}
+	//sets the character's stats in the new position
+	set $terces_PVP_names$[(@PosinLadder+@considerdeath)],strcharinfo(0);
+	set $terces_PVP_kills[(@PosinLadder+@considerdeath)],PVPKills;
+	set $terces_PVP_deaths[(@PosinLadder+@considerdeath)],PVPDeaths;
+	set $terces_PVP_times[(@PosinLadder+@considerdeath)],gettimetick(2);
+	announce strcharinfo(0)+" just claimed the "+((@PosinLadder+@considerdeath)+1)+". Position in the Top "+10+" after killing "+getd("$@PVPkilledplayer"+$@PVPcounter+"$")+".",16;
+	end;
+
+OnPCLoginEvent:
+if (terces_PVP_resets != $terces_PVP_resets){
+		set PVPDeaths,0;
+		set @PVPDeathstoday,0;
+		set #PVPDeathsAccount,0;
+		set PVPKills,0;
+		set @PVPKillstoday,0;
+		set #PVPKillsAccount,0;
+		set terces_PVP_resets,$terces_PVP_resets;
+	}
+}
+
+pvp_n_1-5.gat,110,106,3	script	PvP Ladder	719,{
+	set @name$,"[PvP-Ladder]";
+	//Colour of:			Position	Name		Kills		Deaths		Time
+	setarray @colour$[0],	"^996600",	"^006699",	"^00AA00",	"^FF0000",	"^EE8800";
+	access_eng:
+	mes @name$;
+	mes "Hello "+strcharinfo(0)+"...";
+	mes "If you want to I can show you your PVP stats.";
+	next;
+	M_selection_eng:
+
+	UserMenu:
+	menu "Show me the PVP Ladder",M_Ladder_eng,"PvP stats since my login",M_seitLogin_eng,"PvP stats of this Char",M_dieserChar_eng,"Stats of the whole account",M_vomAccount_eng,"Warp back",M_warpback,"Cancel",M_abbrechen_eng;
+
+	M_warpback:
+	mes @name$;
+	mes "Please wait a few seconds to be warped back.";
+	close2;
+	sleep2 5000;
+	warp "SavePoint",0,0;
+	end;
+
+	M_Ladder_eng:
+	mes "Alright...I'll show you the Top "+ 10 +" with "+10+" entries per page.";
+	mes "It'll be viewed like this:";
+	mes @colour$[0]+"Place^000000: "+@colour$[1]+"<name>^000000 :"+@colour$[2]+"<kills>^000000:"+@colour$[3]+"<deaths>^000000 "+@colour$[4]+"<time>";
+	next;
+	callsub L_Ladder;
+	goto M_selection_eng;
+
+	M_seitLogin_eng:
+	mes @name$;
+	mes "Your stats since your login:";
+	mes @PVPKillstoday+"/"+@PVPDeathstoday+"(Kills/Deaths)";
+	next;
+	goto M_selection_eng;
+
+	M_dieserChar_eng:
+	mes @name$;
+	mes "Your stats of this Char:";
+	mes PVPKills+"/"+PVPDeaths+"(Kills/Deaths)";
+	next;
+	goto M_selection_eng;
+
+	M_vomAccount_eng:
+	mes @name$;
+	mes "Your stats of the whole account:";
+	mes #PVPKillsAccount+"/"+#PVPDeathsAccount+"(Kills/Deaths)";
+	next;
+	goto M_selection_eng;
+
+	M_abbrechen_eng:
+	mes @name$;
+	mes "OK. You can come back to me and see your stats whenever you want.";
+	close;
+	
+	L_Ladder:
+	for (set @y,0; @y < 10; set @y,@y+10){
+		for (set @x,@y; (@x < (@y+10)) && (@x < (10)); set @x,@x+1){
+			if ($terces_PVP_names$[@x] != ""){
+				mes @colour$[0]+(@x+1)+"^000000: "+@colour$[1]+$terces_PVP_names$[@x]+"^000000 "+@colour$[2]+$terces_PVP_kills[@x]+"^000000:"+@colour$[3]+$terces_PVP_deaths[@x]+"^000000 ~ "+@colour$[4]+callfunc ("Gettime",$terces_PVP_times[@x])+"^000000";
+			} else {
+				mes "^DD0000"+(@x+1)+": ^006699None^000000 ";
+			}
+		}
+		next;
+	}
+	return;
+}
+
+function	script	Gettime	{
+if (getarg(0)==0) return;
+
+set @difftimedays,(gettimetick(2) - getarg(0));
+set @difftimehours,@difftimedays%86400;
+set @difftimeminutes,@difftimehours%3600;
+set @difftimeseconds,@difftimeminutes%60;
+
+set @days,@difftimedays/86400;
+set @hours,@difftimehours/3600;
+set @minutes,@difftimeminutes/60;
+set @seconds,@difftimeseconds;
+set @result$,"";
+if(@days != 0) set @result$,@result$+@days+"d ";
+if(@hours != 0) set @result$,@result$+@hours+"h ";
+if(@minutes != 0) set @result$,@result$+@minutes+"m ";
+if(@seconds != 0) set @result$,@result$+@seconds+"s";
+
+return (@result$);
+}

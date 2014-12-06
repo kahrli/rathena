@@ -1,0 +1,228 @@
+//===== eAthena Script ======================================= 
+//= Dark Randgris Helm Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+glast_01,46,369,3	script	Strange Man#randg	735,3,3,{
+	completequest 16004;
+	if(randg==5) {
+		if(getmapusers("que_moon")) {
+			mes "[Helgi]";
+			mes "Please wait... I must gather my strength.";
+			close;
+		}
+		mes "[Helgi]";
+		mes "Quick! I will open the portal to the God's Realm. You must enter quickly.";
+		next;
+		hideoffnpc "#randg_port";
+		mes "^3355FFAs you enter the portal, you feel a weird presence near Helgi. However, you didn't say anything, thinking it was nothing.";
+		close2;
+		hideonnpc "#randg_port";
+		warp "que_moon",100,17;
+		initnpctimer "Svava#randg1";
+		end;	
+	}
+	if(randg==4 && countitem(7510)>=20) { // Valhalla_Flower
+		mes "[Helgi]";
+		mes "Before you enter the portal you must do one thing. You must impale the new Sigarsholm inside me.";
+		next;
+		select("But how can I... What would happen to you?");
+		mes "[Helgi]";
+		mes "Don't worry about me. I will be fine.";
+		next;
+		mes "^3355FFYou pierced the sword into Helgi's body, causing him to yell out in pain. You can feel a great surge of energy being drawn into the sword.";
+		delitem 7510,20; // Valhalla_Flower
+		getitem 17008,1; // Sigarsholm
+		set randg,5;
+		if(getmapusers("que_moon")) close;
+		next;
+		mes "[Helgi]";
+		mes "Quick! I will open the portal to the God's Realm. You must enter quickly.";
+		next;
+		hideoffnpc "#randg_port";
+		mes "^3355FFAs you enter the portal, you feel a weird presence near Helgi. However, you didn't say anything, thinking it was nothing.";
+		close2;
+		hideonnpc "#randg_port";
+		initnpctimer "Svava#randg1";
+		warp "que_moon",100,17;
+		end;
+	}
+	if(randg==4) {
+		mes "[Helgi]";
+		mes "Hurry, I don't think I can liv...forget it. You must make haste.";
+		close;
+	}
+	if(randg==3) {
+		mes "[Helgi]";
+		mes "I have finally finished. I must warn you that Svava is resting inside the God's Realm. There is only one way to gain access into the Realm and that is Valhalla Flower.";
+		next;
+		mes "[Helgi]";
+		mes "Normally only one Valhalla Flower is needed for a Valkyrie to get back inside the God's Realm. However, to transport such a massive power you would need at least ^3355FF20 Valhalla Flower^000000.";
+		set randg,4;
+		close;
+	}
+	if(randg==2 && countitem(7024)>=30) { // Bloody_Edge
+		mes "[Helgi]";
+		mes "Great!! Thank you so much. With this, Svava will be saved! Please wait a moment.";
+		next;
+		mes "^666666(You hear lots of clanking noises.)^000000";
+		delitem 7024,30;
+		set randg,3;
+		close;
+	}
+	if(randg==2) {
+		mes "[Helgi]";
+		mes "Please, hurry, time is running out.";
+		close;
+	}
+	if(randg==1) {
+		mes "[Strange Man]";
+		mes "No... I feared this day would come.";
+		next;
+		if(select("Are you alright?:(Ignore him.)")==2) close;
+		mes "[Strange Man]";
+		mes "You... can see me?";
+		next;
+		if(select("Yes...?:(Continue walking.)")==2) close;
+		mes "[Strange Man]";
+		mes "What perfect timing, almost as if the gods guided you here... Never mind all that. Dear Traveler, I have a favor to ask of you. Will you listen to my tale? I will make it worth your while.";
+		next;
+		if(select("I'm too busy, sorry.:Very well.")==1) close;
+		mes "[Strange Man]";
+		mes "My name is Helgi and this place was once my home. I remember a time when this now-ruined place was very beautiful. Sorry to interrupt you with my useless babble. You must be wondering why I was talking to myself.";
+		next;
+		mes "[Strange Man]";
+		mes "You see, I was talking to a Valkyrie.";
+		next;
+		if(select("Impossible! A Valkyrie?:No way that can be true.")==2) close;
+		mes "[Helgi]";
+		mes "I know it is hard to believe. When I was a young man, I was very ill and bed-ridden. My parents prayed to the gods to help me regain my strength. Their prayers were not left unanswered.";
+		next;
+		mes "[Helgi]";
+		mes "A Valkyrie by the name of Svava bestowed me with her powers. Svava used half of her powers to forge a sword, Sigarsholm, into my body. Svava was not only my savior but also the person I longed for the most.";
+		next;
+		mes "[Helgi]";
+		mes "I have fallen in love with Svava and wish the best for her. I was able to communicate with Svava by using her powers as a link between us. However, over the years, the consequences of her great deed caught up with her.";
+		next;
+		mes "[Helgi]";
+		mes "Svava's powers weakened greatly and she is on the verge of dying.";
+		next;
+		mes "[Helgi]";
+		mes "I wish for you to help Svava return to her once beautiful brilliance.";
+		next;
+		if(select("I'll try my best to help.:It is unwise to get involved with Valkyries.")==2) close;
+		mes "[Helgi]";
+		mes "It is a very hard task to undo a Valkyrie's magic. The only way for Svava to regain her brilliance is to return her sword to her.";
+		next;
+		mes "[Helgi]";
+		mes "However, the sword inside me no longer contain a physical form. It is a mass of magic inside me. The only way to extract it is to create another sword capable of carrying such energy.";
+		next; 
+		mes "[Helgi]";
+		mes "Only a sword made of one item is strong enough to hold such energy and it is the Bloody Edge. Please bring me ^3355FF30 Bloody Edges^000000.";
+		set randg,2;
+		close;
+	}
+	mes "[Strange Man]";
+	mes "...";
+	close;
+	OnTouch:
+		if(!randg) {
+			mes "[Strange Man]";
+			mes "Svava, can you hear me! Svava!";
+			set randg,1;
+			close;
+		}
+	OnTimer300000:
+		stopnpctimer;
+	OnInit:
+		disablenpc "Strange Man#randg";
+}
+
+glast_01,44,366,0	script	#randg_port	723,12,12,{
+	end;
+	OnTouch:
+		if(randg==6) {
+			mes "^3355FFYou get an ominous feeling returning to this place... Helgi is nowhere to be found. Instead you see a hat on the ground.^000000";
+			getitem 5373,1;
+			set randg,7;
+			close;
+		}
+		if(randg<=5) {
+			enablenpc "Strange Man#randg";
+			initnpctimer "Strange Man#randg";
+		}
+		if(!randg) {
+			mes "^3355FFWalking by, you hear strange noises resembling someone talking. As you approach the noise you can see a strange man standing near a mound of dirt.";
+			close;
+		}
+		end;
+	OnInit:
+		hideonnpc "#randg_port";
+		end;
+}
+
+que_moon,99,39,7	script	Svava#randg1	435,7,7,{
+	end;
+	OnTouch:
+		enablenpc "Svava#randg";
+		disablenpc "Svava#randg1";
+		end;
+	OnTimer600000:
+		mapwarp "que_moon","glast_01",46,369; //GLAST HEIM
+}
+
+que_moon,99,39,5	script	Svava#randg	435,{
+	initnpctimer;
+	if(randg==5) {
+		mes "[Svava]";
+		mes "Stop!! What are you doing in here, Human? This is the God's Realm, forbidden to Humans who have not been judged worthy. Go back!";
+		next;
+		if(select("I am not a enemy, please wait!!:Ahh! I am very sorry. I  will leave right away!!")==2) goto L_end;
+		mes "[Svava]";
+		mes "Why have you come to this holy place?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "I have been asked by Helgi to help you regain your health. He even forged your sword, Sigarsholm.";
+		next;
+		mes "^3355FFYou hand Sigarsholm to Svava.^000000";
+		next;
+		mes "[Svava]";
+		mes "Helgi... that foolish man. He did this even though he knew what would happen. Humans... what mysterious creatures.";
+		next;
+		select("What will happen to Helgi?");
+		mes "[Svava]";
+		mes "Helgi cannot survive without the power of the sword. You see... Helgi isn't a normal human. Helgi is a spirit, bound to the earth by my sword. Only his spirit remained intact for all these years due to the power of the Sigarsholm. Without the sword he cannot hope to survive.";
+		next;
+		select("No…");
+		mes "[Svava]";
+		mes ".........";
+		next;
+		mes "[Svava]";
+		mes "He will be able to rest in peace now. Please leave. I thank you for the sword.";
+		next;
+		mes "^3355FFAs you leave, you turn around to see how Svava is doing. You can see a tear run down Svava's cheek.";
+		delitem 17008,1;
+		set randg,6;
+L_end:
+		close2;
+		enablenpc "Svava#randg1";
+		warp "glast_01",46,369; //Glast Heim
+	}
+	OnTimer300000:
+		stopnpctimer;
+		enablenpc "Svava#randg1";
+		mapwarp "que_moon","glast_01",46,369; //GLAST HEIM
+	OnInit:
+		disablenpc "Svava#randg";
+}
+
+que_moon,0,0,0	script	CloudInit#randg	139,{
+	OnInit:
+		setmapflag "que_moon",mf_sakura;
+		setmapflag "que_moon",mf_clouds;
+}

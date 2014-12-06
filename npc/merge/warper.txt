@@ -1,0 +1,1027 @@
+//===== rAthena Script ======================================= 
+//= Warper
+//===== By: ================================================== 
+//= Pyeus
+//===== Current Version: =====================================
+//= 1.4
+//===== Compatible With: =====================================
+//= rAthena SVN
+//===== Description: ========================================= 
+//= A complete - but very condensed - warper script.
+//= Some coordinates written by Tekno-Kanix and ToastOfDoom.
+//===== Additional Comments: =================================
+//= Level options, hopefully voting, etc.
+//============================================================
+
+prontera.gat,159,187,4	script	Warper::Warper	10039,{
+
+if(HB_BEGIN&4==0) {
+	callfunc "F_Tutorial",3;
+	next;
+}
+
+Warper:
+
+cutin "lunain01",2;
+set .@npc$,"[Warp Agent]";
+function w;
+mes .@npc$;
+switch($DTS_Result) {
+	case 2:
+		mes "We're currently being sponsered by the ^0000FFKafra Corporation^000000, who won the last Dungeon Teleport Service election~"; break;
+	case 1:
+		mes "We're currently being sponsered by the ^0000FFCool Event Corp^000000, who won the last Dungeon Teleport Service election~"; break;
+}
+mes "Where would you like to be warped to?";
+next;
+MainMenu:
+if(BaseLevel >= 160)
+	menu "Last Warp",lastmap,"Towns",town,"Fields",field,"Dungeons",dungeon,"Castles",gcastle,"Other",event;
+else
+	menu	"Last Warp",lastmap,"Level",level,"Towns",town,"Fields",field,"Dungeons",dungeon,"Castles",gcastle,"Other",event; 
+
+function w {
+	if(!getarg(3,0)) {
+		if(Zeny >= getarg(4,0))
+			set Zeny, Zeny - getarg(4,0);
+		set lastmap$,getarg(0);
+		set lastx,getarg(1);
+		set lasty,getarg(2);
+	}
+	warp getarg(0),getarg(1),getarg(2);
+	end;
+}
+
+function d {
+	if(!getarg(5,0)) {
+		mes .@npc$;
+		if(getarg(3,0))
+			mes "Please select a Field. You will be warped to the center of that map.";
+		else
+			mes "Please select a Level. Beware that you will be warped directly into the dungeon.";
+		next;
+		if(getarg(0)=="gef_fild" || getarg(0)=="prt_fild"
+			|| getarg(0)=="gef_dun" || getarg(0)=="pay_dun"
+			|| getarg(0)=="iz_dun")
+			set .@j$,.@j$+getarg(2)+" 0:";
+		for (set .@i,1; .@i<=getarg(1,1); set .@i,.@i+1)
+			set .@j$,.@j$+getarg(2)+" "+.@i+":";
+		set .@j,select(.@j$) - getarg(6,0);
+	}
+	else set .@j,getarg(5,0);
+	set .@j$,.@j;
+	if(getarg(0)!="prt_sewb" && getarg(0)!="in_sphinx" 
+		&& getarg(0)!="beach_dun" && .@j<10)
+		set .@j$,"0"+.@j;
+	if(getarg(0)=="beach_dun" && .@j<2)
+		set .@j$,"";
+	for (set .@i,0; .@i<2; set .@i,.@i+1)
+		setarray .@k[.@i],getd("."+getarg(0)+.@j+"["+.@i+"]");
+	w(getarg(0)+.@j$,.@k[0],.@k[1],0,getarg(4,0));
+	end;
+}
+
+function c {
+	set .@cas,getd("$"+getarg(0));
+	setarray .@i[0],getd("."+getarg(0)+.@cas+"[0]");
+	setarray .@i[1],getd("."+getarg(0)+.@cas+"[1]");
+	if(getarg(0)=="gef")
+		w(getarg(0)+"_fild13",.@i[0],.@i[1]);
+	w(getarg(0)+"_gld",.@i[0],.@i[1]);
+}
+
+function s {
+	if(!getcharid(2)) {
+		mes .@npc$;
+		mes "I'm sorry, you need to be in a guild for the beginner castles.";
+		goto nsmall;
+	}
+	switch(getarg(0)) {
+		case 1: set .@check,getcastledata("nguild_alde",1); break;
+		case 2: set .@check,getcastledata("nguild_prt",1); break;
+		case 3: set .@check,getcastledata("nguild_pay",1); break;
+		case 4: set .@check,getcastledata("nguild_gef",1); break;
+	}
+	if(.@check!=getcharid(2)) {
+		set @nb,query_sql("SELECT `last_ip` FROM `login` WHERE `account_id`="+getcharid(3)+" LIMIT 1",@last_ip$);
+		set @nb,query_sql("SELECT `account_id` FROM `login` WHERE `last_ip`='"+@last_ip$+"' and `lastlogin`>date_sub(now(),interval 1 month) LIMIT 128",@account_id);
+		for (set .@i,0; .@i<getarraysize(@account_id); set .@i,.@i+1) {
+			set @nb,query_sql("SELECT DISTINCT `guild_id` FROM `char` WHERE `account_id`="+@account_id[.@i]+" AND `guild_id`!=0 LIMIT 128",@guild_id);
+			for (set .@j,0; .@j<getarraysize(@guild_id); set .@j,.@j+1) {
+				set @nb,query_sql("SELECT COUNT(*) FROM `char` WHERE `guild_id`="+@guild_id[.@j]+" LIMIT 128",@count);
+				for (set .@k,0; .@k<getarraysize(@count); set .@k,.@k+1) {
+					if (@count[.@k]>20) { set .@size,@guild_id[.@j];
+					set @nb,query_sql("SELECT name FROM `char` WHERE `account_id`="+@account_id[.@i]+" AND `guild_id`="+.@size+" LIMIT 1",@name$);  }
+				}
+				deletearray @count,128;
+				set @nb,query_sql("SELECT COUNT(*) FROM guild_castle WHERE `guild_id`="+@guild_id[.@j]+" LIMIT 128",@count);
+				for (set .@k,0; .@k<getarraysize(@count); set .@k,.@k+1)
+					if (@count[.@k]) set .@cas,@guild_id[.@j];
+				deletearray @count,128;
+			}
+			deletearray @guild_id,128;
+		}
+		deletearray @account_id,128;
+		if(.@size) {
+			mes "[Warp NPC]";
+			mes "I'm sorry, I can't allow ^3355FF"+@name$+"^000000 to enter the beginner castles.";
+			goto nsmall;
+		}
+		if(.@cas) {
+			mes "[Warp NPC]";
+			mes "^3355FF"+GetGuildName(.@cas)+"^000000 has already proved itself to not be a beginner guild.";
+			goto nsmall;
+		}
+	}
+	
+	switch(getarg(0)) {
+		case 1: w("n_castle",187,16); // alde, earth
+		case 2: w("n_castle",19,14); // prt, fire
+		case 3: w("n_castle",18,178); // pay, water
+		case 4: w("n_castle",183,180); // gef, air
+	}
+}
+
+function L {
+	set .@i,BaseLevel;
+	if(.@i <= 5) set .@i,6;
+	for(set .@j,0; .@j<getarraysize(.fList$); set .@j,.@j+1) {
+		for(set .@k,0; .@k<=14; set .@k,.@k+1) {
+			if((.@i<6?true:(getd("."+.fList$[.@j]+.@k+"[2]")>=(.@i-5))) && getd("."+.fList$[.@j]+.@k+"[2]")<=(.@i+5)) {
+				set .@m$,.@m$+.fName$[.@j]+" "+.@k+":";
+				setarray .@n$[getarraysize(.@n$)],.fList$[.@j];
+				setarray .@o[getarraysize(.@o)],.@k;
+			}
+		}
+	}
+	
+	sleep2 20;
+
+	for(set .@j,0; .@j<getarraysize(.dList$); set .@j,.@j+1) {
+		for(set .@k,0; .@k<=6; set .@k,.@k+1) {
+			if((.@i<6?true:(getd("."+.dList$[.@j]+.@k+"[2]")>=(.@i-5))) && getd("."+.dList$[.@j]+.@k+"[2]")<=(.@i+5)) {
+				set .@m$,.@m$+.dName$[.@j]+" "+.@k+":";
+				setarray .@n$[getarraysize(.@n$)],.dList$[.@j];
+				setarray .@o[getarraysize(.@o)],.@k;
+			}
+		}
+	}
+	set .@m,select(.@m$);
+	set .@m,.@m-1;
+	d(.@n$[.@m],0,.@n$[.@m],0,0,.@o[.@m]);
+}
+
+level:
+mes "[Warper]";
+mes "Choose a Dungeon or Field. The following are suitable for your Level.";
+next;
+L();
+
+town:
+setarray .@town$[0],"Prontera (City Capital)","Alberta",
+	"Al De Baran",
+	"Amatsu","Archer Village","Ayothaya",
+	"Brasilis","Byalan Island",
+	"Comodo","Einbech (Mining Village)","Einbroch","Geffen","Glast Heim","Gonryun","Hugel","Izlude","Jawaii","Juno",
+	"Lighthalzen","Louyang","Lutie";
+if(ep13_ryu>=100) setarray .@town$[21],"Manuk","Midgarts Expedition Camp";
+setarray .@town$[23],"Moscovia","Morroc","Morroc Ruins";
+if(aru_monas>=16) setarray .@town$[26],"Nameless Island";
+setarray .@town$[27],"Niflheim","Payon","Rachel";
+if(ep13_ryu>=100) setarray .@town$[30],"Splendide";
+setarray .@town$[31],"St. Capitolina Abbey";
+if(aru_vol >=11 && aru_vol < 24) setarray .@town$[32],"Thor Camp";
+setarray .@town$[33],"Umbala","Veins";
+
+set .@k$, .@town$[0];
+for (set .@l,1; .@l<35; set .@l, .@l+1)
+	set .@k$, .@k$ + ":" + .@town$[.@l];
+           
+
+switch(select(.@k$)) {
+	case 1: w("prontera",155,182);
+	case 2: w("alberta",117,57);
+	case 3: w("aldebaran",140,115);
+	case 4: w("amatsu",114,147,0,10000);
+	case 5: w("pay_arche",48,130);
+	case 6: w("ayothaya",217,175,0,10000);
+	case 7: w("brasilis",196,216,0,10000);
+	case 8: w("izlu2dun",107,50,0,150);
+	case 9: w("comodo",189,150);
+	case 10: w("einbech",180,128);
+	case 11: w("einbroch",238,198);
+	case 12: w("geffen",120,64);
+	case 13: w("glast_01",199,46);
+	case 14: w("gonryun",159,117,0,10000);
+	case 15: w("hugel",94,147);
+	case 16: w("izlude",128,87);
+	case 17: 
+		if(!getpartnerid()) {
+			mes "[Warp NPC]";
+			mes "Terribly sorry, but as Jawaii is the island of honeymoons";
+			mes "you must be married to be warped there.";
+			close;
+		}
+		w("jawaii",213,230,0,100000);
+	case 18: w("yuno",157,165);
+	case 19: w("lighthalzen",159,90);
+	case 20: w("louyang",218,115,0,10000);
+	case 21: w("xmas",148,131);
+	case 22: w("manuk",277,207);
+	case 23: w("mid_camp",218,235);
+	case 24: w("moscovia",223,192,0,10000);
+	case 25: w("morocc",159,91);
+	case 26: w("moc_ruins",101,106);
+	case 27: w("nameless_n",256,215);
+	case 28: w("niflheim",85,154);
+	case 29: w("payon",183,99);
+	case 30: w("rachel",130,111);
+	case 31: w("splendide",198,151);
+	case 32: w("prt_monk",94,212);
+	case 33: w("thor_camp",248,190);
+	case 34: w("umbala",126,131);
+	case 35: w("veins",215,122);
+}
+
+field:
+function d;
+setarray .@field$[0],"Amatsu Field";
+if ( !(ayodunquest>2 && (countitem(7285) || countitem(7287))) )
+	setarray .@field$[1],"Ayothaya Field";
+else 
+	setarray .@field$[1],"Ayothaya Fields";
+setarray .@field$[2],"Brasilis Fields","Comodo Fields","Einbroch Fields", "Geffen Fields","Gonryun Field",
+		"Hugel Fields","Juno Fields","Kamidal Mountain","Lighthalzen Fields","Louyang Field","Lutie Field";
+if(ep13_ryu>=100) setarray .@field$[13],"Manuk Fields";
+setarray .@field$[14],"Mt. Mjolnir","Morroc Fields";
+if(mos_whale_edq > 38) 
+	setarray .@field$[16],"Moscovia Field";
+setarray .@field$[17],"Niflheim Fields","Payon Forests","Prontera Fields",
+	"Rachel Fields";
+if(ep13_ryu>=100) setarray .@field$[21],"Splendide Fields";
+setarray .@field$[22],"Umbala Fields","Veins Fields";
+	
+set .@m$, .@field$[0];
+for (set .@n,1; .@n<25; set .@n, .@n+1)
+	set .@m$, .@m$ + ":" + .@field$[.@n];
+           
+switch(select(.@m$)) {
+	case 1: // Amatsu
+		d("ama_fild",1,"Amatsu Field",1,10000);
+	case 2: // Ayothaya
+		if ( !(ayodunquest>2 && (countitem(7285) || countitem(7287))) )
+			d("ayo_fild",1,"Ayothaya Field",1,10000);
+		d("ayo_fild",2,"Ayothaya Field",1,10000);
+	case 3: // Brasilis
+		d("bra_fild",1,"Brasilis Field",1);
+	case 4: // Comodo
+		d("cmd_fild",9,"Comodo Field",1);
+	case 5: // Einbroch
+		d("ein_fild",10,"Einbroch Field",1);
+	case 6: // Geffen
+		d("gef_fild",14,"Geffen Field",1,0,0,1);
+	case 7: // Gonryun
+		d("gon_fild",1,"Gonryun Field",1,10000);
+	case 8: // Hugel
+		d("hu_fild",7,"Hugel Field",1);
+	case 9: // Juno
+		d("yuno_fild",12,"Juno Field",1);
+	case 10: // Kamidal Mountain
+		d("dic_fild",2,"Kamidal Mountain",1);
+	case 11: // Lighthalzen
+		d("lhz_fild",3,"Lighthalzen Field",1);
+	case 12: // Louyang
+		d("lou_fild",1,"Louyang Field",1,10000);
+	case 13: // Lutie
+		d("xmas_fild",1,"Lutie Field",1);
+	case 14: // Manuk
+		d("man_fild",3,"Manuk Field",1);
+	case 15: // Mjolnir
+		d("mjolnir_",12,"Mt. Mjolnir",1);
+	case 16:
+		mes "[Warp NPC]";
+		mes "Please select a Field. You will be warped to the center of that map.";
+		next;
+
+		setarray .@mocfild$[0],"Morroc Field 1","Morroc Field 2","Morroc Field 3",
+				"Sograt Desert 7","Sograt Desert 11","Sograt Desert 12","Sograt Desert 13",
+				"Sograt Desert 16","Sograt Desert 17","Sograt Desert 18","Sograt Desert 19",
+				"Dimensional Gorge 20";
+		if (rebirth_moc_edq > 3 && rebirth_moc_edq < 8 && countitem(7826)) 
+			setarray .@mocfild$[12],"Dimensional Gorge 21";
+		if (rebirth_moc_edq == 8 && countitem(7826))
+			setarray .@mocfild$[13],"Dimensional Gorge 22";
+			
+		set .@p$, .@mocfild$[0];
+		for (set .@q,1; .@q<14; set .@q, .@q+1)
+			set .@p$, .@p$ + ":" + .@mocfild$[.@q];
+			   
+		switch(select(.@p$)) {
+			case 1: w("moc_fild01",219,205);
+			case 2: w("moc_fild02",177,206);
+			case 3: w("moc_fild03",194,182);
+			case 4: w("moc_fild07",224,170);
+			case 5: w("moc_fild11",198,216);
+			case 6: w("moc_fild12",156,187);
+			case 7: w("moc_fild13",185,263);
+			case 8: w("moc_fild16",206,228);
+			case 9: w("moc_fild17",208,238);
+			case 10: w("moc_fild18",209,223);
+			case 11: w("moc_fild19",85,97);
+			case 12: w("moc_fild20",215,212);
+			case 13: w("moc_fild21",38,193);
+			case 14: w("moc_fild22",38,193);
+		}
+	case 17: 
+		mes "[Warp NPC]";
+		mes "Please select a Field. You will be warped to the center of that map.";
+		next;
+		select("Okrestnosti of Moscovia");
+		w("mosk_fild02",204,59);
+	case 18: // Niflheim
+		d("nif_fild",2,"Niflheim Field",1);
+	case 19: // Payon
+		d("pay_fild",11,"Payon Forest",1);
+	case 20: // Prontera
+		d("prt_fild",11,"Prontera Field",1,0,0,1);
+	case 21: // Rachel
+		d("ra_fild",13,"Rachel Field",1);
+	case 22: 
+		d("spl_fild",3,"Splendide Field",1);
+	case 23: 
+		d("um_fild",2,"Umbala Field",1);
+	case 24: 
+		d("ve_fild",7,"Veins Field",1);
+}
+
+dungeon:
+function d;
+
+	if(aru_monas>=16) 
+		setarray .@dungeon$[0],"Abbey, Cursed Monastery";
+	if(countitem(1035)&&countitem(1036)&&countitem(1037))
+		setarray .@dungeon$[1],"Abyss Lakes";
+	if(event_amatsu==6&&countitem(7160)>0)
+		setarray .@dungeon$[2],"Amatsu Dungeon";
+	setarray .@dungeon$[3],"Ant Hell";
+	if( ayodunquest>2 && (countitem(7285) || countitem(7287)) )
+		setarray .@dungeon$[4],"Ayothaya Dungeon";
+	setarray .@dungeon$[5],"Beach Dungeon","Brasilis Dungeon","Clock Tower";
+	if(MISC_QUEST & 8)
+		setarray .@dungeon$[8],"Culverts";
+	setarray .@dungeon$[9],"Dead Pit","Einbroch Dungeons";
+	if(countitem(7025) && signquest==66)
+		setarray .@dungeon$[11],"Geffenia";
+	setarray .@dungeon$[12],"Geffen Dungeon","Glast Heim","Gonryun Dungeon","Hidden Dungeon","Ice Dungeon","The Ruins of Juperos";
+	if( (KielHyreQuest>=106&&countitem(7509)) || (KielHyreQuest>=38 && KielHyreQuest<106) )
+		setarray .@dungeon$[18],"Kiel Dungeons";
+	if(MISC_QUEST & 512)
+		setarray .@dungeon$[19],"Lighthalzen Dungeon";
+	setarray .@dungeon$[20],"Louyang Dungeons","Magma Dungeon";
+	if(mos_whale_edq > 38) 
+		setarray .@dungeon$[22],"Moscovia Dungeon";
+	setarray .@dungeon$[23],"Nidhogg's Dungeon","Odin Shrine","Orc Dungeon","Payon Dungeon","Pyramids";
+	if(ra_tem_q>=21 || MISC_QUEST & 8192)
+		setarray .@dungeon$[28],"Rachel Dungeon";
+	setarray .@dungeon$[29],"Scarab Hole","Sphinx",
+		"Sunken Ship","Thanatos Tower","Thor Volcano","Toy Factory",
+		"Turtle Dungeon","Umbala Dungeon","Undersea Tunnel";
+
+	set .@j$, .@dungeon$[0];
+	for (set .@i,1; .@i<38; set .@i, .@i+1)
+		set .@j$, .@j$ + ":" + .@dungeon$[.@i];
+
+switch (select(.@j$)) {
+	case 1: // St Abbey
+		d("abbey",3,"Cursed Saint Abbey");
+	case 2: // Abyss dungeon
+		delitem 1035,1;
+		delitem 1036,1;
+		delitem 1037,1;
+		d("abyss_",3,"Abyss Lakes");
+	case 3: // Amatsu Dungeon
+		d("ama_dun",3,"Amatsu Dungeon");
+	case 4: // Anthell
+		d("anthell",2,"Anthell");
+	case 5: // Ayothaya Dungeon
+		d("ayo_dun",2,"Ayothaya Dungeon",0,10000);
+	case 6: // Beach Dungeon
+		d("beach_dun",3,"Beach Dungeon",0,0,0,0,2);
+	case 7: // Brasilis
+		d("bra_dun",2,"Brasilis Dungeon");
+	case 8: 
+		mes "[Warp NPC]";
+		mes "Please select a Level. Beware that you will be warped directly into the dungeon.";
+		next;
+		setarray .@clock$[0],"Level 1","Level 2","Level 3";
+		if(countitem(7026)) set .@clock$[3],"Level 4";
+		setarray .@clock$[4],"Basement 1","Basement 2","Basement 3";
+		if(countitem(7027)) set .@clock$[7],"Basement 4";
+
+		set .@w$, .@clock$[0];
+		for (set .@z,1; .@z<8; set .@z, .@z+1)
+			set .@w$, .@w$ + ":" + .@clock$[.@z];
+	
+		switch(select(.@w$)) {
+			case 1: w("c_tower1",199,159);
+			case 2: w("c_tower2",148,283);
+			case 3: w("c_tower3",65,147);
+			case 4: delitem 7026,1;
+				w("c_tower4",56,155);
+			case 5: w("alde_dun01",297,25);
+			case 6: w("alde_dun02",127,169);
+			case 7: w("alde_dun03",277,178);
+			case 8: delitem 7027,1;
+				w("alde_dun04",268,74);
+		}
+	case 9: // Culverts
+		d("prt_sewb",4,"Culverts",0,0,0,0,1);
+	case 10: // Coal Mines
+		d("mjo_dun",3,"Coal Mines");
+	case 11: // Einbroch Dungeon
+		d("ein_dun",2,"Einbroch Dungeon");
+	case 12: // Geffenia
+		d("gefenia",4,"Geffenia");
+	case 13: // Geffen
+		d("gef_dun",3,"Geffen Dungeon",0,0,0,1);
+	case 14: 
+		mes "[Warp NPC]";
+		mes "Please select a Level. Beware that you will be warped directly into the dungeon.";
+		next;
+		menu 	"Castle 1",dglastcast1,
+			"Castle 2",dglastcast2,
+			"Chivalry 1",dglastchiv1,
+			"Chivalry 2",dglastchiv2,
+			"Churchyard",dglastyard,
+			"Culvert 1",dglastcul1,
+			"Culvert 2",dglastcul1,
+			"Culvert 3",dglastcul3,
+			"Culvert 4",dglastcul4,
+			"St.Abbey",dglastchur,
+			"Staircase Dungeon",dglaststep,
+			"Underground Cave 1",dglastcave1,
+			"Underground Cave 2",dglastcave2,
+			"Underground Prison 1",dglastpris1,
+			"Underground Prison 2",dglastpris2;
+		dglastent: w("glast_01",375,304);
+		dglastcast1: w("gl_cas01",199,29);
+		dglastcast2: w("gl_cas02",104,25);
+		dglastchiv1: w("gl_knt01",150,15);
+		dglastchiv2: w("gl_knt02",157,287);
+		dglastyard: w("gl_chyard",147,15);
+		dglastcul1: w("gl_sew01",258,255);
+		dglastcul2: w("gl_sew02",108,291);
+		dglastcul3: w("gl_sew03",171,283);
+		dglastcul4: w("gl_sew04",68,277);
+		dglastchur: w("gl_church",156,7);
+		dglaststep: w("gl_step",12,17);
+		dglastcave1: w("gl_dun01",133,271);
+		dglastcave2: w("gl_dun02",224,274);
+		dglastpris1: w("gl_prison",14,70);
+		dglastpris2: w("gl_prison1",150,14);
+	case 15: // Gonryun
+		d("gon_dun",3,"Gonryun Dungeon");
+	case 16: // Hidden Dungeon
+		d("prt_maze",3,"Hidden Dungeon");
+	case 17: // Ice Dungeon
+		d("ice_dun",3,"Ice Dungeon");
+	case 18: // Juperos
+		d("juperos_",2,"Juperos");
+	case 19: 
+		if (!countitem(7509)) 
+			d("kh_dun",1,"Kiel Hyre");
+		d("kh_dun",2,"Kiel Hyre");
+	case 20: // Lighthalzen Dungeon
+		d("lhz_dun",3,"Lighthalzen Dungeon");
+	case 21: // Louyang Dungeon
+		d("lou_dun",3,"Louyang Dungeon",0,10000);
+	case 22: // Magma Dungeon
+		d("mag_dun",2,"Magma Dungeon");
+	case 23: // Moscovia Dungeon
+		d("mosk_dun",3,"Moscovia Dungeon");
+	case 24: // Nidhogg's Dungeon
+		d("nyd_dun",2,"Nidhogg's Dungeon");
+	case 25: // Odin Temple
+		d("odin_tem",3,"Odin Temple");
+	case 26: // Orc Dungeon
+		d("orcsdun",2,"Orc Dungeon");
+	case 27: // Payon Dungeon
+		d("pay_dun",4,"Payon Dungeon",0,0,0,1);
+	case 28: // Pyramids
+		d("moc_pryd",6,"Pyramids");
+	case 29: // Rachel Sanctuary
+		d("ra_san",5,"Rachel Sanctuary");
+	case 30: // Scarab Hole
+		d("dic_dun",2,"Scarab Hole");
+	case 31: // Sphinx
+		d("in_sphinx",5,"Sphinx",0,0,0,0,1);
+	case 32: // Sunken Ship
+		d("treasure",2,"Sunken Ship");
+	case 33: // Thanatos Tower
+		d("tha_t",2,"Thanatos Tower");
+	case 34: // Thor Volcano
+		d("thor_v",3,"Thor Volcano");
+	case 35: // Toy Factory
+		d("xmas_dun",2,"Toy Factory");
+	case 36: // Turtle Dungeon
+		d("tur_dun",4,"Turtle Dungeon");
+	case 37: // Umbala Dungeon
+		d("um_dun",2,"Umbala Dungeon");
+	case 38: // Undersea
+		d("iz_dun",4,"Izlude Dungeon",0,150,0,1);
+}
+    
+gcastle:
+	function s; function c;
+
+	setarray .alde1,48,83;
+	setarray .alde2,95,249;
+	setarray .alde3,142,85;
+	setarray .alde4,239,242;
+	setarray .alde5,264,90;
+
+	setarray .aru1,158,272;
+	setarray .aru2,83,47;
+	setarray .aru3,68,155;
+	setarray .aru4,299,345;
+	setarray .aru5,292,107;
+	
+	setarray .sch1,293,100;
+	setarray .sch2,288,252;
+	setarray .sch3,97,196;
+	setarray .sch4,137,90;
+	setarray .sch5,71,315;
+
+	if(rand(2)) setarray .gef1,150,50;
+	else setarray .gef1,214,75;
+	setarray .gef2,308,240;
+	switch(rand(4)) {
+		case 0: setarray .gef3,83,181; break;
+		case 1: setarray .gef3,74,287; break;
+		case 2: setarray .gef3,117,273; break;
+		case 3: setarray .gef3,143,240; break;
+	}
+	setarray .gef4,193,278;
+	if(rand(2)) setarray .gef5,252,57;
+	else setarray .gef5,305,87;
+
+	setarray .pay1,121,233;
+	setarray .pay2,295,116;
+	setarray .pay3,317,293;
+	setarray .pay4,140,160;
+	setarray .pay5,204,266;
+
+	setarray .prt1,134,65;
+	setarray .prt2,240,128;
+	setarray .prt3,153,137;
+	setarray .prt4,111,240;
+	setarray .prt5,208,240;
+	
+if(agitcheck() || agitcheck2()) 
+	switch(gettime(3)) {
+		case 0: s(1);
+		case 1: 
+			if(gettime(4)==4)
+				c("alde");
+			else s(2);
+		case 2: c("prt");
+		case 8: c("sch");
+		case 10: s(4);
+		case 11: c("gef");
+		case 12: c("aru");
+		case 17: s(2);
+		case 18: c("prt");
+		case 19: s(3);
+		case 20: c("pay");
+	}
+
+nsmall:
+
+next;	
+menu "First Edition",gcnorm,
+	"Second Edition",gcse;
+
+gcnew:
+	switch(select("Air:Earth:Fire:Water")) {
+		case 1: s(4);
+		case 2: s(1);
+		case 3: s(2);
+		case 4: s(3);
+	}
+	
+gcse:
+	if(select("Arunafeltz:Schwartzwald")==1)
+		c("aru");
+	c("sch");
+		
+gcnorm:
+	switch(select("Al De Baran:Geffen:Payon:Prontera")) {
+		case 1: c("alde");
+		case 2: c("gef");
+		case 3: c("pay");
+		case 4: c("prt");
+	}		
+pvp:
+	mes "[Warp NPC]";
+	mes "I can warp you to PvP. You will be warped to a random point in the arena.";
+	next;
+	set .@rock,getmapusers("pvp_n_1-5");
+	set .@pori,getmapusers("poring_c01");
+	set .@four,getmapusers("pvp_n_1-3");
+	set .@payo,getmapusers("payo1");
+	menu "Compass ["+.@rock+"]",rockon,
+		"Yoyo ["+.@payo+"]",yoyo,
+		"Four ["+.@four+"] ^FF0000Nightmare^000000",fourpvp,
+		"Poring ["+.@pori+"/2]",poring;
+
+event:
+	mes "[Warp NPC]";
+	mes "I can warp you to an event room. You will be warped to one side of the event.";
+	next;
+	set .@chess,getmapusers("chess01");
+	set .@tower,getmapusers("e_tower");
+	set .@shrine,getmapusers("monk_test");
+	set .@bground,getmapusers("bat_room")+getmapusers("bat_b01")
+		+getmapusers("bat_b02")+getmapusers("bat_a01")
+		+getmapusers("bat_a02");
+	set .@track,getmapusers("turbo_room")+getmapusers("turbo_e_16")
+		+getmapusers("turbo_e_8")+getmapusers("turbo_e_4")
+		+getmapusers("turbo_n_16")+getmapusers("turbo_n_8")
+		+getmapusers("turbo_n_4")+getmapusers("turbo_n_1");
+	set .@csquare,getmapusers("quiz_00")+getmapusers("pvp_2vs2");
+	set .@jail,getmapusers("sec_pri");
+	set .@market,getmapusers("heaven_m");
+	set .@pvp,getmapusers("pvp_n_1-5")+getmapusers("poring_c01")
+		+getmapusers("payo1")+getmapusers("pvp_n_1-3");
+	set .@auction,getmapusers("auction_01");
+	set .@ball,getareausers("quiz_02",20,334,71,374)+getmapusers("ball2");
+	menu "PvP ["+.@pvp+"]",pvp,
+		"Endless Tower ["+.@tower+"]",endless,
+		"Sealed Shrine ["+.@shrine+"]",sshrine,
+		"Battlegrounds ["+.@bground+"]",bgrounds,
+		"Soccer ["+.@ball+"]",soccer,
+		"Turbo Track ["+.@track+"]",ttrack,
+		"Chess ["+.@chess+"]",chess,
+		"Combat Square ["+.@csquare+"]",csquare,
+		"Marketplace ["+.@market+"]",market,
+		"Auction House ["+.@auction+"]",auction,
+		"Jail ["+.@jail+"]",jail;
+
+auction: w("auction_01",21,42);
+market: w("heaven_m",49,49);
+jail: w("sec_pri",16,20);
+soccer: w("quiz_02",45,374);
+ttrack: w("alde_gld",183,196);
+bgrounds: w("bat_room",155,150);
+sshrine: w("monk_test",306,145);
+endless: w("e_tower",74,110,0,10000);
+chess: w("chess01",65,33);
+rockon: w("pvp_n_1-5",0,0);
+yoyo: w("payo1",0,0);
+fourpvp:
+	mes "[Warp NPC]";
+	mes "Be aware that Four is ^FF0000Nightmare PvP^000000, meaning if you die, you may ^FF0000lose items^000000 when you die.  Further more, the use of butterfly wings and fly wings are disabled, so you will need to ^ff0000relog^000000 in order to leave.";
+	next;
+	if(select("Continue:Cancel")==2) close;
+	warp "pvp_n_1-3",0,0;
+	end;
+poring:
+	if (.@pori>=2) goto PvPfail;
+	warp "poring_c01",0,0;
+	end;
+csquare: w("quiz_00",66,8);
+PvPfail:
+	mes "[Warper]";
+	mes "This map is currently full.";
+	close;
+lastmap:
+	if(lastmap$=="") { mes "You have not warped anywhere yet!"; close; }
+	warp lastmap$,lastx,lasty;
+        end;
+
+	
+OnInit:
+OnWhisperGlobal:
+	setmapflag "heaven_m",mf_clouds;
+	setmapflag "heaven_m",mf_sakura;
+	
+	setarray .fName$,"Amatsu Field","Ayothaya Field","Brasilis Field","Comodo Field","Einbroch Field","Geffen Field",
+		"Gonryun Field","Hugel Field","Juno Field","Kamidal Mountain","Lighthalzen Field","Louyang Field","Lutie Field","Manuk Field",
+		"Mt. Mjolnir","Niflheim Field","Payon Forest","Prontera Field","Rachel Field","Splendide Field","Umbala Field",
+		"Veins Field";
+	setarray .fList$,"ama_fild","ayo_fild","bra_fild","cmd_fild","ein_fild","gef_fild","gon_fild","hu_fild","yuno_fild","dic_fild","lhz_fild",
+		"lou_fild","xmas_fild","man_fild","mjolnir_","nif_fild","pay_fild","prt_fild","ra_fild","spl_fild","um_fild","ve_fild";
+
+	setarray .ama_fild1,190,197,83;
+	setarray .ayo_fild1,173,134,38;
+		setarray .ayo_fild2,212,150,64;
+	setarray .bra_fild1,138,73,153;
+	setarray .cmd_fild1,180,178,57;
+		setarray .cmd_fild2,231,160,50;
+		setarray .cmd_fild3,191,172,109;
+		setarray .cmd_fild4,228,194,50;
+		setarray .cmd_fild5,224,203,57;
+		setarray .cmd_fild6,190,223,55;
+		setarray .cmd_fild7,234,177,2;
+		setarray .cmd_fild8,194,175,108;
+		setarray .cmd_fild9,172,172,100;
+	setarray .ein_fild1,142,225,91;
+		setarray .ein_fild2,182,141,65;
+		setarray .ein_fild3,187,228,85;
+		setarray .ein_fild4,185,173,73;
+		setarray .ein_fild5,216,173,95;
+		setarray .ein_fild6,195,148,80;
+		setarray .ein_fild7,272,220,81;
+		setarray .ein_fild8,173,214,21;
+		setarray .ein_fild9,207,174,85;
+		setarray .ein_fild10,196,200,85;
+	setarray .gef_fild0,46,199;
+		setarray .gef_fild1,213,204,13;
+		setarray .gef_fild2,195,212,44;
+		setarray .gef_fild3,257,192,44;
+		setarray .gef_fild4,188,171,4;
+		setarray .gef_fild5,166,263,70;
+		setarray .gef_fild6,248,158,79;
+		setarray .gef_fild7,195,191,6;
+		setarray .gef_fild8,186,183,102;
+		setarray .gef_fild9,221,117,19;
+		setarray .gef_fild10,178,218,45;
+		setarray .gef_fild11,136,328,48;
+		setarray .gef_fild12,240,181,108;
+		setarray .gef_fild13,235,235,23;
+		setarray .gef_fild14,211,185,81;
+	setarray .gon_fild1,220,227,68;
+	setarray .hu_fild1,268,101,73;
+		setarray .hu_fild2,222,193,90;
+		setarray .hu_fild3,232,185,55;
+		setarray .hu_fild4,252,189,95;
+		setarray .hu_fild5,165,299,55;
+		setarray .hu_fild6,216,220,85;
+		setarray .hu_fild7,227,197,86;
+	setarray .yuno_fild1,189,224,62;
+		setarray .yuno_fild2,192,207,55;
+		setarray .yuno_fild3,221,157,30;
+		setarray .yuno_fild4,226,199,1;
+		setarray .yuno_fild5,223,177,86;
+		setarray .yuno_fild6,187,232,81;
+		setarray .yuno_fild7,231,174,83;
+		setarray .yuno_fild8,196,203,75;
+		setarray .yuno_fild9,183,214,55;
+		setarray .yuno_fild10,200,124,55;
+		setarray .yuno_fild11,195,226,81;
+		setarray .yuno_fild12,210,304,62;
+	setarray .dic_fild1,38,83,125;
+		setarray .dic_fild2,71,367,132;
+	setarray .lhz_fild1,240,179,81;
+		setarray .lhz_fild2,185,235,81;
+		setarray .lhz_fild3,240,226,84;
+	setarray .lou_fild1,229,187,83;
+	setarray .xmas_fild1,115,145,37;
+	setarray .manfild1,208,209,141;
+		setarray .manfild2,239,262,144;
+		setarray .manfild3,107,217,144;
+	setarray .mjolnir_1,204,120,38;
+		setarray .mjolnir_2,175,193,86;
+		setarray .mjolnir_3,208,213,79;
+		setarray .mjolnir_4,179,180,11;
+		setarray .mjolnir_5,181,240,75;
+		setarray .mjolnir_6,195,270,21;
+		setarray .mjolnir_7,235,202,26;
+		setarray .mjolnir_8,188,215,65;
+		setarray .mjolnir_9,205,144,32;
+		setarray .mjolnir_10,245,223,47;
+		setarray .mjolnir_11,180,206,59;
+		setarray .mjolnir_12,196,208,62;
+	setarray .nif_fild1,215,229,103;
+		setarray .nif_fild2,167,234,109;
+	setarray .pay_fild1,158,206,18;
+		setarray .pay_fild2,151,219,45;
+		setarray .pay_fild3,205,148,4;
+		setarray .pay_fild4,186,247,2;
+		setarray .pay_fild5,134,204,26;
+		setarray .pay_fild6,193,235,17;
+		setarray .pay_fild7,200,177,34;
+		setarray .pay_fild8,137,189,18;
+		setarray .pay_fild9,201,224,29;
+		setarray .pay_fild10,160,205,68;
+		setarray .pay_fild11,194,150,72;
+	setarray .prt_fild0,184,235;
+		setarray .prt_fild1,190,206,3;
+		setarray .prt_fild2,240,206,13;
+		setarray .prt_fild3,190,143,38;
+		setarray .prt_fild4,307,252,15;
+		setarray .prt_fild5,239,213,1;
+		setarray .prt_fild6,185,188,3;
+		setarray .prt_fild7,193,194,15;
+		setarray .prt_fild8,187,218,1;
+		setarray .prt_fild9,210,183,14;
+		setarray .prt_fild10,195,149,59;
+		setarray .prt_fild11,198,164,48;
+	setarray .ra_fild1,192,162,105;
+		setarray .ra_fild2,235,166,105;
+		setarray .ra_fild3,202,206,100;
+		setarray .ra_fild4,202,208,95;
+		setarray .ra_fild5,225,202,101;
+		setarray .ra_fild6,202,214,101;
+		setarray .ra_fild7,263,196,95;
+		setarray .ra_fild8,217,201,95;
+		setarray .ra_fild9,87,121,101;
+		setarray .ra_fild10,277,181,95;
+		setarray .ra_fild11,221,185,2;
+		setarray .ra_fild12,175,200,2;
+		setarray .ra_fild13,174,197,95;
+	setarray .spl_fild1,188,192,145;
+		setarray .spl_fild2,216,226,145;
+		setarray .spl_fild3,225,210,142;
+	setarray .um_fild1,217,206,68;
+		setarray .um_fild2,223,221,67;
+		setarray .um_fild3,237,215,76;
+		setarray .um_fild4,202,197,55;
+	setarray .ve_fild1,186,175,23;
+		setarray .ve_fild2,196,370,59;
+		setarray .ve_fild3,222,45,61;
+		setarray .ve_fild4,51,250,103;
+		setarray .ve_fild5,202,324,81;
+		setarray .ve_fild6,150,223;
+		setarray .ve_fild7,149,307,70;
+	
+	
+
+	setarray .dName$,"Abbey, Cursed Monastery","Abyss Lakes","Amatsu Dungeon","Ant Hell","Ayothaya Dungeon",
+		"Beach Dungeon","Brasilis Dungeon","Culverts","Dead Pit","Einbroch Dungeon","Geffenia","Geffen Dungeon",
+		"Gonryun Dungeon","Hidden Dungeon","Ice Dungeon","The Ruins of Juperos","Kiel Dungeon",
+		"Lighthalzen Dungeon","Louyang Dungeon","Magma Dungeon","Moscovia Dungeon",
+		"Nidhogg's Dungeon","Odin Shrine","Orc Dungeon","Payon Dungeon","Pyramids",
+		"Rachel Dungeon","Scarab Hole","Sphinx","Sunken Ship","Thanatos Tower","Thor Volcano","Toy Factory",
+		"Turtle Dungeon","Umbala Dungeon","Undersea Tunnel";
+	setarray .dList$,"abbey","abyss","ama_dun","anthell","ayo_dun","beach_dun","bra_dun",
+		"prt_sewb","mjo_dun","ein_dun","gefenia","gef_dun","gon_dun","prt_maze","ice_dun","juperos",
+		"kh_dun","lhz_dun","lou_dun","mag_dun","mosk_dun","nyd_dun","odin_tem","orcsdun","pay_dun","moc_pryd",
+		"ra_san","dic_dun","in_sphinx","treasure","tha_t","thor_v","xmas_dun","tur_dun","um_dun","iz_dun";
+
+	setarray .abbey1,51,14,130;
+		setarray .abbey2,150,11,124;
+		setarray .abbey3,120,10,133;
+	setarray .abyss_1,256,268,126;
+		setarray .abyss_2,275,270,130;
+		setarray .abyss_3,116,27,130;
+	setarray .ama_dun1,228,11,85;
+		setarray .ama_dun2,34,41,87;
+		setarray .ama_dun3,119,14,98;
+	setarray .anthell1,35,262,28;
+		setarray .anthell2,168,170,33;
+	setarray .ayo_dun1,275,19,64;
+		setarray .ayo_dun2,24,26,73;
+	setarray .beach_dun1,266,67,102;
+		setarray .beach_dun2,255,244,68;
+		setarray .beach_dun3,23,260,40;
+	setarray .bra_dun1,199,38,167;
+		setarray .bra_dun2,262,261,159;
+	setarray .prt_sewb1,131,247,20;
+		setarray .prt_sewb2,19,19,21;
+		setarray .prt_sewb3,180,169,28;
+		setarray .prt_sewb4,100,92,30;
+	setarray .mjo_dun1,52,17,22;
+		setarray .mjo_dun2,381,343,39;
+		setarray .mjo_dun3,302,262,44;
+	setarray .ein_dun1,22,14,90;
+		setarray .ein_dun2,292,290,96;
+	setarray .gefenia1,40,103,105;
+		setarray .gefenia2,203,34,118;
+		setarray .gefenia3,266,168,118;
+		setarray .gefenia4,151,75,118;
+	setarray .gef_dun0,104,99,63;
+		setarray .gef_dun1,115,236,61;
+		setarray .gef_dun2,106,132,90;
+		setarray .gef_dun3,203,200;
+	setarray .gon_dun1,153,53,92;
+		setarray .gon_dun2,28,113,94;
+		setarray .gon_dun3,68,16,97;
+	setarray .prt_maze1,176,7,28;
+		setarray .prt_maze2,93,20,30;
+		setarray .prt_maze3,23,8,30;
+	setarray .ice_dun1,157,14,98;
+		setarray .ice_dun2,151,155,103;
+		setarray .ice_dun3,149,22,110;
+	setarray .juperos_1,53,247,113;
+		setarray .juperos_2,37,63,113;
+	setarray .kh_dun1,28,226,112;
+		setarray .kh_dun2,41,198,115;
+	setarray .lhz_dun1,150,228,121;
+		setarray .lhz_dun2,150,18,133;
+		setarray .lhz_dun3,140,133,141;
+	setarray .lou_dun1,218,196,80;
+		setarray .lou_dun2,282,20,87;
+		setarray .lou_dun3,165,38,87;
+	setarray .mag_dun1,126,68,100;
+		setarray .mag_dun2,47,30,107;
+	setarray .mosk_dun1,189,46,81;
+		setarray .mosk_dun2,163,33,82;
+		setarray .mosk_dun3,33,136,87;
+	setarray .nyd_dun1,128,145,145;
+		setarray .nyd_dun2,144,121,144;
+	setarray .odin_tem1,298,167,118;
+		setarray .odin_tem2,224,149,128;
+		setarray .odin_tem3,266,280,131;
+	setarray .orcsdun1,32,170,51;
+		setarray .orcsdun2,21,185,54;
+	setarray .pay_dun0,21,183;
+		setarray .pay_dun1,19,33,34;
+		setarray .pay_dun2,19,63,58;
+		setarray .pay_dun3,155,159,64;
+		setarray .pay_dun4,201,204,68;
+	setarray .moc_pryd1,192,9,24;
+		setarray .moc_pryd2,10,192,50;
+		setarray .moc_pryd3,100,92,55;
+		setarray .moc_pryd4,181,11,59;
+		setarray .moc_pryd5,94,96,58;
+		setarray .moc_pryd6,192,8,107;
+	setarray .ra_san1,140,11,123;
+		setarray .ra_san2,32,21,124;
+		setarray .ra_san3,4,149,122;
+		setarray .ra_san4,204,218,126;
+		setarray .ra_san5,150,9,128;
+	setarray .dic_dun1,156,171,132;
+		setarray .dic_dun2,101,139,136;
+	setarray .in_sphinx1,288,9,47;
+		setarray .in_sphinx2,149,81,70;
+		setarray .in_sphinx3,210,54,73;
+		setarray .in_sphinx4,10,222,58;
+		setarray .in_sphinx5,100,99,79;
+	setarray .treasure1,69,24,48;
+		setarray .treasure2,102,27,85;
+	setarray .tha_t1,150,39,116;
+		setarray .tha_t2,150,136,112;
+	setarray .thor_v1,21,228,135;
+		setarray .thor_v2,75,205,126;
+		setarray .thor_v3,146,188,138;
+	setarray .xmas_dun1,205,15,35;
+		setarray .xmas_dun2,129,133,39;
+	setarray .tur_dun1,154,49,88;
+		setarray .tur_dun2,148,261,92;
+		setarray .tur_dun3,132,189,94;
+		setarray .tur_dun4,100,192,100;
+	setarray .um_dun1,42,31,64;
+		setarray .um_dun2,51,25;
+	setarray .iz_dun0,168,168;
+		setarray .iz_dun1,253,252,45;
+		setarray .iz_dun2,236,204,48;
+		setarray .iz_dun3,32,63,52;
+		setarray .iz_dun4,26,27,61;
+}
+
+//---------------------
+//Edit duplicates here!
+//---------------------
+
+rachel.gat,109,138,4	duplicate(Warper)	Warper#2-2	721
+alberta,119,64,3	duplicate(Warper)	Warper#3-1	721
+aldebaran,143,115,4	duplicate(Warper)	Warper#4-1	721
+amatsu,111,155,5	duplicate(Warper)	Warper#5-1	721
+ayothaya,215,170,6	duplicate(Warper)	Warper#6-1	721
+comodo,186,157,4	duplicate(Warper)	Warper#7-1	721
+einbech,182,124,4	duplicate(Warper)	Warper#8-1	721
+einbroch,182,172,4	duplicate(Warper)	Warper#9-1	721
+einbroch,241,198,2	duplicate(Warper)	Warper#9-2	721
+hugel,95,154,5	duplicate(Warper)	Warper#10-1	721
+lighthalzen,164,95,6	duplicate(Warper)	Warper#11-1	721
+geffen,122,62,0	duplicate(Warper)	Warper#12-1	721
+izlude,132,89,3	duplicate(Warper)	Warper#13-1	721
+xmas,149,136,4	duplicate(Warper)	Warper#14-1	721
+morocc,158,97,4	duplicate(Warper)	Warper#15-1	721
+payon,184,104,4	duplicate(Warper)	Warper#16-1	721
+//payon,183,103,4 duplicate(Warper)	Warper#16-12	721
+yuno,160,170,4	duplicate(Warper)	Warper#17-1	721
+moc_fild04.gat,207,331,4	duplicate(Warper)	Warper#18-1	721
+izlu2dun.gat,104,82,4	duplicate(Warper)	Warper#19-1	721
+//mjolnir_02.gat,85,363,4	duplicate(Warper)	Warper#20-1	721
+prt_fild05.gat,273,215,4	duplicate(Warper)	Warper#21-1	721
+glast_01.gat,370,308,4	duplicate(Warper)	Warper#22-1	721
+yuno_fild03.gat,37,135,4	duplicate(Warper)	Warper#23-1	721
+gef_fild10.gat,71,339,4	duplicate(Warper)	Warper#24-1	721
+pay_arche.gat,39,135,4	duplicate(Warper)	Warper#25-1	721
+moc_ruins.gat,99,110,4	duplicate(Warper)	Warper#26-1	721
+moc_fild19.gat,106,97,4	duplicate(Warper)	Warper#27-1	721
+alb2trea.gat,73,101,4	duplicate(Warper)	Warper#28-1	721
+tur_dun01.gat,148,239,4	duplicate(Warper)	Warper#29-1	721
+gonryun,162,123,4	duplicate(Warper)	Warper#30-1	721
+louyang,219,118,4	duplicate(Warper)	Warper#31-1	721
+umbala,131,131,4	duplicate(Warper)	Warper#32-1	721
+moscovia,220,198,4	duplicate(Warper)	Warper#33-1	721
+veins,211,122,4	duplicate(Warper)	Warper#34-1	721
+rachel,132,114,4	duplicate(Warper)	Warper#35-1	721
+new_1-1,58,106,7	duplicate(Warper)	Warper#36-1	721
+jawaii,213,235,4	duplicate(Warper)	Warper#37-1	721
+niflheim,211,180,4	duplicate(Warper)	Warper#38-1	721
+maze_room,77,7,4	duplicate(Warper)	Warper#39-1	721
+mid_camp,224,237,4	duplicate(Warper)	Warper#40-1	721
+manuk.gat,275,211,5	duplicate(Warper)	Warper#44-1	721
+splendide,198,155,3	duplicate(Warper)	Warper#45-1	721
+prt_monk,98,208,3	duplicate(Warper)	Warper#46-1	721
+sec_pri,18,15,1	duplicate(Warper)	Warper#47-1	721
+guild_vs3,51,50,3	duplicate(Warper)	Warper#48-1	721
+prt_in,244,137,3	duplicate(Warper)	Warper#49-1	721
+payo1,85,142,4	duplicate(Warper)	Warper#50-1	721
+quiz_02,49,388,4	duplicate(Warper)	Warper#51-1	721
+heaven_m,51,45,3	duplicate(Warper)	Warper#52-1	721
+brasilis,197,220,3	duplicate(Warper)	Warper#53-1	721

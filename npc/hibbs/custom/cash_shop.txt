@@ -1,0 +1,349 @@
+-	script	CashPointsUpdate#cpu01	-1,{
+OnPCLoginEvent:
+	if (getarraysize(@donate_to_add) >= 1) { deletearray @donate_to_add,127; }
+	set @mb,query_sql("SELECT `points_to_add` FROM `donate_points` WHERE (`account_id` = "+ getcharid(3) +") LIMIT 1",@donate_to_add);
+	if ((@mb == 1) && ((@donate_to_add >= 1 )))
+	{
+		set @mb,query_sql("UPDATE `donate_points` SET `points_to_add` = 0 WHERE (`account_id` = "+ getcharid(3) + ") LIMIT 1");
+		getitem 17003,@donate_to_add;
+		mes "^008000[ Server ]^000000";
+		mes " ";
+		mes "You have gained "+ @donate_to_add +" KCP vouchers.";
+		mes " ";
+		mes "Thank you for donating!";
+		close;
+	}
+	if (getarraysize(@points_to_add) >= 1) { deletearray @points_to_add,127; }
+	set @nb,query_sql("SELECT `points_to_add` FROM `cash_points` WHERE (`account_id` = "+ getcharid(3) +") LIMIT 1",@points_to_add);
+	if ((@nb == 1) && ((@points_to_add >= 1)))
+	{
+		// Update User's Points
+		set #CASHPOINTS,(#CASHPOINTS + @points_to_add);
+
+		// Update Cash Points Table
+		set @nb,query_sql("UPDATE `cash_points` SET `points_to_add` = 0 WHERE (`account_id` = "+ getcharid(3) +") LIMIT 1");
+        
+		// Let Player Know Points Updated
+		mes "^008000[ Server ]^000000";
+		mes " ";
+		mes "Your kafra credit points has been successfully updated. Your new balance is ...";
+		mes " ";
+		mes "Kafra Credit Points : ^0000FF"+ #CASHPOINTS +"^000000";
+		close;
+	}
+	end;
+}
+
+// Kafra Credit Point NPCs
+//============================================================
+// KCP ----------------------------------------------
+prontera,161,176,3	script	Kafra Credit Staff	113,{
+	cutin "kafra_05",2;
+	mes "[Kafra Employee]";
+	mes "Welcome, ^6666FF" + strcharinfo(0) + "^000000.  This is where you can trade in your kafra credit points for useful items and cool prizes.";
+	next;
+	mes "[Kafra Employee]";
+	mes "You can gain credit points by logging in and voting on the website ^FF0000ShmaRO.com^000000 or by donating to the server. ";
+	next;
+	mes "[Kafra Employee]";
+	mes "The amount of special credit points that you have is: ^FF0000"+#CASHPOINTS+"^000000 pts.  Please make a choice based on your point total.";
+M_Menu:
+	next;
+	menu "3 - Skill Reset",reset,
+		"3 - Stat Reset",sreset,
+		"20 - Glass of Illusion 10ea Box",goill,
+		"20 - Abrasive 10ea Box",abra,
+                "20 - Taming Gift Set",rtame,
+		"50 - Enriched Oridecon 5ea Box",eori,
+		"60 - Blessing Scroll 10ea Box",bscroll,
+		"60 - Increase Agility Scroll 10ea Box",ascroll,
+		"60 - Wind Walk Scroll 10ea Box",wscroll,
+		"60 - Token of Ziegfried 5ea Box",zbox,
+		"60 - Kafra Card 30ea Box",kcard,
+		"100 - Giant Fly Wing Box 500",fwing,
+		"100 - 50 Old Blue Boxes",obb,
+		"100 - 1 Gym Pass",gym,
+                "100 - 1 100% Manual",m100,
+		"100 - 15 Old Card Albums",oca,
+		"100 - Enriched Elunium 5ea Box",eelu,
+		"100 - Star Reset (TKM only)",star,
+		"100 - Change Sex",csex,
+		"100 - 100 Dead Branches",dbs,
+		"200 - 1 Bubblegum",bgum,
+		"200 - 1 300% Manual",m300,
+		"200 - 50 Old Purple Boxes",opb,
+		"300 - Robo Eyes",robo,
+		"400 - Cat Tail",cat,
+		"500 - Hockey Mask",mask,
+                "25 - Lottery Chance!",lotto,
+                "Cancel",M_End;
+	reset:
+		if(#CASHPOINTS < 3) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		//ResetSkill;
+		getitem 12213, 1;
+		set #CASHPOINTS, #CASHPOINTS - 3;
+		next; goto M_End;
+		close;
+	sreset:
+		if(#CASHPOINTS < 3) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		//ResetStatus;
+		getitem 6025, 1;
+		set #CASHPOINTS, #CASHPOINTS - 3;
+		next; goto M_End;
+		close;
+	goill:
+		if(#CASHPOINTS < 20) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 13739,1;
+		set #CASHPOINTS, #CASHPOINTS - 20;
+		next; goto M_End;
+		close;
+	abra:
+		if(#CASHPOINTS < 20) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 13718,1;
+		set #CASHPOINTS, #CASHPOINTS - 20;
+		next; goto M_End;
+		close;
+	rtame:
+		if(#CASHPOINTS < 20) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		set #CASHPOINTS, #CASHPOINTS - 20;
+		getitem 12105,1;
+                next; goto M_End;
+		close;
+	eori:
+		if(#CASHPOINTS < 50) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		set #CASHPOINTS, #CASHPOINTS - 50;
+		getitem 13611,1;
+		next; goto M_End;
+		close;
+	bscroll:
+		if(#CASHPOINTS < 60) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 13697,1;
+		set #CASHPOINTS, #CASHPOINTS - 60;
+		next; goto M_End;
+		close;
+	ascroll:
+		if(#CASHPOINTS < 60) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 13698,1;
+		set #CASHPOINTS, #CASHPOINTS - 60;
+		next; goto M_End;
+		close;
+	wscroll:
+		if(#CASHPOINTS < 60) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 13699,1;
+		set #CASHPOINTS, #CASHPOINTS - 60;
+		next; goto M_End;
+		close;
+	zbox:
+		if(#CASHPOINTS < 60) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 13600,1;
+		set #CASHPOINTS, #CASHPOINTS - 60;
+		next; goto M_End;
+		close;
+	kcard:
+		if(#CASHPOINTS < 60) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 13602,1;
+		set #CASHPOINTS, #CASHPOINTS - 60;
+		next; goto M_End;
+		close;
+	fwing:
+		if(#CASHPOINTS < 100) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 13998,1;
+		set #CASHPOINTS, #CASHPOINTS - 100;
+		next; goto M_End;
+		close;
+	obb:
+		if(#CASHPOINTS < 100) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 603,50;
+		set #CASHPOINTS, #CASHPOINTS - 100;
+		next; goto M_End;
+		close;
+	gym:
+		if(#CASHPOINTS < 100) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 7776,1;
+		set #CASHPOINTS, #CASHPOINTS - 100;
+		next; goto M_End;
+		close;
+	m100:
+		if(#CASHPOINTS < 100) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 14533, 1;
+		set #CASHPOINTS, #CASHPOINTS - 100;
+		next; goto M_End;
+		close;
+	oca:
+		if(#CASHPOINTS < 100) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 616,15;
+		set #CASHPOINTS, #CASHPOINTS - 100;
+		next; goto M_End;
+		close;
+	eelu:
+		if(#CASHPOINTS < 100) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 13610,1;
+		set #CASHPOINTS, #CASHPOINTS - 100;
+		next; goto M_End;
+		close;
+	star:
+		if(#CASHPOINTS < 100) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		atcommand "@feelreset";
+		set #CASHPOINTS, #CASHPOINTS - 100;
+		next; goto M_End;
+		close;
+	csex:
+		if(#CASHPOINTS < 100) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		set #CASHPOINTS, #CASHPOINTS - 100;
+		close2;
+		atcommand "@changesex";
+		end;
+		next; goto M_End;
+		close;
+	dbs:
+		if(#CASHPOINTS < 100) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 14234,4;
+		set #CASHPOINTS, #CASHPOINTS - 100;
+		next; goto M_End;
+		close;
+	m300:
+		if(#CASHPOINTS < 200) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 14545, 1;
+		set #CASHPOINTS, #CASHPOINTS - 200;
+		next; goto M_End;
+		close;
+	bgum:
+		if(#CASHPOINTS < 200) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 12210, 1;
+		set #CASHPOINTS, #CASHPOINTS - 200;
+		next; goto M_End;
+		close;
+	opb:
+		if(#CASHPOINTS < 200) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 617,50;
+		set #CASHPOINTS, #CASHPOINTS - 200;
+		next; goto M_End;
+		close;
+	robo:
+		if(#CASHPOINTS < 300) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 13937,1;
+		set #CASHPOINTS, #CASHPOINTS - 300;
+		next; goto M_End;
+		close;
+	cat:
+		if(#CASHPOINTS < 400) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 17006,1;
+		set #CASHPOINTS, #CASHPOINTS - 400;
+		next; goto M_End;
+		close;
+	mask:
+		if(#CASHPOINTS < 500) goto sL_LowPts1;
+		mes "[Kafra]";
+		mes "Here you are.";
+		getitem 5314,1;
+		set #CASHPOINTS, #CASHPOINTS - 500;
+		next; goto M_End;
+		close;
+        lotto:
+        	mes "[Kafra]";
+		mes "You can enter in the lottery";
+		mes "for chances to win ^FF0000100";
+		mes "cash points!!^000000";
+		mes "Interested?";
+		next;
+		if (select("Yes","Not really")==2) goto M_End;
+	      if(#CASHPOINTS < 25) goto sL_LowPts1;
+              set #CASHPOINTS, #CASHPOINTS - 25;
+              mes "[Kafra]";
+              mes "^0000FFLottery Opportunity!!^000000";
+		// mes "...";
+		//set @Lotto, 1;
+		//next;
+		//callfunc "F_Lottery";
+		//goto M_End;
+                //set @theLotto,rand(5);
+                //if(@theLotto=5) goto sL_Win;
+                //goto sL_Lose;
+                switch(rand(1,5)) {
+                 case 1: case 2: case 3: case 4: next; goto sL_Lose;close;
+                 case 5: next; goto sL_Win; close;
+                }
+        close;
+
+        sL_Win:
+               mes "[Kafra]";
+               mes "Oh, wow.  Congratulations!  You've won!";
+               mes " ";
+               mes "Enjoy your 100 free credit points!";
+               set #CASHPOINTS,#CASHPOINTS+100;
+               next;
+                               goto M_End;
+               close;
+
+        sL_Lose:
+                mes "[Kafra]";
+                mes "Sorry... No luck this time.";
+                mes " ";
+                mes "Feel free to try again any time though!";
+                next;
+                goto M_End;
+                close;
+
+	sL_LowPts1:
+		mes "[Kafra]";
+		mes "I'm sorry but you do not have enough credit points for that selection.";
+		goto M_Menu;
+
+	M_End:
+		mes "[Kafra]";
+		mes "Remember to vote daily for more points.";
+		mes " ";
+		mes "Please come back anytime when you have more credit points.";
+		cutin "",255;
+		close;
+}

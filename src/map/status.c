@@ -1586,6 +1586,13 @@ int status_heal(struct block_list *bl,int64 hhp,int64 hsp, int flag)
 	if (sc && !sc->count)
 		sc = NULL;
 
+	if(bl->type == BL_PC) { // [ Pyeus ] Faster regen in towns
+		if(map[bl->m].flag.town) {
+			hp*=8;
+			sp*=8;
+		}
+	}
+
 	if (hp < 0) {
 		if (hp == INT_MIN) hp++; // -INT_MIN == INT_MIN in some architectures!
 		status_damage(NULL, bl, -hp, 0, 0, 1);

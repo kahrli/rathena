@@ -47,7 +47,7 @@
 7335,507,100	// Morroc Tablet
 7336,507,100	// Geffen Tablet
 7339,507,100	// Commemorative Travel Card
-5132,472,100	// Angeling Hat
+//5132,472,100	// Angeling Hat
 
 // "Main Quest"/"Danilion's Request" items
 7416,475,100	// Letter of Recommendation
@@ -55,7 +55,7 @@
 7418,475,100	// Written Request(B)
 
 // PVP Item
-7420,498,100	// Skull
+//7420,498,100	// Skull
 
 // 10.3 Quest items
 // * "Gaebolg family Curse" items
@@ -257,8 +257,8 @@
 7759,507,100	// Geologist's Report
 
 // USA 4th Anniversary Event Items
-5305,475,100	// Pirate Dagger
-5373,73,100	// Dark Randgris Helm
+//5305,475,100	// Pirate Dagger
+//5373,73,100	// Dark Randgris Helm
 7773,499,100	// Wat Badge
 7875,467,100	// Pirate Treasure
 
@@ -2566,6 +2566,7 @@
 20140,475,100	//C_Horse_Hairpin
 6907,475,100		//Piece_Of_Soul_Horse
 
+<<<<<<< Updated upstream
 // kRO 2014-08-06
 17507,475,100	//Actinidia_Cat_Fruit_Box(4)
 17508,475,100	//Actinidia_Cat_Fruit_Box(10)
@@ -2618,3 +2619,9 @@
 // kRO 2014-10-22
 14765,475,100	//Limited_Edition_JOB_Battle_Manual
 17520,475,100	//Limited_Edition_Manual_Box
+=======
+// ShmaRO [Pyeus]
+// Quest items
+12312,123,100 // 50% thick manual
+17008,123,100 // Sigarsholm
+>>>>>>> Stashed changes

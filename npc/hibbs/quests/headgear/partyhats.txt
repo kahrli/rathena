@@ -1,0 +1,56 @@
+//===== eAthena Script ======================================= 
+//= Party Hats Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+prt_in,163,136,3	script	Rental Dealer	97,{
+	mes "[Rental Dealer]";
+	mes "I can rent you hats to help you in your time of need.";
+	mes "Only 1,000 zeny!";
+	next;
+	if(Zeny<1000) 
+				goto L_TooLow;
+	mes "[Rental Dealer]";
+	mes "What are you looking for in life?";
+	next;
+	menu	"Guild members",gmem,
+		"Party members",pmem,
+		"Friends",fri,
+		"A boyfriend",bhat,
+		"A girlfriend",ghat;
+	gmem:
+			rentitem 5336,3600;
+			mes "[Rental NPC]";
+			mes "Enjoy your new hat!";
+			close;
+	pmem:
+			rentitem 5337,3600;
+			mes "[Rental NPC]";
+			mes "Enjoy your new hat!";
+			close;
+	fri:
+			rentitem 5339,3600;
+			mes "[Rental NPC]";
+			mes "Enjoy your new hat!";
+			close;
+	bhat:
+			rentitem 5338,3600;
+			mes "[Rental NPC]";
+			mes "Enjoy your new hat!";
+			close;
+	ghat:
+			rentitem 5346,3600;
+			mes "[Rental NPC]";
+			mes "Enjoy your new hat!";
+			close;
+	L_TooLow:
+		mes "[Rental Dealer]";
+		mes "Er... I'd love to help you but you";
+		mes "need at least 1,000 zeny, remember?";
+		close;
+}

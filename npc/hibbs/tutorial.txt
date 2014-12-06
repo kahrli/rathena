@@ -1,0 +1,755 @@
+//===== HiBBs Script ======================================= 
+//= Tutorial
+//===== By: ================================================== 
+//= Pyeus
+//===== Edited: =====================================
+//= August 2013
+//===== Compatible With: =====================================
+//= rAthena SVN
+//===== Description: ========================================= 
+//= Functions for Tutorial NPC
+//===== Additional Comments: =================================
+//= Called by:
+//= Warper (npc/hibbs/warper.txt)
+//============================================================
+
+function	script	F_Tutorial	{
+	
+switch (getarg(0,0)) {
+	
+case 2:
+J_Choose:
+	if(!getarg(1,0)) cutin "war_y4",2;
+	if(!getarg(1,0)) @name$="[Tutorial]";
+		else @name$="[Mom]";
+	if (checkfalcon() || checkcart() || checkriding() || ismounting()) {
+		mes @name$;
+		mes "Hey, when you're ready to change your job, can you get rid of your ^0000ff"+
+			(checkfalcon()?"falcon" : checkcart()?"cart" : checkriding()?"Peco" : ismounting()?"mount" : "") +
+			"^000000 and talk to me again?";
+		close2;
+		cutin "",255; end;
+	}
+	if(SkillPoint) {
+		mes @name$;
+		mes "Can you use up all your ^0000ffskill points^000000 please?";
+		mes "And talk to me about ^0000ffchanging your job^000000 when you're done!";
+		close2; cutin "",255; end;
+	}
+	if(baby_q && !getarg(1,0)) {
+		cutin "war_y3",2;
+		mes "[Tutorial]";
+		mes "Hey! Pleasure to see you agai-- Wait what!!";
+		specialeffect2 72;
+		close2;
+		setnpcdisplay("Mother#baby",mother);
+		setnpcdisplay("Father#baby",father);
+		warp "que_moon",99,25;
+		end;
+	}
+	if(getarg(1,0)) {
+		mes "[Mom]";
+		mes "Oh-ho-ho! Our darling's gotten stronger! Care if your old ma and pa show you some tricks?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Don't you think it's time you change me back now?";
+		next;
+		mes "[Mom]";
+		mes "Well, let's see how you look first, okay?? And then we will. For sure.";
+		next;
+	}
+	.@e = eaclass();
+	.@i = roclass(.@e&EAJ_UPPERMASK);
+	if(.@i>=Job_Knight && .@i<=Job_Crusader2) {
+		.@j=roclass(.@e|EAJL_THIRD);
+		if(Class > Job_Crusader2) {
+			if(JobLevel == 70) {
+				callsub Job_Stuff,.@j;
+			}
+			if(Class >= Job_Baby_Knight && JobLevel==50)
+				callsub Job_Stuff,.@j;
+			mes @name$;
+			mes "Your level's high enough now that you can change into ^0000ff" + callfunc("F_InsertArticle",jobname(.@j)) + "^000000, but are you sure you're ready? You can still ^0000fflevel more^000000!";
+			next;
+			if(select("I'll level more.:Yes, I'm sure I want to change.")==1)
+				goto L_Good;
+			else callsub Job_Stuff,.@j;
+		}
+		else {
+			if(JobLevel == 50)
+				goto Trans_Stuff;
+			mes @name$;
+			mes "Your level's high enough now that you can change jobs, but you can still ^0000fflevel even more^000000! Are you sure you're ready?";
+			next;
+			if(select("I'll level more.:Yes, I'm sure I want to change.")==1) {
+L_Good:
+				mes @name$;
+				mes "Good choice!";
+				close2;
+				cutin "",255;
+				end;
+			}
+			else {
+Trans_Stuff:
+				mes @name$;
+				if(!getarg(1,0))cutin "war_y1",2;
+				mes "Okay, you actually have two options right now: You can rebirth into ^0000ffa High Novice^000000, or you can become a ^0000ff" + callfunc("F_InsertArticle",jobname(.@j)) + "^000000. Do you need me to explain the differences?";
+				next;
+				if(select("Yes please.:No, I understand.")==1) {
+					mes @name$;
+					mes "When you rebirth, you gain access to ^0000ffmore job levels and new skills^000000 that are very powerful. You also gain ^0000ffmore HP and SP^000000 over regular characters.";
+					next;
+					mes @name$;
+					mes "The drawback is that you'll have to start from level 1 again, and work your way back up again, through novice, first class, second, and third.";
+					next;
+				}
+				mes @name$;
+				mes "So which one do you want to become?";
+				next;
+				if(select("a High Novice:"+callfunc("F_InsertArticle",jobname(.@j)))==1) 
+					callsub Job_Stuff,Job_Novice_High;
+				else
+					callsub Job_Stuff,.@j;
+			}
+		}
+	}
+	if((eaclass()&EAJ_UPPERMASK) == EAJ_SUPER_NOVICE && BaseLevel == 99 && JobLevel == 99)
+		callsub Job_Stuff,roclass(.@e|EAJL_THIRD);
+	if((Class == Job_Ninja || Class == Job_Gunslinger) && BaseLevel == 99 && JobLevel == 70)
+		callsub Job_Stuff,roclass(.@e|EAJL_2_1);
+	if((eaclass()&EAJ_BASEMASK) == EAJ_NOVICE && JobLevel == 10) {
+		if(Class == Job_Novice_High && lastJob) 
+			callsub Job_Stuff,roclass((eaclass(lastJob)&EAJ_BASEMASK)|EAJL_UPPER);
+		else {
+			mes @name$;
+			mes "Decision time! Which job would you like to become?";
+			next;
+			if(!getarg(1,0))set .@menu$,"Tell me about the classes.:";
+			else set .@menu$,":";
+			if(BaseLevel >=45)
+				.@menu$=.@menu$+callfunc("F_InsertArticle",jobname((Class == Job_Novice?Job_SuperNovice:Job_Super_Baby)));
+			for(.@i=1; .@i<7; .@i=.@i+1)
+				set .@menu$,.@menu$+":"+callfunc("F_InsertArticle",jobname(roclass(.@e+.@i)));
+			if(Class == Job_Novice)
+				.@menu$=.@menu$+":"+
+					callfunc("F_InsertArticle",jobname(Job_Taekwon))+":"+
+					callfunc("F_InsertArticle",jobname(Job_Gunslinger))+":"+
+					callfunc("F_InsertArticle",jobname(Job_Ninja))+":"+
+					callfunc("F_InsertArticle",jobname(Job_Baby));
+			.@j=select(.@menu$);
+			switch(.@j) {
+				case 1: 
+					cutin "war_y1",2;
+					mes "[Tutorial]";
+					mes "Please allow me to warp you to the ^0000ffTraining Area^000000, where you can learn more about the various jobs.";
+					next;
+					if(select("Yes:No")==2) {
+						cutin "war_y3",2;
+						mes "[Tutorial]";
+						mes "That's too bad. Talk to me again when you're ready.";
+						close2;
+						cutin "",255;
+						end;
+					}
+					else {
+						mes @name$;
+						mes "Here we go!";
+						close2;
+						cutin "",255;
+						savepoint "new_1-2",100,100;
+						warp "new_1-2",100,100;
+						end;
+					}
+				close; break;
+				case 2: callsub Job_Stuff,(Class==Job_Novice?Job_SuperNovice:Job_Super_Baby); break;
+				case 9: callsub Job_Stuff,Job_Taekwon; break;
+				case 10: callsub Job_Stuff,Job_Gunslinger; break;
+				case 11: callsub Job_Stuff,Job_Ninja; break;
+				case 12: 
+					goto Baby_Stuff; break;
+				default: 
+					callsub Job_Stuff,roclass(.@e+.@j-2); break;
+			}
+		}
+	}
+	.@j1=roclass(.@e|EAJL_2_1);
+	.@j2=roclass(.@e|EAJL_2_2);
+	if(.@j1!=-1 && .@j2!=-1 && JobLevel>39) {
+		if(JobLevel<50) {
+			mes @name$;
+			mes "Your level's high enough now that you can change into ^0000ff" + (.@e&EAJL_UPPER?callfunc("F_InsertArticle",jobname(lastJob+Job_Novice_High)):"something new") + "^000000, but are you sure you're ready? You can still ^0000fflevel more^000000!";
+			next;
+			if(select("I'll level more.:Yes, I'm sure I want to change.")==1)
+				goto L_Good;
+			}
+		if(.@e&EAJL_UPPER)
+			callsub Job_Stuff,(lastJob+Job_Novice_High);
+		else {
+			mes @name$;
+			mes "Which job would you like to become?";
+			next;
+			switch(select(callfunc("F_InsertArticle",jobname(.@j1))+":"+callfunc("F_InsertArticle",jobname(.@j2)))) {
+				case 1: callsub Job_Stuff,.@j1; break;
+				case 2: callsub Job_Stuff,.@j2; break;
+			}
+		}
+	}
+	close2;
+	cutin "",255;
+	end;
+	
+Job_Stuff:
+	mes @name$;
+	mes "So you're absolutely 100% sure you want to become ^0000ff" + callfunc("F_InsertArticle",jobname(getarg(0))) + "^000000?";
+	next;
+	if(select("Yes, I'm sure.:No, not yet.")==2) {
+		mes @name$;
+		mes "Okay, come talk to me when you're ready!";
+		close2;
+		cutin "",255;
+		end;
+	}
+	else {
+		if(getarg(0) == Job_Novice_High)
+			lastJob = Class;
+		mes @name$;
+		mes "Then here we go!";
+		jobchange getarg(0);
+		if(getarg(0) == Job_Novice_High)
+			resetlvl(1);
+		specialeffect2 EF_ANGEL2;
+		specialeffect2 EF_ELECTRIC;
+		next;
+		mes @name$;
+		mes "You are now ^0000ff" + callfunc("F_InsertArticle",jobname(getarg(0))) + "^000000! Congratulations!";
+		if(@name$=="[Mom]") {
+			next;
+			mes @name$;
+			mes "And you are ^ff0000soooo^000000 cute!";
+			next;
+			mes @name$;
+			mes "We ^ff0000definitely^000000 need to leave you this way! Please! It's just for a little longer!";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "No mom, I don't want to be --";
+		}
+		close2;
+		if(@name$=="[Mom]") warp "SavePoint",0,0;
+		cutin "",255;
+		end;
+	}
+	
+case 3:
+	if(HB_BEGIN&4==0)
+		set HB_BEGIN,HB_BEGIN|4;
+	cutin "war_y1",2;
+	mes "[Tutorial]";
+	mes "Hello again, " +strcharinfo(0)+"!!";
+	mes "You haven't used one of these warpers yet, have you?";
+	mes "Want some help?";
+	next;
+	if(select("Yes:No")==2) {
+		cutin "war_y4",2;
+		mes "[Tutorial]";
+		mes "Oh... Okay then, smarty-pants!";
+	}
+	else {
+		mes "[Tutorial]";
+		mes "There's a lot to learn, so where should we start?!";
+		next;
+Tut_Switch:
+		if(BaseLevel>=160) set .@switch$,"Where did the ^0000FFLevel^000000 go?:What's a ^0000FFWarper^000000?:What's this ^0000FFLevel^000000 option?:Why does my ^0000FFZeny^000000 decrease sometimes?:Why doesn't my warp show up?:How do I ^0000FFvote^000000?:Where's ^0000FFYuno^000000?:I think I got it...";
+		else set .@switch$,":What's a ^0000FFWarper^000000?:What's this ^0000FFLevel^000000 option?:Why does my ^0000FFZeny^000000 decrease sometimes?:Why doesn't my warp show up?:How do I ^0000FFvote^000000?:Where's ^0000FFYuno^000000?:I think I got it...";
+		switch(select(.@switch$))
+		{
+			mes "[Tutorial]";
+			case 1:
+				cutin "war_y3",2;
+				mes "The Warper Agent is more than happy to help you level... But eventually profits run low. So once they think you're high enough to live on your own, they stop offering free warps to level-based areas.";
+				next;
+				mes "[Tutorial]";
+				mes "I do hope you understand.";
+				next;
+				break;
+			case 2:
+				cutin "war_y4",2;
+				mes "A ha ha, you don't know what a warper is?? They're the latest and greatest in the Kafra Corporation and Cool Event Corp ^0000FFTeleport Service^000000!";
+				next;
+				cutin "war_y1",2;
+				mes "[Tutorial]";
+				mes "When you ask, warpers send you ^0000FFwherever you want to go^000000!";
+				mes "They can take you anywhere in the world!";
+				next;
+				mes "[Tutorial]";
+				mes "Pretty cool, huh?";
+				next;
+				break;
+			case 3:
+				cutin "war_y4",2;
+				mes "You know those times when you're levelling away and suddenly you realize ^666666*oops*^000000 these mobs are too easy?";
+				next;
+				cutin "war_y1",2;
+				mes "[Tutorial]";
+				mes "That's what the ^0000FFLevel^000000 option is for!";
+				next;
+				mes "[Tutorial]";
+				mes "When you select the ^0000FFLevel^000000 option, the warper will automatically tell you the very best places to level!";
+				next;
+				mes "[Tutorial]";
+				mes "It should make leveling up super easy now, huh?";
+				next;
+				break;
+			case 4:
+				cutin "war_y3",2;
+				mes "Sometimes, one ship owner or guard will be in charge of a place...";
+				next;
+				mes "[Tutorial]";
+				mes "The Warpers aren't allowed to warp you there without first paying the fee.";
+				next;
+				cutin "war_y1",2;
+				mes "[Tutorial]";
+				mes "But if you're poor, it's okay.  Warpers love their customers so much, they'll pay for it themselves!";
+				next;
+				break;
+			case 5:
+				cutin "war_y2",2;
+				mes "If you've used a warper before, you might expect to see more places than you do here...";
+				next;
+				mes "[Tutorial]";
+				mes "The trouble is, though, that both the ^0000ffKafra Corporation^000000 and ^0000FFCool Event Corp^000000 can only warp to certain dungeons!";
+				next;
+				mes "[Tutorial]";
+				mes "So if you want to warp to a different dungeon, you have to ^0000FFvote for it^000000!";
+				next;
+				mes "[Tutorial]";
+				mes "Also, certain places won't even let you in unless you've done the ^0000FFquests for them^000000!";
+				next;
+				cutin "war_y1",2;
+				mes "[Tutorial]";
+				mes "So make sure you do lots of quests and fill up your list, okay?";
+				next;
+				break;
+			case 6:
+				cutin "war_y4",2;
+				mes "Voting is my favorite part! You really get to be a part of the decision-making when you vote!";
+				next;
+				cutin "war_y2",2;
+				mes "[Tutorial]";
+				mes "In order to ^0000FFvote for your dungeons^000000, you have to vote at the ^0000FFvoting staff^000000.  Do you know where they are?";
+				next;
+				if(select("I do.:No idea!")==1) {
+					cutin "war_y1",2;
+					mes "[Tutorial]";
+					mes "Then make sure you vote lots and lots!!";
+					next;
+					break;
+				}
+				cutin "war_y3",2;
+				mes "[Tutorial]";
+				if(strcharinfo(3)=="yuno") {
+					set .@town$,"Juno";
+					setarray .@coords[0],158,191;
+				}
+				else if(strcharinfo(3)=="moc_ruins") {
+					set .@town$,"Morroc Ruins";
+					setarray .@coords[0],100,133;
+				}
+				else if(strcharinfo(3)=="geffen") {
+					set .@town$,"Geffen";
+					setarray .@coords[0],120,37;
+				}
+				else if(strcharinfo(3)=="payon") {
+					set .@town$,"Payon";
+					setarray .@coords[0],155,182;
+				}
+				else if(strcharinfo(3)=="alberta") {
+					set .@town$,"Alberta";
+					setarray .@coords[0],117,70;
+				}
+				else if(strcharinfo(3)=="aldebaran") {
+					set .@town$,"Al de Baran";
+					setarray .@coords[0],141,102;
+				}
+				else if(strcharinfo(3)=="lighthalzen") {
+					set .@town$,"Lighthalzen";
+					setarray .@coords[0],159,60;
+				}
+				else {
+					set .@town$,"Prontera";
+					setarray .@coords[0],151,125;
+					set .@not,1;
+				}
+				
+				mes "Okay, I'll mark them on your map if you want, so you can find your way!  They're in every major town, but I'll show you the ones in "+.@town$+"!";
+				if(.@not)
+					mes F_Navi("Please mark them!","prontera,151,125","^B9062F");
+				else {
+					mes F_Navi("Please mark them!",strcharinfo(3)+","+.@coords[0]+","+.@coords[1],"^B9062F");
+					viewpoint 1,.@coords[0],.@coords[1],1,0xFF0000;
+				}
+				next;
+				break;
+			case 7:
+				cutin "war_y3",2;
+				mes "You mean Juno?";
+				next;
+				mes "[Tutorial]";
+				mes "Sometimes people get mixed up because it sounds like \"^0000FFyuno^000000\"... But that's because it's a word from the Schwarzwald Repulic, so that makes sense, right?";
+				next;
+				break;
+			case 8:
+				mes "Okay!  Just remember you can always talk to me again!";
+				// need to add a way to talk to her again
+				cutin "",255;
+				return;
+			default:
+				cutin "war_y3",2;
+				mes "Wait, I got confused... What did you say??";
+				next;
+		}
+		goto Tut_Switch;
+	}
+	return;
+	break;
+	
+case 4:
+Cust_Stuff:
+	switch(select("What are the ^0000FFCustom Quests^000000 here?:Is there a ^0000FFGold Room, MVP Arena, etc.^000000?:Is the ^0000ffGolden Thief Bug Card^000000 modified?:Why are the ^0000ffdrop rates^000000 weird?:Nevermind.")) {
+		mes "[Tutorial]";
+		case 1:
+			mes "I've actually marked all of the custom quests for you already!";
+			next;
+			mes "[Tutorial]";
+			mes "Using either ESC > Shortcuts, or checking in your Basic Info box, open up the ^0000FFQuest^000000 window. The default shortcut is ^0000FFAlt+F^000000.";
+			next;
+			mes "[Tutorial]";
+			mes "The list of headgear names that pop up will give you hints to where the quests are. Good luck~";
+			next;
+			break;
+		case 2:
+			mes "No, we don't have anything like that here. The easiest way to get MVP cards and the like are to actually go out and hunt boss monster.";
+			next;
+			break;
+		case 3:
+			mes "No, the Golden Thief Bug cards works as usual. The only difference is the spawn time of GTB has been raised.";
+			next;
+			while(true) {
+				switch(select("Why? Isn't it unfair?:What about in War of Emperium?:Okay, thanks.")) {
+					case 1:
+						mes "[Tutorial]";
+						mes "The main concern is that the ^0000FFGTB card^000000 will make magic classes useless. It's really not true.";
+						next;
+						mes "[Tutorial]";
+						mes "Of ^0000ffcourse^000000 magic classes have a hard time against GTB cards. But every magic class has a few skills that can bypass a GTB card, though you'll have to figure those out on your own~";
+						next;
+						mes "[Tutorial]";
+						mes "Also, there aren't that many things that specifically limit magic attacks. But there are plenty that limit or block physical attacks, and they're all very easy to get.";
+						next;
+						mes "[Tutorial]";
+						mes "But since the card ^0000ffshould^000000 be a rare treat, we did make it harder to get. So magic classes: never fear! GTB is rare!";
+						break;
+					case 2:
+					//	mes "Normally, Golden Thief Bug Cards ^0000ffare^000000 allowed in War of Emperium. There is one exception though.";
+					//	next;
+						mes "[Tutorial]";
+						mes "We're working on releasing a new mode in WoE called Training Edition. In this mode, Golden Thief Bug Cards don't work.";
+						break;
+					default: goto Cust_Stuff;
+				}
+				next;
+			}
+		case 4:
+			cutin "war_y2",2;
+			mes "I'm gonna ask you a question that might seem a little complicated. Do you understand ^0000fflinear, exponential, and logarithmic graphs^000000?";
+			next;
+			if(select("Yes:No")==1) {
+				mes "[Tutorial]";
+				mes "As you probably know, most servers have a drop rate designed around a ^0000fflinear^000000 equation. The leads to things like most common items dropping 100% of the time, regardless of actual value.";
+				next;
+				cutin "war_y1",2;
+				mes "[Tutorial]";
+				mes "On the other hand, we here work on a ^0000fflogarithmic^000000 equation, which keeps the general balance between item values. If it's better for the economy, it's better for everyone, right?";
+			}
+			else {
+				mes "[Tutorial]";
+				mes "Most private servers out there multiply drop rates using a ^0000fflinear equation^000000. This means if on the official servers an item drops .1% of the time, on a 75x server it will drop 7.5% of the time. (.1*75=7.5)";
+				next;
+				mes "[Tutorial]";
+				mes "In the long term, this means common items all drop 100% of the time. The value of the items becomes the same, even though one ^0000ffshould^000000 be more useful or valuable.";
+				next;
+				mes "[Tutorial]";
+				mes "This can lead to a lot of problems economically as things that should be extremely common are sold at the same price as things that are rarer.";
+				next;
+				mes "[Tutorial]";
+				mes "Here, we use something called a ^0000fflogarithmic equation^000000. If you've ever learned quadratics in school, a logarithmic function is the opposite of that.";
+				next;
+				mes "[Tutorial]";
+				mes "What that means is things that are already very common, such as a poring dropping a jellopy or an empty bottle, only become slightly more common than originally.";
+				next;
+				mes "[Tutorial]";
+				mes "This keeps their relative values in check. Empty bottles should be a little less common than jellopy, but on most servers they're equally common. Logarithmic drops keep the balance.";
+				next;
+				mes "[Tutorial]";
+				mes "But it also means that the uncommon things that everybody wants, like a card, gain the full 75x on a 75x server. So a poring card will still drop .75% of the time.";
+				next;
+				cutin "war_y1",2;
+				mes "[Tutorial]";
+				mes "In short, common items are close to but not quite 100%, enabling us to have a better economy, and uncommon ones can still be found as easily as you expect them to be!";
+				next;
+				if(select("Can I have an example?:Okay, thanks.")==1) {
+					mes "[Tutorial]";
+					mes "Sure! Let me show you with porings, a monster everyone's comfortable with.";
+					next;
+					mes "[Tutorial]";
+					mes "Let's compare porings on a 40x:";
+					mes "Normal 1x ^0000ffLogarithmic ^ff0000Linear";
+					mes "^000000Jellopy: 70% ^0000ff97% ^ff0000100%";
+					mes "^000000Knife [4]: 1% ^0000ff12% ^ff0000100%";
+					mes "^000000Sticky Mucus: 4% ^0000ff30% ^ff0000100%";
+					mes "^000000Apple: 10% ^0000ff49% ^ff0000100%";
+					mes "^000000Empty Bottle: 15% ^0000ff59% ^ff0000100%";
+					mes "^000000Apple: 1.5% ^0000ff16% ^ff000060%";
+					mes "^000000Unripe Apple: 0.2% ^0000ff4% ^ff00008%";
+					mes "^000000Poring Card: 0.01% ^0000ff0.4% ^ff00000.4%";
+					next;
+					mes "[Tutorial]";
+					mes "To put this another way, ";
+				}
+			}
+			next;
+			break;
+		default:
+			mes "Okay! Just remember you can always talk to me again!";
+			cutin "",255;
+			return;
+	}
+	goto Cust_Stuff;
+	return;
+	break;
+	
+case 5:
+NPC_Stuff:
+	switch(select("Where is the ^0000ffJob Changer^000000?:Where is the ^0000ffWarper^000000?:Where is the ^0000ffPvP Arena^000000?:Where is the ^0000ffStylist^000000?:Nevermind.")) {
+		case 1: // job
+		case 2: // warpe
+		case 3: // pvp
+		case 4: // stylist
+		default:
+			mes "Okay! Just remember you can always talk to me again!";
+			cutin "",255;
+			return;
+	}
+	goto NPC_Stuff;
+	return;
+	break;
+case 6:
+	// Quest window
+case 7:
+	// logarithmic drops
+//case something:
+	//booking window
+	
+Skill_Stuff:
+	switch(select("Arch Bishop Skills:Genetic Skills:Nevermind.")) {
+		case 1:
+			// Arch Bishop
+			while(.@i=select("Adoramus:Ancilla:Clearance:Oratio:Go back."))
+			switch(.@i) {
+				case 1:
+				mes "[Tutorial]";
+					mes "Adoramus' debuff is actually unique in that it can't be cured through normal means, and while the blind portion of the effect can be resisted through stats and the like, the Decrease AGI effect cannot be.";
+					next;
+					break;
+				case 2:
+				mes "[Tutorial]";
+					mes "You can only hold 3 ancilla at one time. And while they consume 30% of your SP to make, they recover 15% of your SP when you use them. So keep some for emergencies!";
+					next;
+					break;
+				case 3:
+				mes "[Tutorial]";
+					mes "The description is a little confusing. Clearance is a single-target spell, meaning while you can target anyone, you can only target one person at a time, not the entire screen.";
+					next;
+					break;
+				case 4:
+				mes "[Tutorial]";
+					mes "Oratio actually has a special usage: it hits any enemy on the screen, hidden or not, and puts an icon on the ones successful. This means you can use Oration to find hidden or cloaked enemies!";
+					next;
+					break;
+				default: goto Skill_Stuff;
+			}
+
+		case 2:
+			// Genetic
+			while(.@i=select("Blood Sucker:Cart Cannon:Demonic Fire:Fire Expansion:Thorn Trap:Wall of Thorns:Go back."))
+			switch(.@i){
+				case 1:
+				mes "[Tutorial]";
+					mes "Each target can only have one blood sucker, meaning you can have one attached to three different targets at the same time.";
+					next; 
+					break;
+				case 2:
+				mes "[Tutorial]";
+					mes "Cart Cannon can use any type of cannon ball, including dark, holy, iron, and soul cannon balls.";
+					next;
+					break;
+				case 3:
+				mes "[Tutorial]";
+					mes "Demonic fire can only target shootable path, so you can't cast it over walls, etc. Also, the effects between two demonic fires won't overlap.";
+					next;
+					break;
+				case 4:
+				mes "[Tutorial]";
+					mes "Fire Expansion at the highest level works similar to an Area of Effect Acid Demonstraition.";
+					next;
+					break;
+				case 5:
+				mes "[Tutorial]";
+					mes "You can only cast 3 thorn traps at any one time, and have to wait for the first to disappear before casting again. You can't stack the traps, and you can't cast them on top of or near targets.";
+					next;
+					break;
+				case 6:
+				mes "[Tutorial]";
+					mes "You can only have one wall of thorns up at a time, and it can't be used inside of a town.";
+					next;
+					break;
+				default: goto Skill_Stuff;
+			}
+		default: 
+			cutin "",255;
+			mes "[Tutorial]";
+			mes "Okay then! Next time!";
+		return;
+		break;
+	}
+
+case 8:
+	cutin "war_y3",2;
+	mes "[Tutorial]";
+	mes "Oh man, "+strcharinfo(0)+", I completely forgot when your birthday is! Please don't be mad and tell me, okay?";
+	next;
+Month:
+	cutin "war_y1",2;
+	mes "[Tutorial]";
+	mes "Which month is it in?";
+	next;
+	set @month,select("January:February:March:April:May:June:July:August:September:October:November:December");
+	mes "[Tutorial]";
+	mes "And what day is your birthday on?";
+	next;
+	input @day;
+	if (@day < 1 || @day > 31) goto Day_Wrong;
+	switch(@month) {
+		case 2: if (@day > 29) goto Day_Wrong;
+		case 4: case 6: case 9: case 11:
+			if (@day > 30) goto Day_Wrong;
+	}
+	mes "[Tutorial]";
+	cutin "war_y4",2;
+	switch(@month){
+		case 1: set .@month$,"January"; break;
+		case 2: set .@month$,"February"; break;
+		case 3: set .@month$,"March"; break;
+		case 4: set .@month$,"April"; break;
+		case 5: set .@month$,"May"; break;
+		case 6: set .@month$,"June"; break;
+		case 7: set .@month$,"July"; break;
+		case 8: set .@month$,"August"; break;
+		case 9: set .@month$,"September"; break;
+		case 10: set .@month$,"October"; break;
+		case 11: set .@month$,"November"; break;
+		case 12: set .@month$,"December"; break;
+	}
+	mes "So you were born on "+.@month$+" "+@day+"?";
+	next;
+	if(select("Yes:No")==1) {
+		mes "[Tutorial]";
+		mes "Okay! I'll make sure to remember this time!";
+		set @month,@month*100;
+		set #birthday,@month+@day;
+		close2;
+		cutin "",255;
+		return;
+		break;
+	}
+	else 
+		goto Month;
+	
+Day_Wrong:
+	cutin "war_y1",2;
+	mes "[Tutorial]";
+	mes "That's not the right day... Maybe you got the month wrong!";
+	next;
+	goto Month;
+	
+Baby_Stuff:
+	mes "["+strcharinfo(0)+"]";
+	mes "Where are the ^0000ffbabies^000000?";
+	next;
+	mes "[Tutorial]";
+	cutin "war_y3",2;
+	mes "I... I don't know.";
+	next;
+	specialeffect2 900;
+	specialeffect2 72;
+	mes "[Tutorial]";
+	mes "Huh? What's that --";
+	mes "That's not in my job description, wait!!";
+	close2;
+	cutin "",255;
+	warp "que_moon",99,25;
+	if(!mother)set mother,callfunc("F_Rand",589,592,594,596,597,598);
+	if(!father)set father,callfunc("F_Rand",590,591,593,595,599,600);
+	setnpcdisplay("Mother#baby",mother);
+	setnpcdisplay("Father#baby",father);
+	end;
+
+default:
+	cutin "war_y1",2;
+	mes "[Tutorial]";
+	mes "Hello "+strcharinfo(0)+"!!";
+	mes "You want some help today?  What's up?";
+	next;
+	if(baby_q==1) {
+		cutin "war_y3",2;
+		mes "[Tutorial]";
+		mes "Woah!! You're back! And you're a baby!!";
+		next;
+		cutin "",255;
+		mes "["+strcharinfo(0)+"]";
+		mes "Don't even talk about it...";
+		next;
+		cutin "war_y1",2;
+		set baby_q,2;
+	}
+	.@i = roclass(eaclass()&EAJ_UPPERMASK);
+	if(Class < Job_Soul_Linker) {
+		if(.@i>=Job_Knight && .@i<=Job_Crusader2 && BaseLevel==99 && JobLevel > 49)
+				set .@menu$,.@menu$+"^0000ffJob Changer^000000";
+		if((Class == Job_Ninja || Class == Job_Gunslinger) && BaseLevel == 99 && JobLevel == 70)
+			set .@menu$,.@menu$+"^0000ffJob Changer^000000";
+		if((eaclass()&EAJ_UPPERMASK) == EAJ_SUPER_NOVICE && BaseLevel == 99 && JobLevel == 99)
+			set .@menu$,.@menu$+"^0000ffJob Changer^000000";
+		if((eaclass()&EAJ_BASEMASK) == EAJ_NOVICE && JobLevel == 10) 
+			set .@menu$,.@menu$+"^0000ffJob Changer^000000";
+		if(roclass(eaclass()|EAJL_2_1)!=-1 && roclass(eaclass()|EAJL_2_2)!=-1 && JobLevel>39)
+			set .@menu$,.@menu$+"^0000ffJob Changer^000000";
+	}
+	set .@menu$,.@menu$+":";
+	if(Class == Job_Novice) set .@menu$,.@menu$+"Where are all the ^0000ffBabies^000000?";
+	set .@menu$,.@menu$+":Tell me about ^0000FFWarpers^000000.:What are the ^0000FFCustom Features^000000?:Where is...?:I'm confused about a skill.:Nevermind.";
+	switch(select(.@menu$)) {
+		case 1: goto J_Choose; break;
+		case 2: goto Baby_Stuff; break;
+		case 3: goto Tut_Switch; break;
+		case 4: goto Cust_Stuff; break;
+		case 5: goto NPC_Stuff; break;
+		case 6: goto Skill_Stuff; break;
+		default:
+			cutin "",255;
+			mes "[Tutorial]";
+			mes "See you, then.";
+	}
+	end;
+}
+return;
+}

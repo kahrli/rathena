@@ -1,0 +1,587 @@
+//===== eAthena Script =======================================
+//= Red Glasses Quest
+//===== By: ==================================================
+//= Pyeus, written by Unknown
+//===== Current Version: =====================================
+//= 1.0
+//===== Compatible With: =====================================
+//= rAthena SVN
+//===== Description: ========================================= 
+//= Custom Red Glasses quest
+//= Variables used:
+//=	rglass
+//=	race_test
+//=	$rglass_racerid$
+//===== Additional Comments: =================================
+//= 1.0 First version. [Pyeus]
+//============================================================
+
+prt_in,47,111,3	script	Janine#rglass	951,{
+	completequest 16016;
+	if(rglass==14) {
+		mes "[Janine]";
+		mes "Thanks again!";
+		mes "^777777*sigh*^000000";
+		mes "My love~";
+		close;
+	}
+	if(rglass==13&&countitem(12152)) {
+		mes "["+strcharinfo(0)+"]";
+		mes "I have something for you.";
+		next;
+		mes "[Janine]";
+		mes "OOH~! So pretty!";
+		delitem 12152,1;
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...So what is it?";
+		next;
+		mes "[Janine]";
+		mes "Some glasses! Oh, they are so cute! Who are they from? Roger?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Actually, I don't know who they're from.";
+		next;
+		mes "[Janine]";
+		mes "Oh, it doesn't matter. They wouldn't fit anyway. Want them? I've got a better idea to get cute boys... I'm gonna become a dancer! Thanks!";
+		getitem 5288,1;
+		set rglass,14;
+		close;
+	}
+	else if(rglass>=6) {
+		mes "[Janine]";
+		mes "Go see Richard for my gift!";
+		mes "He's in Glast Heim!";
+		close;
+	}
+	else if(rglass==5) {
+		mes "[Janine]";
+		mes "Back already?";
+		next;
+		mes "[Janine]";
+		mes "So... Did you convince him??";
+		next;
+		if(select("He says you have enough gifts already!:No.")==2) {
+			mes "[Janine]";
+			mes "Then could you please hurry?";
+			close;
+		}
+		else {
+			mes "[Janine]";
+			mes "Wait, what?  Who did you talk to?";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "Roger.";
+			next;
+			mes "[Janine]";
+			mes "Oh, silly~ Wrong person! I meant Richard! Last I heard, he was exploring Glast Heim!";
+			next;
+			mes "^777777(sigh...)^000000";
+			set rglass,6;
+			close;
+		}
+	}
+	else if(rglass<5 && rglass>0) {
+		mes "[Janine]";
+		mes "^777777*sigh*^000000";
+		mes "Oh my love...";
+		next;
+		mes "[Janine]";
+		mes "I hope he didn't forget me to go off with some cute alchemist girl...";
+		close;
+	}
+	else {
+		mes "[Janine]";
+		mes "^777777*sigh*^000000";
+		mes "My love,";
+		mes "where are you~";
+		next;
+		if(select("Need some help?:Leave her alone.") == 1) {
+			mes "[Janine]";
+			if (sex)
+				mes "You look like the kind of guy who could help me.";
+			else
+				mes "You look like the kind of girl who could help me.";
+			mes "My boyfriend is just so unappreciative...";
+			mes "Would you help me?";
+			next;
+			if(select("I don't want to get in the middle of this.:Sure, where is he?") == 2) {
+				mes "[Janine]";
+				mes "Gosh...";
+				mes "He just took a trip to Al De Baran.";
+				mes "You can probably find him there.";
+				set rglass,1;
+			}
+			else {
+				mes "[Janine]";
+				mes "^777777*sigh*^000000";
+				mes "Oh my love...";
+			}
+		}
+		close;
+	}
+}
+
+aldebaran,110,111,7	script	Roger#rglass	828,{
+	mes "["+strcharinfo(0)+"]";
+	mes "Um... Excuse me.";
+	next;
+	mes "[Roger]";
+	emotion e_ag;
+	mes "Huh-- wha?";
+	mes "What do you want?";
+	if(rglass>=5) close;
+	next;
+	if(rglass==4) {
+		mes "[Roger]";
+		mes "Did you bring me those ^3355FFpowder of butterfly^000000 yet?";
+		next;
+		switch(select("Right here.:No...:Come on, really?")) {
+			case 1:
+				if(countitem(924)>=200) 
+					goto L_BroughtThem;
+				else {
+					mes "[Roger]";
+					mes "Are you pulling my leg...?";
+					close;
+				}
+			case 2:
+				goto L_DidntBring;
+			case 3:
+				mes "[Roger]";
+				mes "Of course I'm not serious! What the hell would I do with 200 powder of butterfly?!";
+				mes "Give her a jar of powder?!";
+				next;
+				emotion e_heh;
+				mes "[Roger]";
+				mes "But seriously, I can't think of anything to give her.";
+				set rglass,5;
+				close;
+		}		
+	}
+	else if(rglass==3) {
+		mes "[Roger]";
+		mes "Did you bring me those ^3355FFpowder of butterfly^000000 yet?";
+		next;
+		switch(select("Right here.:No...:There's no way you're serious...")) {
+			case 1:
+				if(countitem(924)>=200) 
+					goto L_BroughtThem;
+				else {
+					mes "[Roger]";
+					mes "Are you pulling my leg...?";
+					close;
+				}
+			case 2:
+				goto L_DidntBring;
+			case 3:
+				mes "[Roger]";
+				mes "Honest, I'm completely, 100% serious.  Can't you see it in my face?";
+				set rglass,4;
+				close;
+		}
+	}
+	else if(rglass==2) {
+		if(countitem(924)>=200) {
+L_BroughtThem:
+			mes "[Roger]";
+			mes "Did you really go do that? Oh my god! What the hell am I going to do with all this?!";
+			delitem 924,200;
+			set rglass,5;
+			next;
+			mes "[Roger]";
+			mes "Man, adventurers will believe anything you ask them!";
+			mes "Seriously, man, I don't have any gifts for her.";
+			close;
+		}
+		else {
+L_DidntBring:
+			mes "[Roger]";
+			mes "Oh, it's you. Come on, Wonder Boy, I'm waiting on those ^3355FFpowder of butterfly^000000...";
+			close;
+		}
+	}
+	else if(rglass==1) {
+		mes "["+strcharinfo(0)+"]";
+		mes "Excuse me, but...";
+		mes "Are you Janine's boyfriend?";
+		next;
+		mes "[Roger]";
+		mes "Yeah, that's me.";
+		mes "So what?";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Just a concerned stranger. She feels unappreciated.";
+		next;
+		mes "[Roger]";
+		mes "What?! I shower her with gifts!";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "So there's nothing you want to get for her? No rare items?";
+		next;
+		emotion e_hmm;
+		mes "[Roger]";
+		mes "Well, there is one thing... I need ^3355FF200 powder of butterfly^000000 to make it though.";
+		next;
+		if(select("Okay!:Are you serious??")==2) {
+			mes "[Roger]";
+			mes "I'm completely, totally serious.";
+			set rglass,3;
+		}
+		else set rglass,2;
+	}
+	close;
+}
+
+glast_01,205,102,3	script	Richard#rglass	953,{
+	if(rglass>=9) {
+		mes "Richard is no where to be found,";
+		mes "just a note on the ground which reads:";
+		next;
+		mes "^3355FFSince you helped me find these items, I figure I should at least tell you where I am. I went to confront Janine, but it could be a while. Let me know when the item is ready. I'll be in Payon at that point.";
+		if(rglass==9) set rglass,10;
+		close;
+	}
+	else if(rglass==8) {
+		mes "[Richard]";
+		mes "Don't stall, please!  This is for ^FF0000my girlfriend^000000!";
+		next;
+		mes "[Richard]";
+		mes "Go see the Great Sage ^FF0000Letk^000000!";
+		close;
+	}
+	else if(rglass==7) {
+		mes "[Richard]";
+		mes "Oh, do you have them already??";
+		next;
+		if(select("Sure do.:Not exactly.")==2) {
+			mes "[Richard]";
+			mes "If you don't mind, I need";
+			mes "^3355FF20 Blade of Darkness,";
+			mes "100 Red Frame,";
+			mes "100 Dry Sand,^000000";
+			mes "and ^3355FF200 Rusty Screw^000000.";
+			close;
+		}
+		else if(countitem(7023)<20 || countitem(734)<100 || countitem(7264)<100 || countitem(7317)<200) {
+			mes "[Richard]";
+			mes "^777777*grumble*^000000 Yeah right...";
+			close;
+		}
+		else {
+			specialeffect 307;
+			mes "[Richard]";
+			mes "Thank you so much!";
+			mes "Now, there is only one person who can make these items...";
+			next;
+			mes "[Richard]";
+			mes "...the Great Sage ^FF0000Letk^000000!!";
+			next;
+			mes "[Richard]";
+			mes "Could you take these to him?";
+			next;
+			mes "(What is he making...)";
+			set rglass,8;
+			close;
+		}
+	}
+	else if(rglass==6) {
+		mes "["+strcharinfo(0)+"]";
+		mes "...Are you Richard?";
+		next;
+		mes "[Richard]";
+		specialeffect 17;
+		mes "^FF0000AAAAHHHH MONSTER!!!^000000";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Hey!!";
+		next;
+		mes "[Richard]";
+		mes "Err, sorry, I'm just scared out of my wits here...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "What are you even doing in a place like this?";
+		next;
+		mes "[Richard]";
+		mes "I have come here to get some items! ^FF0000For my girlfriend!^000000 I have to make her a new present...";
+		next;
+		mes "[Richard]";
+		specialeffect 18;
+		mes "...^FF0000The Rarest Item Ever^000000!";
+		next;
+		mes "[Richard]";
+		mes "^777777*sigh*^000000";
+		mes "It won't even matter though... I can't get the items I need.";
+		emotion e_sob;
+		next;
+		if(select("What do you need?:That's too bad.")==2) {
+			mes "[Richard]";
+			mes "Yeah... ^777777*sigh*^000000";
+			close;
+		}
+		else {
+			mes "[Richard]";
+			mes "If you don't mind, I need";
+			mes "^3355FF20 Blade of Darkness,";
+			mes "100 Red Frame,";
+			mes "100 Dry Sand,^000000";
+			mes "and ^3355FF200 Rusty Screw^000000!";
+			set rglass,7;
+			close;
+		}
+	}
+}
+
+yuno,211,265,3	script	Juno Sage#rglass	754,{
+	if(rglass==10) {
+		mes "[Lekt]";
+		mes "MUAHAHA!! It's ready! It's ready!!!";
+		next;
+		mes "[Lekt]";
+		mes "My greatest invention ever!!";
+		next;
+		mes "[Lekt]";
+		mes "Oh, right.  Take this to Richard, will you?";
+		getitem 12152,1;
+		set rglass,11;
+		close;
+	}
+	mes "[Juno Sage]";
+	mes "Hrm... Hrm...";
+	next;
+	mes "[Juno Sage]";
+	mes "I'm sorry, I am rather busy. I'm trying to find a new challenge for...";
+	next;
+	mes "[Juno Sage]";
+	mes "...the world's greatest glasses-smith!!";
+	if(rglass==8) {
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "You're Lekt?";
+		next;
+		mes "[Lekt]";
+		mes "Erm, yes.  Yes I am.";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Do you know Richard? He said you could make him something...";
+		next;
+		if(countitem(7023)<20 || countitem(734)<100 || countitem(7264)<100 || countitem(7317)<200) {
+			mes "[Lekt]";
+			mes "No... I can't help you, sorry.";
+			mes "Go away.";
+			close;
+		}
+		mes "[Lekt]";
+		mes "Hrm?  What's this?";
+		mes "OH!  And that?";
+		mes "And...";
+		next;
+		mes "[Lekt]";
+		mes "This is perfect!  Give me those items!";
+		next;
+		mes "[Lekt]";
+		mes "This might take a bit, so give me some room to work.";
+		mes "Go tell this Richard that it'll be done soon.";
+		delitem 7023,20;
+		delitem 734,100;
+		delitem 7264,100;
+		delitem 7317,200;
+		set rglass,9;
+	}
+	close;
+}
+
+
+
+payon,224,324,5	script	Sign#rglass	837,8,8,{
+	mes "Advertisement: Elemental Weapons at Nicol's Corner!";
+	close;
+OnTouch:
+	if(rglass<12) end;
+	else if(@race_test && $rglass_racerid$==strcharinfo(0) && getnpctimer(1) && rglass==12) 
+	{
+		mes "[Richard]";
+		mes "Aww man... Fine, go give them to her...";
+		next;
+		mes "[Roger]";
+		mes "This isn't even worth it...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "^777777*sigh*^000000";
+		set rglass,13;
+		close2;
+		disablenpc "Roger#rglass3";
+		disablenpc "Richard#rglass3";
+		stopnpctimer;
+	}
+	else if(@race_test!=3 && rglass==12) {
+		set .@win,rand(1,40);
+		if(.@win==1) { 
+			mes "[Richard]";
+			mes "^FF0000I WON!!^000000";
+			next;
+			mes "[Roger]";
+			mes "What?  No way!";
+			next;
+			mes "[Richard]";
+			mes "You even saw it!! I won fair and square!";
+			mes "Hey, "+strcharinfo(0)+", can you take the present to ^FF0000my girlfriend^000000 for me?";
+			set rglass,13;
+			close2;
+		}
+		else if(.@win==2) { 
+			mes "[Roger]";
+			mes "Yes!";
+			mes "I won!";
+			next;
+			mes "[Roger]";
+			mes "Hey, you.  Take that gift to Janine, will ya?";
+			set rglass,13;
+			close2;
+		}
+		else {
+			mes "[Richard]";
+			mes "Ow, I tripped!"; 
+			next;
+			mes "[Roger]";
+			mes "My shoes weren't tied.";
+			next;
+			mes "[Richard]";
+			mes "Redo?";
+			set @race_test,0;
+			close2; 
+		}
+		disablenpc "Roger#rglass3";
+		disablenpc "Richard#rglass3";
+		stopnpctimer;
+	}
+	end;
+OnTimer20000:
+	stopnpctimer;
+	enablenpc "Roger#rglass3";
+	enablenpc "Richard#rglass3";
+	end;
+OnTimer40000:
+	stopnpctimer;
+	disablenpc "Roger#rglass3";
+	disablenpc "Richard#rglass3";	
+	end;
+}
+
+
+
+payon,219,198,5	script	Roger#rglass2	828,{
+	if(rglass<11) {
+		mes "[Roger]";
+		mes "Look, I'm working here, so screw off, will ya?";
+		close;
+	}
+	else if (rglass==13) {
+		mes "[Roger]";
+		mes "This isn't even worth it...";
+		close;
+	}
+	else if (rglass==11) {
+		mes "[Roger]";
+		mes "What do you mean you're better for her?!";
+		next;
+		mes "[Richard]";
+		mes "Hey, just because you gave up on giving her presents doesn't mean I did! And I have the best one ever ^FF0000RIGHT HERE^000000!";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Uh... I don't wanna get into the middle of anything here...";
+		next;
+		mes "[Richard]";
+		mes "Do you have the item?";
+		next;
+		mes "[Roger]";
+		mes "Don't give it to him! Give it to me!  I deserve it!";
+		next;
+		mes "[Richard]";
+		mes "No!  I'm the one who deserves credit for it!";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Guys... Technically I was the one who got the items for it...";
+		next;
+		mes "[Richard]";
+		mes "...";
+		next;
+		mes "[Roger]";
+		mes "...";
+		next;
+		mes "[Richard]";
+		mes "There is only one way to solve this.";
+		next;
+		mes "[Roger]";
+		mes "Obviously we need...";
+		next;
+		mes "[Richard and Roger]";
+		mes "^FF0000A RACE!^000000";
+		next;
+		mes "[Richard]";
+		mes "Whoever makes it to the sign by the Archer Village first wins!";
+		next;
+		mes "[Richard]";
+		mes "Come by when you're ready to race.";
+		set rglass,12;
+		close;
+	}
+	else if (rglass==12&&!getnpctimer(1,"Sign#rglass")&&!@race_test) {
+		mes "[Roger]";
+		mes "Ready...";
+		next;
+		mes "[Richard]";
+		mes "Set...";
+		next;
+		mes "[Richard and Roger]";
+		mes "GO!";
+		mes F_Navi("Get to racing!","payon,227,325","^B9062F");
+		viewpoint 1,232,324,1,0xFF0000;
+		set @race_test,1;
+		close2;
+		initnpctimer "Sign#rglass";
+		set $rglass_racerid$,strcharinfo(0);
+		end;
+	}
+	else if (rglass==12&&getnpctimer(1,"Sign#rglass")) {
+		mes "[Roger]";
+		mes "Er, wait a sec.";
+		close;
+	}
+	else if (@race_test) {
+		mes "[Roger]";
+		mes "Get moving, kid!";
+		close;
+	}
+}
+
+payon,228,197,3	script	Richard#rglass2	953,{
+	if(rglass<13&&!@race_test) {
+		mes "[Richard]";
+		mes "I'm better for her...";
+		close;
+	}
+	else if (rglass == 13) {
+		mes "[Richard]";
+		mes "Aww man... Fine, go give them to her...";
+		close;
+	}
+	else if (@race_test) {
+		mes "[Richard]";
+		mes "Let's go!!";
+		close;
+	}
+
+}
+
+payon,232,320,3	script	Richard#rglass3	953,{
+OnInit:
+	disablenpc "Richard#rglass3";
+	end;
+}
+
+payon,226,318,5	script	Roger#rglass3	828,{
+OnInit:
+	disablenpc "Roger#rglass3";
+	end;
+}

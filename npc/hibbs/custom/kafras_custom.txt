@@ -1,0 +1,29 @@
+// Payo1 -----------------------------------------------------------------
+payo1,94,142,4	script	Kafra Employee::kaf_payo	112,{
+	cutin "kafra_06",2;
+	mes "[Kafra Employee]";
+	mes "Welcome to the";
+	mes "Kafra Corporation.";
+	mes "Kafra's Employees are";
+	mes "always ready to serve you.";
+	mes "How can I help you today?";
+	callfunc "F_Kafra",5,3,1,50,700;
+
+	M_Save:
+		set .@x,rand(85,94);
+		set .@y,rand(105,135);
+		savepoint "payo1",.@x,.@y;
+		callfunc "F_KafEnd",0,1,"in the city of Payon.";	
+}
+
+// Market ------------------------------------------------------------------
+heaven_m,46,45,5	script	Kafra Employee::kaf_market	703,{
+	cutin "v_choco01",2;
+	mes "[Kafra Employee]";
+	mes "Welcome to the";
+	mes "Kafra Corporation.";
+	mes "Kafra's Employees are";
+	mes "always ready to serve you.";
+	mes "How can I help you today?";
+	callfunc "F_Kafra",5,2,1,50,700;
+}

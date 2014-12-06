@@ -1,0 +1,101 @@
+beach_dun,108,199,3	script	Utan Girl#um	781,{
+	if (event_umbala >=3) {
+		mes "[Mitan]";
+		mes "...ah! Hello!";
+		mes "...?";
+		next;
+		mes "[Mitan]";
+		mes "...Medusa?";
+		mes "She like what I feed her.";
+		mes "Want some?";
+		emotion e_heh;
+		next;
+		if (select("Yes please.","No thanks.")==1) {
+			mes "[Mitan]";
+			if (countitem(512)<2 || countitem(506)==0) {
+				mes "Oh...";
+				mes "You need ^0000FF2 apples";
+				mes "and 1 green potion^000000...";
+				emotion e_sob;
+			}
+			else {
+				mes "...";
+				next;
+				mes "[Mitan]";
+				mes "...";
+				mes "......";
+				next;
+				mes "[Mitan]";
+				mes "...";
+				mes "......";
+				mes ".........";
+				next;
+				mes "[Mitan]";
+				mes "...";
+				mes "......";
+				mes ".........";
+				mes "Done!";
+				set .@min,countitem(512)/2;
+				set .@min2,countitem(506);
+				if (.@min>.@min2) set .@min,.@min2;
+				delitem 512,.@min*2; delitem 506,.@min;
+				getitem 6108,.@min;
+				emotion e_thx;
+			}
+		}
+		else {
+			mes "[Mitan]";
+			mes "...maybe later, okay?";
+		}
+	}
+	else {
+		mes "[???]";
+		mes "...um! Umbahwa!";
+		mes "...?";
+		next;
+		mes "[???]";
+		mes "...babah?";
+		mes "Umbah umbaha babuamumbuaha.";
+		mes "Bauhabaum?";
+		emotion e_heh;
+		next;
+		if (select("Umbah.","Umbuaboo.")==1) {
+			mes "[???]";
+			if (countitem(512)<2 || countitem(506)==0) {
+				mes "Umbah...";
+				mes "Bwuaham baumbaumbaha";
+				mes "umbababua umbah...";
+				emotion e_sob;
+			}
+			else {
+				mes "...";
+				next;
+				mes "[???]";
+				mes "...";
+				mes "......";
+				next;
+				mes "[???]";
+				mes "...";
+				mes "......";
+				mes ".........";
+				next;
+				mes "[???]";
+				mes "...";
+				mes "......";
+				mes ".........";
+				mes "Umbah!";
+				set .@min,countitem(512)/2;
+				set .@min2,countitem(506);
+				if (.@min>.@min2) set .@min,.@min2;
+				delitem 512,.@min*2; delitem 506,.@min;
+				getitem 6108,.@min;
+				emotion e_thx;
+			}
+		}
+		else {
+			mes "[???]";
+			mes "...umbuala um, umbah?";
+		}
+	}
+	close;
+}

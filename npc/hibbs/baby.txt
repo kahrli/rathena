@@ -1,0 +1,141 @@
+que_moon,99,25,0	script	Warp#baby	-1,1,1,{
+OnTouch:
+if(!@port) {
+	@port=1;
+	mes "^999999You were sucked into some sort of portal, you think.^000000";
+	specialeffect2 561;
+	close;
+}
+}
+
+que_moon,97,33,4	script	Father#baby	600,{
+	mes "^ff00ff[Dad]";
+	mes "My "+(sex?"son...":"daughter...");
+	next;
+	mes "^000000["+strcharinfo(0)+"]";
+	mes "Dad??";
+	next;
+	mes "^ff00ff[Dad]";
+	mes "^999999M..."+(sex?"so....n......":"daught...r......");
+	close;
+}
+
+que_moon,102,33,4	script	Mother#baby	600,{
+	/*if(ismounting()) {
+		mes "^ff00ff[Mother]";
+		mes "Sweetie, would you really talk to your mother while riding that...that thing?";
+		close;
+	}*/
+	if(baby_q) callfunc "F_Tutorial",2,1;
+	mes "^ff00ff[Mother]";
+	mes "^999999My "+(sex?"son...":"daughter...");
+	next;
+	mes "^000000["+strcharinfo(0)+"]";
+	mes "Mom?? Dad??";
+	next;
+	mes "^ff00ff[Mom]";
+	mes "Yes, "+(sex?"son~":"sweetie~");
+	next;
+	mes "^999999[Dad]";
+	mes sex?"(S-s...son......)":"(My.....daughter......)";
+	next;
+	mes "[Mom]";
+	mes "Hey, KNOCK IT OFF.";
+	next;
+	mes "[Dad]";
+	mes "Okay, okay...";
+	next;
+	mes "^000000["+strcharinfo(0)+"]";
+	mes "(I'm so relieved my dad's not a zombie...)";
+	next;
+	mes "[Mom]";
+	mes "It's been a long time, "+(sex?"son.":"sweetie.");
+	next;
+	mes "[Mom]";
+	mes "You're probably wondering how we ended up like this, huh?";
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "Yeaaa... pretty much.";
+	next;
+	mes "[Mom]";
+	mes "Sit right down and let me tell you all about it then!!";
+	next;
+	if(select("No wait! I don't want to hear it!:I'd like to see me when I was a kid~")==1) {
+		Emotion e_sob;
+		mes "^999999[Mom]";
+		mes "Oh, alright then...";
+		close2;
+		warp "Save",0,0;
+		end;
+	}
+	mes "[Mom]";
+	mes "How about we turn you back into the ^ff0000little baby^000000 you used to be for a little while? For us? A family reunion, what do you say?";
+	next;
+	if(select("What! No way am I doing that!:Okay, I'd love to be a baby again!")==1) {
+		Emotion e_sob;
+		mes "^999999[Mom]";
+		mes "Oh, alright then...";
+		close2;
+		warp "Save",0,0;
+		end;
+	}
+	mes "[Mom]";
+	mes "Okay, okay! Brace yourself!";
+	next;
+	.@job = JobLevel;
+	jobchange(Job_Baby);
+	resetskill;
+	set SkillPoint,0;
+	set JobLevel,1;
+	set JobLevel,.@job;
+	next;
+	mes "[Mom]";
+	mes "A long, long time ago, a group of evil men captured the strongest and smartest warriors and scholars in Rune Midgard. This was around the time you were born.";
+	next;
+	mes "[Mom]";
+	mes "Unfortunately, your dad was simply ^ff0000too^000000 macho, and me such a delicate young thing, obviously they found out about us eventually. Us escaping would have been impossible.";
+	next;
+	mes "[Mom]";
+	mes "So we did the only thing we could, we ^0000ffgave you away^000000, so that you wouldn't have to experience what was going to happen to us.";
+	next;
+	mes "[Mom]";
+	mes "We were experiment on, and we tried to escape and endure it so that we could be reunited with you when we made our escape. But it was too much.";
+	next;
+	mes "[Mom]";
+	mes "^ff00ffWe died.";
+	next;
+	mes "[Mom]";
+	mes "But our love for you is ^0000ffstrong^000000! So our spirits stayed here in Rune-Midgard, instead of passing into Niflheim.";
+	next;
+	mes "[Mom]";
+	mes "Years passed and you were left alone, wandering without our guidance, and for that we're very sorry, "+(sex?"son":"sweetie")+"...";
+	next;
+	mes "^ff00ff[Mom]";
+	mes "Please forgive us.";
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "Of course I forgive you, Mom, Dad...";
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "But could you please turn me back to normal now?";
+	next;
+	mes "[Mom]";
+	mes "Mmm, okay... Well, I mean, I don't know... You sure look ^0000ffcute^000000 as a baby!!";
+	next;
+	mes "[Mom]";
+	mes "Hmmm.... ^ff0000Nahhhh!^000000 I'll leave you like that for a while!";
+	Emotion e_heh;
+	next;
+	mes "["+strcharinfo(0)+"]";
+	mes "What?? Noooo!! What will my friends say!!!";
+	next;
+	mes "[Mom]";
+	mes "Oh, alright, fine. I'll change you back when you're level, I don't know, "+((BaseLevel+10)/10*10)+" or something.";
+	next;
+	mes "[Mom]";
+	mes "Bye, sweetie~";
+	close2;
+	set baby_q,1;
+	warp "prontera",155,180;
+	end;
+}

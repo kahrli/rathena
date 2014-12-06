@@ -1,0 +1,215 @@
+-	script	CASFLAGSET	-1,{
+OnInit:
+setmapflag "pvp_n_1-3",mf_clouds;
+setmapflag "payg_cas01",mf_loadevent;
+setmapflag "payg_cas02",mf_loadevent;
+setmapflag "payg_cas03",mf_loadevent;
+setmapflag "payg_cas04",mf_loadevent;
+setmapflag "payg_cas05",mf_loadevent;
+setmapflag "prtg_cas01",mf_loadevent;
+setmapflag "prtg_cas02",mf_loadevent;
+setmapflag "prtg_cas03",mf_loadevent;
+setmapflag "prtg_cas04",mf_loadevent;
+setmapflag "prtg_cas05",mf_loadevent;
+setmapflag "aldeg_cas01",mf_loadevent;
+setmapflag "aldeg_cas02",mf_loadevent;
+setmapflag "aldeg_cas03",mf_loadevent;
+setmapflag "aldeg_cas04",mf_loadevent;
+setmapflag "aldeg_cas05",mf_loadevent;
+setmapflag "schg_cas01",mf_loadevent;
+setmapflag "schg_cas02",mf_loadevent;
+setmapflag "schg_cas03",mf_loadevent;
+setmapflag "schg_cas04",mf_loadevent;
+setmapflag "schg_cas05",mf_loadevent;
+setmapflag "arug_cas01",mf_loadevent;
+setmapflag "arug_cas02",mf_loadevent;
+setmapflag "arug_cas03",mf_loadevent;
+setmapflag "arug_cas04",mf_loadevent;
+setmapflag "arug_cas05",mf_loadevent;
+setmapflag "gefg_cas01",mf_loadevent;
+setmapflag "gefg_cas02",mf_loadevent;
+setmapflag "gefg_cas03",mf_loadevent;
+setmapflag "gefg_cas04",mf_loadevent;
+setmapflag "gefg_cas05",mf_loadevent;
+setmapflag "pvp_2vs2",mf_loadevent;
+setmapflag "pvp_n_1-5",mf_loadevent;
+setmapflag "poring_c01",mf_loadevent;
+setmapflag "payo1",mf_loadevent;
+setmapflag "pvp_n_1-3",mf_loadevent;
+end;
+}
+payo1,0,0,0	script	DeGuiser#payo1	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise;
+	end;
+}
+pvp_n_1-3,0,0,0	script	DeGuiser#pvp_n_1-3	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise;
+	end;
+}
+pvp_2vs2,0,0,0	script	DeGuiser#pvp_2vs2	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise;
+	end;
+}
+pvp_n_1-5,0,0,0	script	DeGuiser#pvp_n_1-5	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise;
+	end;
+}
+poring_c01,0,0,0	script	DeGuiser#poring_c01	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise;
+	end;
+}
+payg_cas01,0,0,0	script	DeGuiser#pay_cas01	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+payg_cas02,0,0,0	script	DeGuiser#pay_cas02	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+payg_cas03,0,0,0	script	DeGuiser#pay_cas03	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+payg_cas04,0,0,0	script	DeGuiser#pay_cas04	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+payg_cas05,0,0,0	script	DeGuiser#pay_cas05	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+prtg_cas01,0,0,0	script	DeGuiser#prt_cas01	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+prtg_cas02,0,0,0	script	DeGuiser#prt_cas02	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+prtg_cas03,0,0,0	script	DeGuiser#prt_cas03	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+prtg_cas04,0,0,0	script	DeGuiser#prt_cas04	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+prtg_cas05,0,0,0	script	DeGuiser#prt_cas05	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+aldeg_cas01,0,0,0	script	DeGuiser#alde_cas01	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+aldeg_cas02,0,0,0	script	DeGuiser#alde_cas02	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+aldeg_cas03,0,0,0	script	DeGuiser#alde_cas03	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+aldeg_cas04,0,0,0	script	DeGuiser#alde_cas04	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+aldeg_cas05,0,0,0	script	DeGuiser#alde_cas05	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+schg_cas01,0,0,0	script	DeGuiser#sch_cas01	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+schg_cas02,0,0,0	script	DeGuiser#sch_cas02	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+schg_cas03,0,0,0	script	DeGuiser#sch_cas03	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+schg_cas04,0,0,0	script	DeGuiser#sch_cas04	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+schg_cas05,0,0,0	script	DeGuiser#sch_cas05	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+arug_cas01,0,0,0	script	DeGuiser#aru_cas01	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+arug_cas02,0,0,0	script	DeGuiser#aru_cas02	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+arug_cas03,0,0,0	script	DeGuiser#aru_cas03	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+arug_cas04,0,0,0	script	DeGuiser#aru_cas04	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+arug_cas05,0,0,0	script	DeGuiser#aru_cas05	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+gefg_cas01,0,0,0	script	DeGuiser#gef_cas01	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+gefg_cas02,0,0,0	script	DeGuiser#gef_cas02	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+gefg_cas03,0,0,0	script	DeGuiser#gef_cas03	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+gefg_cas04,0,0,0	script	DeGuiser#gef_cas04	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}
+gefg_cas05,0,0,0	script	DeGuiser#gef_cas05	-1,{
+OnPCLoadMapEvent:
+	atcommand strcharinfo(0)+" : @size 0"; undisguise; 
+	end;
+}

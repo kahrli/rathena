@@ -1,0 +1,102 @@
+//===== eAthena Script ======================================= 
+//= Pagdayaw Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+ra_in01.gat,307,389,5	script	Turkey Chef	886,{
+	completequest 16017;
+	if ( (countitem(914)>=200) && (countitem(916)>=200) && 
+		(countitem(7115)>=75) && (countitem(723)>=30) && 
+		(countitem(722)>=40) && (countitem(726)>=25) && 
+		(countitem(728)>=15) && (countitem(5002)>=1) )
+			goto L_make;
+	mes "[Turkey Chef]";
+	mes "Hey there! You here for some turkey?";
+	mes "I'm the best chef around for miles when it comes to turkey.";
+	next;
+	menu "I'll have your 'Festival Special'.",-,"Nah, can't afford it on my salary!",L_aw;
+	mes "[Turkey Chef]";
+	mes "Oh-ho! So you've heard of it, then?";
+	mes "Glad to see someone knows of the Ati Atihan!";
+	next;
+	mes "[Turkey Chef]";
+	mes "I felt like such a foreigner in this place -- I was called a heretic, too!";
+	mes "So, you DO know what the Ati Atihan is, right?";
+	next;
+	menu "It's a festival held in the honor of a chieftain!",L_wrong,"It's a Catholic Festival!",-,"It's...a turkey?",L_turk;
+	mes "[Turkey Chef]";
+	mes "Hooray! You do know.";
+	next;
+	mes "[Turkey Chef]";
+	mes "So, as you may or may not have heard, I can make a special hat for you to wear at the next Ati Atihan.";
+	mes "Or, well, anywhere I guess! Your choice.";
+	next;
+	mes "[Turkey Chef]";
+	mes "So, do you want one?";
+	next;
+	menu "Yes please!",-,"No, I won't be the idiot at that festival!",L_aw;
+	mes "[Turkey Chef]";
+	mes "Good! I'll need the following, then:";
+	next;
+	mes "[Turkey Chef]";
+	mes "^3355FF200 Fluff, 200 Feather of Birds, 75 Harpy Feathers, 30 Rubies, 40 Pearls, 25 Sapphires, 15 Topaz, and 1 Jewel Crown.^000000";
+	next;
+	mes "[Turkey Chef]";
+	mes "Come back when ya got everything.";
+	close;
+	
+L_aw:
+	mes "[Turkey Chef]";
+	mes "Aw, that's too bad. You're missing out!";
+	close;
+	
+L_wrong:
+	mes "[Turkey Chef]";
+	mes "Aw, I guess I really am the only one in this country who knows what Ati Atihan is...";
+	close;
+
+L_turk:
+	mes "[Turkey Chef]";
+	mes "Ahaha! That put a smile on my face but it's not right, sorry.";
+	close;
+
+L_make:
+	mes "[Turkey Chef]";
+	mes "So I see you have everything!";
+	mes "Let me just take all that off your hands for now while I put it to good use!";
+	next;
+	mes "[Turkey Chef]";
+	mes "So, I bet you're wondering why a turkey chef like me would be making some odd hat like this, right?";
+	next;
+	mes "[Turkey Chef]";
+	mes "Well, if you couldn't guess by what I had you hunt down for me, this hat is actually pretty fowl.";
+	mes "HA! Didja get it? Fowl? Bwahaha, I crack myself up sometimes.";
+	next;
+	mes "[Turkey Chef]";
+	mes "But enough of puns. When I'm finished with this, this hat will actually kinda look like a turkey, to be honest.";
+	next;
+	mes "[Turkey Chef]";
+	mes "At least in my opinion. I made a living off of these back home -- everyone looked so silly wearing these, too, especially being that they were all painted black -- they looked like gigantic turkeys!";
+	next;
+	mes "[Turkey Chef]";
+	mes "That bein' said, I'm finished!";
+	mes "Here, take this hat and wear it with pride -- just keep a low profile if it's around Thanksgiving.";
+	delitem 914,200;
+	delitem 916,200;
+	delitem 7115,75;
+	delitem 723,30;
+	delitem 722,40;
+	delitem 726,25;
+	delitem 728,15;
+	delitem 5002,1;
+	getitem 5263,1;
+	next;
+	mes "[Turkey Chef]";
+	mes "I'll see you next time!";
+	close;
+}

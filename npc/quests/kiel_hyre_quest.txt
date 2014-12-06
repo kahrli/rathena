@@ -686,6 +686,13 @@ yuno_fild08,196,196,5	script	Hanie#kh1	102,{
 // Academy Security Guards
 //----------------------------------------------------------------------------
 yuno_fild08,158,194,6	script	Security Guard#1::KHAGuard	852,{
+	if (countitem(7509)) { // [ Pyeus ] This is for the quest hibbs/quests/headgear/bball.txt
+		mes "[Security Guard]";
+		mes "Oh, did you have other business inside the academy? I remember you from before, so there shouldn't be any problems letting you back inside.";
+		close2;
+		warp "kh_school",71,155;
+		end;
+	}
 	if ((KielHyreQuest < 2) || (KielHyreQuest > 31)) { 
 		mes "[Security Guard]";
 		mes "I'm sorry, but if you aren't";

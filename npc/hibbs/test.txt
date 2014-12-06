@@ -1,0 +1,25 @@
+
+prontera,156,184,0	script	SCRIPTS	406,{
+	callFunc "F_Tutorial";
+	end;
+	if(getmapflag(strcharinfo(3),mf_town)) {
+		if(Class > Job_Soul_Linker) end;
+		.@i = roclass(eaclass()&EAJ_UPPERMASK);
+		if(.@i>=Job_Knight && .@i<=Job_Crusader2 && BaseLevel==99) {
+			if((Class > Job_Crusader2 && JobLevel>49) || (Class<=Job_Crusader2 && JobLevel > 39))
+				callfunc "F_Tutorial",2;
+			if(eaclass()&EAJ_BASEMASK == EAJ_NOVICE && JobLevel>9)
+				callFunc "F_Tutorial",2;
+		}
+		if((Class == Job_Ninja || Class == Job_Gunslinger) && BaseLevel == 99 && JobLevel == 70)
+			callFunc "F_Tutorial",2;
+		if((eaclass()&EAJ_UPPERMASK) == EAJ_SUPER_NOVICE && BaseLevel == 99 && JobLevel == 99)
+			callFunc "F_Tutorial",2;
+		if((eaclass()&EAJ_BASEMASK) == EAJ_NOVICE && JobLevel == 10) 
+			callfunc "F_Tutorial",2;
+		end;
+	}
+OnWhisperGlobal:
+	set fifths2,0;
+	end;
+}

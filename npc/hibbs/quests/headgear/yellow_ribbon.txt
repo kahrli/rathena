@@ -1,0 +1,89 @@
+//===== eAthena Script ======================================= 
+//= Yellow Ribbon Quest
+//===== By: ================================================== 
+//= Unknown, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+lhz_in02,237,142,5	script	Tiffany#yribbon	862,{
+	if(countitem(2209)>=10 && countitem(715)>=20 && countitem(10007) 
+		&& countitem(7166)>=15 && countitem(508)>=20 
+		&& countitem(7452)>=5) {
+			mes "[Tiffany]";
+			mes "Oh goody! You brought everything! Hmm... Okay, let's see...";
+			next;
+			mes "^666666Tiffany turns and deftly puts together a beautiful ribbon.^000000";
+			next;
+			mes "[Tiffany]";
+			mes "Here you go!  All ready!";
+			next;
+			mes "^666666You notice Tiffany is still holding the yellow herbs and spices.^000000";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "What are those for?";
+			next;
+			mes "[Tiffany]";
+			mes "Oh! These are for dinner! I am making Grandpa a special dinner!";
+			next;
+			mes "["+strcharinfo(0)+"]";
+			mes "Why did you make me get them, then?";
+			next;
+			mes "[Tiffany]";
+			mes "Well I figured since you were already out....";
+			delitem 2209,10;
+			delitem 715,20;
+			delitem 10007,1;
+			delitem 7166,15;
+			delitem 508,20;
+			delitem 7452,5;
+			getitem 5278,1;
+			close;
+	}
+	if(!getequipisequiped(1)) { // and countitem(2209)
+		completequest 16010;
+		mes "[Tiffany]";
+		mes "Oh my! Your head! It's so sweet! But... There is nothing on it. Would you like something that can help with that?";
+		next;
+		mes "[Tiffany]";
+		mes "Want to hear a story?";
+		next;
+		if(select("Yes:No")==2) {
+			mes "[Tiffany]";
+			mes "Well okay then... Your loss!";
+			close;
+		}
+		mes "[Tiffany]";
+		mes "I know just the thing! My grandfather was at war; I missed him dearly. But just recently he came back! With a present for me!";
+		next;
+		mes "[Tiffany]";
+		mes "I was so excited I couldn't contain myself! I ripped open the box and right inside was the cutest darned ribbon you would ever see!";
+		next;
+		mes "[Tiffany]";
+		mes "He told me that it was part of a flag that was torn up during the war.";
+		next;
+		mes "[Tiffany]";
+		mes "And now I wear it every where! I'm sure that if I wear this everyone will remember the war and bring luck and courage to warriors who will be going into future wars!";
+		next;
+		mes "[Tiffany]";
+		mes "If you want, I can make you one so you could help ribbon the war! Just bring me a few things.";
+		next;
+		mes "[Tiffany]";
+		mes "I would need";
+		mes "^3355FF20 Yellow Gemstones^000000,";
+		mes "^3355FF1 Silk Ribbon^000000,";
+		mes "^3355FF15 Soft Silk^000000,";
+		mes "^3355FF20 Yellow Herbs^000000,";
+		mes "^3355FF5 Yellow Spice^000000,";
+		mes "and ^3355FF10 Ribbon [1]^000000!";
+		next;
+		mes "[Tiffany]";
+		mes "Fetch those for me and I can make you a Ribbon for yourself!";
+		close;
+	}
+	mes "[Tiffany]";
+	mes "Hello there!  Welcome to Lighthalzen!";
+	close;
+}

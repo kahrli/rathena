@@ -1,0 +1,120 @@
+// Prizes, minimum.
+
+
+quiz_00,70,33,4	script	Registration Staff	105,{
+
+if(strcharinfo(0)=="Pyeus") {
+	mes "Reset?";
+	next;
+	if(select("Yes:No")==1) {
+		deletearray $pDuel$[0],128;
+		deletearray $cDuel$[0],128;
+		deletearray $pTier$[0],128;
+		deletearray $cTier$[0],128;
+	}
+	mes "Start?";
+	if(select("Yes:No")==1) {
+		callfunc "L_MakeDuel";
+	}
+	close;
+}
+		
+if (getarraysize($pDuel$)) goto M_DuelWait; // if duel in progress, wait
+else if (getarraysize($cDuel$)) goto M_DuelInProgress;
+else if (getarraysize($pTier$)) goto M_Hm;
+else if (@pTier) goto M_WelcomeBack;
+else if (gettime(3)==6 && gettime(2)>=0 && gettime(2)<=5) goto 
+M_SignUp;
+else if (gettime(3)==18 && gettime(2)>=0 && gettime(2)<=5) goto 
+M_SignUp;
+
+M_NotTime:
+	set @pTier,0;
+	mes "[Registration Staff]";
+	mes "I'm sorry, but the Tournament";
+	mes "is not currently underway.";
+	mes "Please try again at ^3355FF6:00^000000.";
+close;
+
+M_Hm:
+	mes "[Registration Staff]";
+	mes "Please wait a moment.";
+close;
+
+M_WelcomeBack:
+	mes "[Registration Staff]";
+	if(Sex==0) mes "Welcome back, Lady "+strcharinfo(0)+".";
+	else mes "Welcome back, Lord "+strcharinfo(0)+".";
+	mes "We're not quite ready for duels yet, so please check back soon.";
+close;
+
+M_SignUp:
+	if (@pTier) goto M_WelcomeBack;
+	mes "[Registration Staff]";
+	mes "Welcome, champions and heros from afar, to the Tournament of brave men!";
+	next;
+	mes "[Registration Staff]";
+	mes "Pitted against one another to leave their fate to their skill in battle, here you will fight for your crowning glory!";
+	next;
+	mes "[Registration Staff]";
+	mes "Would you like to join their ranks in combat, fellow?";
+	next;
+	if(select("I would.:I'm here to watch.")==1) {
+		mes "[Registration Staff]";
+		mes "Very good.  But I must ask, have you read the Code of Honor?";
+		next;
+		if(select("I have.:What's that?")==1) {
+			if(zeny<10000) {
+				mes "[Registration Staff]";
+				if(Sex==0) mes "But lady, you have read";
+				else mes "But sir, you have read";
+				mes "the Code of Honor, yes? There is a small fee";
+				mes "which you cannot supply...";
+				close;
+			}
+			if(Class==Job_Novice) {
+				mes "[Registration Staff]";
+				mes "I'm terribly sorry, but we can't allow someone with your meager combat experience to enter. The Tournament is a dangerous place, you know...";
+				close;
+			}
+			set zeny,zeny-10000;
+			mes "[Registration Staff]";
+			mes "Then welcome to the Tournament, my friend! You will be called to arms shortly!";
+			if ((gettime(3)==6 || gettime(3)==18) && gettime(2)>=0 && gettime(2)<=5)
+				setarray $cTier$[getarraysize($cTier$)],strcharinfo(0);
+			set @pTier,1;
+			close;
+		}
+		else {
+			mes "[Registration Staff]";
+			mes "You see the woman over yonder?  Speak with her, if you will.";
+			close;
+		}
+	}
+	else {
+		mes "[Registration Staff]";
+		mes "Ah, yes. Some do prefer the relaxation of the viewer's seat.";
+		next;
+		mes "[Registration Staff]";
+		mes "Please enter these portals behind me to view.  But be careful -- it is a brawl in there.";
+		close;
+	}
+close;
+
+M_DuelInProgress:
+	set @pTier,0;
+	mes "[Registration Staff]";
+	mes "There are currently men at odds.";
+	mes "If you would like to watch, just enter this portal behind me.";
+	mes "Thank you.";
+close;
+
+M_DuelWait:
+	set @pTier,0;
+	mes "[Registration Staff]";
+	mes $pDuel$[0]+" and "+$pDuel$[1]+",";
+	mes "you will find ourselves in battle in mere moments.";
+	mes "Prepare yourselves!";
+close;
+
+}

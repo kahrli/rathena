@@ -55,16 +55,18 @@
 #define MAX_FAME 1000000000 ///Max fame points
 #define MAX_CART 100 ///Maximum item in cart
 #define MAX_SKILL 5020 ///Maximum skill data
-#define GLOBAL_REG_NUM 256 ///Max permanent character variables per char
-#define ACCOUNT_REG_NUM 64 ///Max permanent local account variables per account
-#define ACCOUNT_REG2_NUM 16 ///Max permanent global account variables per account
-#define MAX_REG_NUM 256 ///Should hold the max of GLOBAL/ACCOUNT/ACCOUNT2 (needed for some arrays that hold all three)
+// [Pyeus]
+#define GLOBAL_REG_NUM 350 ///Max permanent character variables per char
+#define ACCOUNT_REG_NUM 150 ///Max permanent local account variables per account
+#define ACCOUNT_REG2_NUM 50 ///Max permanent global account variables per account
+#define MAX_REG_NUM 350 ///Should hold the max of GLOBAL/ACCOUNT/ACCOUNT2 (needed for some arrays that hold all three)
 #define DEFAULT_WALK_SPEED 150 ///Default walk speed
 #define MIN_WALK_SPEED 20 ///Min walk speed
 #define MAX_WALK_SPEED 1000 ///Max walk speed
-#define MAX_STORAGE 600 ///Max number of storage slots a player can have, (up to ~850 tested)
-#define MAX_GUILD_STORAGE 600 ///Max number of storage slots a guild
-#define MAX_PARTY 12 ///Max party member
+// [Pyeus]
+#define MAX_STORAGE 800 ///Max number of storage slots a player can have, (up to ~850 tested)
+#define MAX_GUILD_STORAGE 1000 ///Max number of storage slots a guild
+#define MAX_PARTY 20 ///Max party member
 #define MAX_GUILD 16+10*6	///Increased max guild members +6 per 1 extension levels [Lupus]
 #define MAX_GUILDPOSITION 20	///Increased max guild positions to accomodate for all members [Valaris] (removed) [PoW]
 #define MAX_GUILDEXPULSION 32 ///Max Guild expulsion

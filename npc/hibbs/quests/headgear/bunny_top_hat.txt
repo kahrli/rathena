@@ -1,0 +1,141 @@
+//===== eAthena Script ======================================= 
+//= Bunny Top Hat Quest
+//===== By: ================================================== 
+//= Joey, scripted by Pyeus
+//===== Current Version: ===================================== 
+//= August 2013
+//===== Compatible With: ===================================== 
+//= rAthena SVN
+//============================================================
+
+spl_in02,229,233,3	script	Wanda#bhat	438,{
+	if( countitem(2214) && countitem(5076) && countitem(5114) && countitem(2220) &&
+		countitem(980) && countitem(982) && countitem(914)>=100 && countitem(7200)>=50 &&
+		countitem(712) && countitem(5061) && countitem(7215)>=5 && countitem(952)>=10 &&
+		countitem(7213) && countitem(7166)>=15 && countitem(10007)>=5 ) {
+		mes "[Wanda]";
+		mes "Do you have the stuff??";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Here you go, O Great Fairy! I have done what you requested and brought all that is needed to make the great hat!";
+		next;
+		mes "[Wanda]";
+		mes "^666666*stitch stitch stitch*^000000";
+		next;
+		mes "[Wanda]";
+		mes "^666666*stitch stitch stitch*^000000";
+		mes "^666666*hem hem sew*^000000";
+		next;
+		mes "[Wanda]";
+		mes "^666666*stitch stitch stitch*^000000";
+		mes "^666666*hem hem sew*^000000";
+		mes "^3355FF*CLANG CLANG CLANG*^000000";
+		next;
+		mes "[Wanda]";
+		mes "All finished!";
+		delitem 2214,1;
+		delitem 5076,1;
+		delitem 5114,1;
+		delitem 2220,1;
+		delitem 980,1;
+		delitem 982,1;
+		delitem 914,100;
+		delitem 7200,50;
+		delitem 712,1;
+		delitem 5061,1;
+		delitem 7215,5;
+		delitem 952,10;
+		delitem 7213,1;
+		delitem 7166,15;
+		delitem 10007,5;
+		getitem 5378,1;
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "This is it? I thought you said it was some god item!";
+		next;
+		mes "[Wanda]";
+		mes "Why this is a god item! For it is bestowed upon you by the one and only me: the lovely, godly Wanda!";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Yeah thanks anyway...";
+		mes "^666666(At least it's better than nothing...)^000000";
+		close;
+	}
+	if(countitem(547)) {
+		mes "[Wanda]";
+		mes "A ^3355FFCondensed White Potion^000000!  Please tell me that's for me!";
+		next;
+		if(select("Why would you think that?:Of course!")==1) {
+			mes "[Wanda]";
+			mes "Oh woe is me, the poor wounded fairy...";
+			close;
+		}
+		delitem 547,1;
+		mes "[Wanda]";
+		mes "^666666*gulp gulp gulp*^000000";
+		next;
+		mes "[Wanda]";
+		mes "Thank you, traveller! How kind of you to stop and help me in my time of need.";
+		next;
+		mes "[Wanda]";
+		mes "For your kindness I shall do you a favor. How would you like a hat? One of a kind and all original. It's only known to the people of Splendide!";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "Oh yes please! Make me this hat you talk so greatly about!";
+		next;
+		mes "[Wanda]";
+		mes "Well, get me the items I request of you and I shall make the hat of the gods!";
+		next;
+		mes "[Wanda]";
+		mes "Surely you didn't think I would get the items! Oh ho ho, you joker. Make sure you write these down.";
+		next;
+		mes "[Wanda]";
+		mes "You shall need";
+		mes "^3355FF1 Bunny Band^000000,";
+		mes "^3355FF1 Beanie^000000,";
+		mes "^3355FF1 Bucket Hat^000000,";
+		mes "^3355FF1 Hat^000000...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "So many hats...";
+		next;
+		mes "[Wanda]";
+		mes "Hee hee, I'm not finished.";
+		mes "^3355FF1 Orange Dyestuff^000000,";
+		mes "^3355FF1 White Dyestuff^000000,";
+		mes "^3355FF100 Fluff^000000,";
+		mes "^3355FF50 Elastic Bands^000000,";
+		mes "^3355FF1 Flower^000000...";
+		next;
+		mes "["+strcharinfo(0)+"]";
+		mes "...one ^3355FFflower.";
+		next;
+		mes "[Wanda]";
+		mes "Fairy magic, you know.";
+		next;
+		mes "[Wanda]";
+		mes "^3355FF1 Flower Hairpin^000000,";
+		mes "^3355FF5 Broken Needles^000000,";
+		mes "^3355FF10 Cactus Needles^000000,";
+		mes "^3355FF1 Needle Packet^000000,";
+		mes "^3355FF15 Soft Silk^000000,";
+		mes "and ^3355FF5 Silk Ribbon^000000!";
+		next;
+		mes "[Wanda]";
+		mes "Don't give me that look. It's really not that much for a godly hat like this. Now be on your way, traveller!";
+		close;
+	}
+	completequest 16006;
+	mes "[Wanda]";
+	mes "Traveller, I am wounded! Please bring me a ^3355FFWhite Condensed Potion^000000 so that I may be healed!";
+	next;
+	if(select("I'm very busy.:Yes ma'am, right away!")==1) {
+		emotion e_pif;
+		mes "[Wanda]";
+		mes "Fine! Just let a poor, poor fairy die!";
+		close;
+	}
+	mes "[Wanda]";
+	mes "Thank you so much!!";
+	close;
+}

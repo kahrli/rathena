@@ -1,0 +1,98 @@
+function	script	GStore	{
+L_Guild:
+	if (!getcharid(2)) {
+		mes "[Kafra Employee]";
+		mes "Sorry, you must be in a guild to use this function!";
+		close2;
+		cutin "", 255;
+		end;
+	}
+	if(strcharinfo(0) != getguildmaster(getcharid(2)))
+		goto L_UseGStorage;
+	mes "[Kafra Employee]";
+	mes "What would you like to do?";
+	next;
+	switch(select("Use guild storage:View settings")) {
+		case 1:
+			goto L_UseGStorage;
+		case 2:
+			set @nb,query_sql("select gstorage_mode,gstorage_pos,gstorage_password from `guild` where guild_id = "+getcharid(2),@mode,@pos,@password$);
+			if (strcharinfo(0) == getguildmaster(getcharid(2))) {
+				mes "[Kafra Employee]";
+				mes "Guild storage access mode is currently set to mode "+@mode[0]+".";
+				mes "0=Unrestricted access";
+				mes "1=Position requirement";
+				mes "2=Password protected";
+				next;
+				switch(select("Change mode","Set minimum allowed position","Set password")) {
+					case 1:
+						mes "Enter the mode number.";
+						input @temp;
+						if (@temp < 0) set @temp, 0;
+						if (@temp > 2) set @temp, 2;
+						query_sql "update `guild` set gstorage_mode = "+@temp+" where guild_id = "+getcharid(2),@ignore;
+						mes "Mode set to "+@temp+".";
+						next;
+						goto L_Guild;
+					case 2:
+						mes "Enter the minimum position.";
+						input @temp;
+						if (@temp < 1) set @temp, 1;
+						if (@temp > 20) set @temp, 20;
+						query_sql "update `guild` set gstorage_pos = "+@temp+" where guild_id = "+getcharid(2),@ignore;
+						mes "Minimum position set to "+@temp;
+						next;
+						goto L_Guild;
+					case 3:
+						mes "Enter the password, or enter one space to cancel.";
+						input @temp$;
+						set @temp$, escape_sql(@temp$);
+						if (@temp$ == " ") {
+							next;
+							goto L_Guild;
+							}
+						query_sql "update `guild` set gstorage_password = '"+@temp$+"' where guild_id = "+getcharid(2),@ignore;
+						mes "Password set to ^3355FF"+@temp$+"^000000.";
+						next;
+						goto L_Guild;
+				}
+			}
+	}
+
+L_UseGStorage:
+	if (strcharinfo(0) == getguildmaster(getcharid(2))) goto L_UseGStorageSkip;
+	query_sql "select gstorage_mode,gstorage_pos,gstorage_password from `guild` where guild_id = "+getcharid(2),@mode,@pos,@password$;
+	if (@mode[0] == 1) {
+		query_sql "select position from `guild_member` where guild_id = "+getcharid(2)+" and char_id = "+getcharid(0),@current_pos;
+		if (@current_pos[0] > (@pos[0] - 1)) {
+			mes "[Kafra Employee]";
+			mes "Sorry, but you are not authorized to use guild storage.";
+			close2;
+			cutin "", 255;
+			end;
+			}
+		}
+	if (@mode[0] == 2) {
+			mes "[Kafra Employee]";
+			mes "The guild leader has instated password-protected guild storage. Please enter the password now.";
+			input @pw$;
+			if (@pw$ != @password$[0]) {
+				next;
+				mes "[Kafra Employee]";
+				mes "Sorry, that password is incorrect.";
+				close2; cutin "", 255; end;
+				}
+		}
+L_UseGStorageSkip:
+	if(guildopenstorage(0) == 1){
+		mes "[Kafra Employee]";
+		mes "I'm sorry but another guild member is using the guild storage";
+		mes "right now.  Please wait until that person is finished.";
+		close2;
+		cutin "", 255;
+		end;
+	}
+	close2;
+	cutin "", 255;
+	end;
+}

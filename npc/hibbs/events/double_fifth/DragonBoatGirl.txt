@@ -1,0 +1,254 @@
+// Rewards probably need modified a bit
+
+louyang.gat,90,252,5	script	Dragon Boat Girl	719,{
+
+	if (countitem(7201)>=150 && countitem(7266)>=20
+		&& countitem(7265)>=15 && countitem(7169)>=1
+		&& fifths==1) goto S_boat; 
+	if (countitem(7701)>0 && countitem(7201)>=150 
+		&& countitem(7266)>=20 && countitem(7265)>=15
+		&& countitem(7169)>=1 && fifths==2) goto F_boat;
+	if (fifths==3) goto L_qua;
+	if (fifths>3) goto L_finish;
+
+	mes "[Qingqing]";
+	mes "Hello!";
+	mes "Are you enjoying the Dragon Boat Festival?";
+	next;
+	if(select("Sure am!:No...")==2) goto L_sor;
+	mes "[Qingqing]";
+	mes "I wish I was having as easy a time as you are.";
+	mes "My tutor, Qu Yuan, asked me to help him make a Dragon Boat.";
+	next;
+	mes "[Qingqing]";
+	mes "But I can't gather everything!";
+	mes "It's much too dangerous for someone like me~";
+	next;
+	mes "[Qingqing]";
+	mes "Would you help me, traveler?";
+	mes "I promise you'll get something in return~";
+	next;
+	if(select("Help her:Don't help her")==2) goto L_sor;
+	mes "[Qingqing]";
+	mes "Oh, you will help me? Yay!";
+	mes "Okay, in order to make a Dragon Boat, you'll need...";
+	next;
+	mes "[Qingqing]";
+	mes "^3355FF150 Log, 15 Dragon Horn,";
+	mes "20 Denture from Dragon Mask,";
+	mes "and 1 Ba Gua.^000000";
+	next;
+	mes "[Qingqing]";
+	mes "Come back to me when you've got everything~";
+	set fifths,1;
+	close;
+
+L_sor:
+	mes "[Qingqing]";
+	mes "Aww...";
+	close;
+	
+
+S_boat:
+	mes "[Qingqing]";
+	mes "Hey! You're back!";
+	mes "And I see you've brought everything~";
+	next;
+	mes "[Qingqing]";
+	mes "But... There's something else you need to get.";
+	next;
+	mes "[Qingqing]";
+	mes "In order to ensure a victory in the race,";
+	mes "Qu Yuan told me you need the blessings of a Dragon.";
+	mes "And the only way to do that is to gather a Dragon's spirit!";
+	next;
+	mes "[Qingqing]";
+	mes "He told me where to find such a Dragon...";
+	mes "But I'm afraid it's MUCH too dangerous for me to go alone...";
+	next;
+	mes "[Qingqing]";
+	mes "Traveler, could you please gather the spirit in my stead?";
+	next;
+	if(select("Okay...:No way!")==2) goto L_sor;
+	mes "[Qingqing]";
+	mes "Yay! Okay, let me send you there right now!";
+	close2;
+	warp "ama_test.gat",50,25;
+	end;
+	
+F_boat:
+	mes "[Qingqing]";
+	mes "Well, now, there's another problem...";
+	mes "My master needs me to deliver these things to him,";
+	mes "but he recently went into the dungeon near here!";
+	next;
+	mes "[Qingqing]";
+	mes "I don't know what I would do if I had to go there~";
+	mes "Would you please deliver these for me?";
+	next;
+	if(select("Sure...:No way!")==2) goto L_sor;
+	mes "[Qingqing]";
+	mes "Thank you so much!";
+	mes "Qu Yuan should be somewhere near the river there.";
+	next;
+	mes "[Qingqing]";
+	mes "Oh! And take this.";
+	mes "It's a token of my appreciation!";
+	next;
+	set fifths,3;
+	getitem 668,2;
+	getitem 5042,1;
+	mes "[Qingqing]";
+	mes "Have a nice day at the Festival~";
+	close;
+L_qua:
+	mes "[Qingqing]";
+	mes "Thank you so much!";
+	mes "Qu Yuan should be somewhere near the river there.";
+	close;
+
+L_finish:
+	mes "[Qingqing]";
+	mes "Have a nice day at the Festival~";
+	close;
+
+}
+
+
+ama_test.gat,50,15,3	script	Dragon#fifths	1609,{
+	if (fifths==1) goto D_boat;
+	if (fifths==2) goto N_boat;
+	
+	mes "[Dragon Spirit]";
+	mes "Who goes there?";
+	mes "Who dares disturb me?";
+	close;
+
+D_boat:
+	mes "[Dragon Spirit]";
+	mes "Who goes there?";
+	mes "Who dares disturb me?";
+	next;
+	if(select("I am here for your blessing.:Nobody~")==2) {
+		mes "[Dragon Spirit]";
+		mes "Hmph!";
+		close;
+	}
+	mes "[Dragon Spirit]";
+	mes "My blessing, eh?";
+	mes "You really think you are worthy of this?";
+	next;
+	mes "[Dragon Spirit]";
+	mes "Well, you must be, if you knew how to find me.";
+	mes "Very well. You may leave here with my blessing.";
+	getitem 7701,1;	// essence of dragon
+	set fifths,2;
+	close2;
+	warp "louyang",218,115;
+	end;
+	
+N_boat:
+	mes "[Dragon Spirit]";
+	mes "Do not waste my time!";
+	close;
+
+}
+
+
+
+lou_dun01.gat,183,170,1	script	Qu Yuan#fifths	814,{
+	if (countitem(7701)>0 && countitem(7201)>=150 
+		&& countitem(7266)>=20 && countitem(7265)>=15 
+		&& countitem(7169)>=1 && fifths==3) goto S_boat; 		
+	if (countitem(7150)>=100 && countitem(7200)>=25
+		&& fifths==4) goto F_boat;
+	if (fifths==4) goto S_fifths4;
+
+	
+	mes "[Qu Yuan]";
+	mes "Ah, the waters are so tranquil...";
+	close;
+
+S_boat:
+	mes "[Qu Yuan]";
+	mes "Hmm? Who are you?";
+	next;
+	select("Qingqing sent me.");
+	mes "[Qu Yuan]";
+	mes "Really? Now, why couldn't she come here herself?";
+	next;
+	mes "[Qu Yuan]";
+	mes "...";
+	next;
+	mes "[Qu Yuan]";
+	mes "I see. That good-for-nothing girl...";
+	mes "When will she ever learn?";
+	mes "^666666*sigh*^000000";
+	next;
+	mes "[Qu Yuan]";
+	mes "But no matter. You appear to have everything needed.";
+	mes "I thank you.";
+	delitem 7701,1;
+	delitem 7201,150;
+	delitem 7266,20;
+	delitem 7265,15;
+	delitem 7169,1;
+	set fifths,4;
+	next;
+	mes "[Qu Yuan]";
+	mes "Ah... I forgot one vital aspect!";
+	mes "I'll need some bamboo poles to steer the boat to victory.";
+	mes "Since you've helped me out thus far...";
+	mes "Would you mind terribly if you helped me once again?";
+	next;
+	select("No problem!");
+	mes "[Qu Yuan]";
+	mes "That's good to hear!";
+	mes "Now, in order to make the poles, I'll need...";
+	next;
+	mes "[Qu Yuan]";
+	mes "^3355FF100 Piece of Bamboo,";
+	mes "and 25 Elastic Bands.^000000";
+	next;
+	mes "[Qu Yuan]";
+	mes "Come back when you have those.";
+	close;
+	
+S_fifths4:
+	mes "[Qu Yuan]";
+	mes "In order to make the poles, I'll need...";
+	next;
+	mes "[Qu Yuan]";
+	mes "^3355FF100 Piece of Bamboo,";
+	mes "and 25 Elastic Bands.^000000";
+	next;
+	mes "[Qu Yuan]";
+	mes "Come back when you have those.";
+	close;
+	
+	
+F_boat:
+	mes "[Qu Yuan]";
+	mes "Ah! I see you have what I need to make the poles.";
+	next;
+	mes "[Qu Yuan]";
+	mes "I thank you.";
+	delitem 7150,100;
+	delitem 7200,25;
+	next;
+	mes "[Qu Yuan]";
+	mes "Ah... Now I have everything to make the perfect Dragon Boat!";
+	mes "I am guaranteed for victory this year!";
+	next;
+	mes "[Qu Yuan]";
+	mes "I hope that one day, people will celebrate this day and also think of me,";
+	mes "Qu Yuan, who not only won this race but also was a fantastic poet!";
+	next;
+	mes "[Qu Yuan]";
+	mes "Ah, but enough of my blather.";
+	mes "Please, accept this -- it is the least I can do for what you have done for me.";
+	getitem 12281,1;
+	getitem 12084,3;
+	set fifths,5;
+	close;
+}

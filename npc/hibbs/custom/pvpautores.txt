@@ -1,0 +1,16 @@
+-	script	AutoRes	-1,{
+
+end;
+
+OnPCDieEvent:
+	getmapxy(@mapname$,@mapx,@mapy,0,strcharinfo(0));
+	if(@mapname$ == "pvp_n_1-5" || @mapname$ == "payo1" || @mapname$ == "pvp_n_1-3" ) {
+		sleep2 1;
+		mes "[Auto-Resurrection]";
+		mes "Would you like to be resurrected?";
+		if(select("Resurrect:Cancel")==2) close;
+		close2;
+		warp @mapname$,0,0;
+		percentheal 100,100;
+	}
+}
